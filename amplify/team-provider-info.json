@@ -23,6 +23,9 @@
       },
       "api": {
         "apimyblog": {}
+      },
+      "auth": {
+        "myblog70d61738": {}
       }
     }
   }
