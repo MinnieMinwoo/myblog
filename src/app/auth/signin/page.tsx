@@ -1,5 +1,4 @@
 import SocialButton from "components/SocialButton";
-import type { Metadata } from "next";
 import Link from "next/link";
 
 export default function SignInPage() {
