@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const AuthWithEmail = ({ signIn }: { signIn: boolean }) => {
+const AuthWithEmail = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
@@ -48,21 +48,19 @@ const AuthWithEmail = ({ signIn }: { signIn: boolean }) => {
               onChange={onChange}
             />
           </div>
-          {signIn ? null : (
-            <div>
-              <label className="form-label">Nickname</label>
-              <input
-                className="form-control"
-                name="nickname"
-                type="text"
-                placeholder="4-20 digits of English, numbers and special characters"
-                value={nickname}
-                autoComplete="off"
-                required
-                onChange={onChange}
-              />
-            </div>
-          )}
+          <div>
+            <label className="form-label">Nickname</label>
+            <input
+              className="form-control"
+              name="nickname"
+              type="text"
+              placeholder="4-20 digits of English, numbers and special characters"
+              value={nickname}
+              autoComplete="off"
+              required
+              onChange={onChange}
+            />
+          </div>
           <button type="submit" className="btn btn-primary col-8 offset-2 h-36px">
             {"Create Account"}
           </button>
