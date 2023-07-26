@@ -10,6 +10,20 @@
       "StackName": "amplify-myblog-dev-150719",
       "StackId": "arn:aws:cloudformation:ap-northeast-2:514744362550:stack/amplify-myblog-dev-150719/ae6abfa0-2b7a-11ee-abce-028e5c46178a",
       "AmplifyAppId": "d30lguc62630ad"
+    },
+    "categories": {
+      "function": {
+        "myblog7e1c1b33": {
+          "deploymentBucketName": "amplify-myblog-dev-150719-deployment",
+          "s3Key": "amplify-builds/myblog7e1c1b33-61374258663030354e73-build.zip"
+        }
+      },
+      "storage": {
+        "dynamoa5f07cda": {}
+      },
+      "api": {
+        "apimyblog": {}
+      }
     }
   }
 }
