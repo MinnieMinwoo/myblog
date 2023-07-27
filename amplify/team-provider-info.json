@@ -25,7 +25,12 @@
         "apimyblog": {}
       },
       "auth": {
-        "myblog70d61738": {}
+        "myblog804baec8": {
+          "userPoolId": "ap-northeast-2_cY5pxzEFs",
+          "userPoolName": "MyBlog",
+          "webClientId": "2qfr6bvss885kuttnofvfl4tig",
+          "nativeClientId": "2qfr6bvss885kuttnofvfl4tig"
+        }
       }
     }
   }

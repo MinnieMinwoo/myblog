@@ -16,34 +16,12 @@
     }
   },
   "auth": {
-    "myblog70d61738": {
+    "myblog804baec8": {
       "customAuth": false,
       "dependsOn": [],
-      "frontendAuthConfig": {
-        "mfaConfiguration": "OFF",
-        "mfaTypes": [
-          "SMS"
-        ],
-        "passwordProtectionSettings": {
-          "passwordPolicyCharacters": [],
-          "passwordPolicyMinLength": 8
-        },
-        "signupAttributes": [
-          "EMAIL"
-        ],
-        "socialProviders": [
-          "FACEBOOK",
-          "GOOGLE"
-        ],
-        "usernameAttributes": [
-          "EMAIL"
-        ],
-        "verificationMechanisms": [
-          "EMAIL"
-        ]
-      },
       "providerPlugin": "awscloudformation",
-      "service": "Cognito"
+      "service": "Cognito",
+      "serviceType": "imported"
     }
   },
   "function": {
@@ -68,6 +46,38 @@
     }
   },
   "parameters": {
+    "AMPLIFY_auth_myblog804baec8_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "myblog804baec8"
+        }
+      ]
+    },
+    "AMPLIFY_auth_myblog804baec8_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "myblog804baec8"
+        }
+      ]
+    },
+    "AMPLIFY_auth_myblog804baec8_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "myblog804baec8"
+        }
+      ]
+    },
+    "AMPLIFY_auth_myblog804baec8_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "myblog804baec8"
+        }
+      ]
+    },
     "AMPLIFY_function_myblog7e1c1b33_deploymentBucketName": {
       "usedBy": [
         {
