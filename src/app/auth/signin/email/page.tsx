@@ -2,28 +2,17 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import signupEmail from "./signupEmail";
+import signinEmail from "./signinEmail";
 
 const AuthWithEmail = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [nickname, setNickname] = useState("");
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { name, value },
     } = event;
-    const excuteFunction =
-      name === "email"
-        ? setEmail
-        : name === "password"
-        ? setPassword
-        : name === "name"
-        ? setName
-        : name === "nickname"
-        ? setNickname
-        : () => {};
+    const excuteFunction = name === "email" ? setEmail : setPassword;
     excuteFunction(value);
   };
 
@@ -32,12 +21,9 @@ const AuthWithEmail = () => {
     const userData = {
       email: email,
       password: password,
-      name: name,
-      nickname: nickname,
-      picture: "",
     };
     try {
-      const user = await signupEmail(userData);
+      const user = await signinEmail(userData);
       console.log(user);
     } catch (error) {
       console.log(error);
@@ -74,35 +60,10 @@ const AuthWithEmail = () => {
               onChange={onChange}
             />
           </div>
-          <div>
-            <label className="form-label">Name</label>
-            <input
-              className="form-control"
-              name="name"
-              type="text"
-              value={name}
-              autoComplete="off"
-              required
-              onChange={onChange}
-            />
-          </div>
-          <div>
-            <label className="form-label">Nickname</label>
-            <input
-              className="form-control"
-              name="nickname"
-              type="text"
-              placeholder="4-20 digits of English, numbers and special characters"
-              value={nickname}
-              autoComplete="off"
-              required
-              onChange={onChange}
-            />
-          </div>
           <button type="submit" className="btn btn-primary col-8 offset-2 h-36px">
-            {"Create Account"}
+            {"Sign in"}
           </button>
-          <Link href="/auth/signup">
+          <Link href="/auth/signin">
             <button type="button" className="btn btn-info col-8 offset-2 h-36px">
               {"Back"}
             </button>
