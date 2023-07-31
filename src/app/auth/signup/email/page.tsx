@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import signupEmail from "./signupEmail";
+import Router from "next/router";
 
 const AuthWithEmail = () => {
   const [email, setEmail] = useState("");
@@ -38,7 +39,7 @@ const AuthWithEmail = () => {
     };
     try {
       const user = await signupEmail(userData);
-      console.log(user);
+      Router.push("/verification");
     } catch (error) {
       console.log(error);
       window.alert("Login Error");
@@ -102,10 +103,8 @@ const AuthWithEmail = () => {
           <button type="submit" className="btn btn-primary col-8 offset-2 h-36px">
             {"Create Account"}
           </button>
-          <Link href="/auth/signup">
-            <button type="button" className="btn btn-info col-8 offset-2 h-36px">
-              {"Back"}
-            </button>
+          <Link className="btn btn-info col-8 offset-2 h-36px" href="/auth/signup" role="button">
+            {"Back"}
           </Link>
         </div>
       </form>

@@ -63,10 +63,8 @@ const AuthWithEmail = () => {
           <button type="submit" className="btn btn-primary col-8 offset-2 h-36px">
             {"Sign in"}
           </button>
-          <Link href="/auth/signin">
-            <button type="button" className="btn btn-info col-8 offset-2 h-36px">
-              {"Back"}
-            </button>
+          <Link className="btn btn-info col-8 offset-2 h-36px" href="/auth/signin" role="button">
+            {"Back"}
           </Link>
         </div>
       </form>

@@ -15,8 +15,8 @@ export default function SignUpPage() {
         <SocialButton name="Facebook" img={"/facebook.png"} href={"/auth/signup/facebook"} />
         <SocialButton name="Email" img={"/email.png"} href={"/auth/signup/email"} />
       </div>
-      <Link href={"/auth/signin"}>
-        <button className="btn btn-primary col-8 offset-2 h-36px">{"Sign in"}</button>
+      <Link className="btn btn-primary col-8 offset-2 h-36px" href={"/auth/signin"} role="button">
+        {"Sign in"}
       </Link>
     </>
   );

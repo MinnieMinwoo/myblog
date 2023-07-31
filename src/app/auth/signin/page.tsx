@@ -9,8 +9,8 @@ export default function SignInPage() {
         <SocialButton name="Facebook" img={"/facebook.png"} href={"/auth/signin/facebook"} />
         <SocialButton name="Email" img={"/email.png"} href={"/auth/signin/email"} />
       </div>
-      <Link href={"/auth/signup"}>
-        <button className="btn btn-primary col-8 offset-2 h-36px">{"Create Account"}</button>
+      <Link className="btn btn-primary col-8 offset-2 h-36px" href={"/auth/signup"} role="button">
+        {"Create Account"}
       </Link>
     </>
   );
