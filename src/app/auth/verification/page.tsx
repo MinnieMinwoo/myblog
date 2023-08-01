@@ -1,31 +1,35 @@
 "use client";
 
-import { Auth } from "aws-amplify";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import resendCode from "./resendCode";
 import verifyEmail from "./verifyEmail";
+import Router from "next/navigation";
 
 const VerificationPage = () => {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const router = useRouter();
+  const params = useSearchParams();
 
   useEffect(() => {
-    Auth.currentUserInfo().then((userData) => {
-      // userData is empty object when user is invalid
-      if (!userData || Object.keys(userData).length === 0) router.push("/");
-      else {
-        const {
-          attributes: { email, email_verified },
-        } = userData;
-        if (email_verified) router.push("/");
-        else setEmail(email);
-      }
-    });
+    const emailParam = params.get("email");
+    console.log(history.state);
+    if (emailParam) {
+      setEmail(emailParam);
+      history.pushState({ data: { email: emailParam } }, "Email Verification", "/auth/verification");
+    } else if (history.state.email !== undefined) {
+      const {
+        state: { email: historyEmail },
+      } = history;
+      setEmail(historyEmail);
+      history.pushState({ data: { email: historyEmail } }, "Email Verification", "/auth/verification");
+    } else router.push("/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => console.log(email), [email]);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {

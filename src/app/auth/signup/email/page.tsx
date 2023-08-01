@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import signupEmail from "./signupEmail";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 
 const AuthWithEmail = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");
+  const router = useRouter();
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -38,11 +39,11 @@ const AuthWithEmail = () => {
       picture: "",
     };
     try {
-      const user = await signupEmail(userData);
-      Router.push("/verification");
+      await signupEmail(userData);
+      router.push(`/verification?email=${email}`);
     } catch (error) {
       console.log(error);
-      window.alert("Login Error");
+      window.alert("Sign up Error");
     }
   };
 

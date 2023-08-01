@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import signinEmail from "./signinEmail";
+import { errorCode } from "./emailErrorCode";
+import { useRouter } from "next/navigation";
 
 const AuthWithEmail = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -27,7 +30,11 @@ const AuthWithEmail = () => {
       console.log(user);
     } catch (error) {
       console.log(error);
-      window.alert("Login Error");
+      console.log(error instanceof Error);
+      console.log((error as any).name === errorCode.notVerify);
+      if (error instanceof Error && error.name === errorCode.notVerify) {
+        router.push(`/auth/verification?email=${email}`);
+      } else window.alert("Login Error");
     }
   };
 
