@@ -5,7 +5,7 @@ import { useState } from "react";
 import signupEmail from "./signupEmail";
 import { useRouter } from "next/navigation";
 
-const AuthWithEmail = () => {
+export default function AuthWithEmail() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -111,6 +111,4 @@ const AuthWithEmail = () => {
       </form>
     </div>
   );
-};
-
-export default AuthWithEmail;
+}

@@ -5,9 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import resendCode from "./resendCode";
 import verifyEmail from "./verifyEmail";
-import Router from "next/navigation";
 
-const VerificationPage = () => {
+export default function VerificationPage() {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const router = useRouter();
@@ -15,7 +14,6 @@ const VerificationPage = () => {
 
   useEffect(() => {
     const emailParam = params.get("email");
-    console.log(history.state);
     if (emailParam) {
       setEmail(emailParam);
       history.pushState({ data: { email: emailParam } }, "Email Verification", "/auth/verification");
@@ -28,8 +26,6 @@ const VerificationPage = () => {
     } else router.push("/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => console.log(email), [email]);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -55,7 +51,6 @@ const VerificationPage = () => {
     } catch (error) {
       console.log(error);
       window.alert("Code verification failed");
-      window.alert(error);
     }
   };
 
@@ -93,6 +88,4 @@ const VerificationPage = () => {
       )}
     </>
   );
-};
-
-export default VerificationPage;
+}
