@@ -1,0 +1,16 @@
+{
+  "resourceName": "myblogUser",
+  "tableName": "myblogUser",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "string"
+  },
+  "sortKey": {
+    "fieldName": "nickname",
+    "fieldType": "string"
+  },
+  "gsi": [],
+  "triggerFunctions": [
+    "myblogUserTrigger66d974c7"
+  ]
+}

@@ -13,16 +13,13 @@
     },
     "categories": {
       "function": {
-        "myblog7e1c1b33": {
+        "myblogUserTrigger66d974c7": {
           "deploymentBucketName": "amplify-myblog-dev-150719-deployment",
-          "s3Key": "amplify-builds/myblog7e1c1b33-61374258663030354e73-build.zip"
+          "s3Key": "amplify-builds/myblogUserTrigger66d974c7-6d58695a48644f324b61-build.zip"
         }
       },
       "storage": {
-        "dynamoa5f07cda": {}
-      },
-      "api": {
-        "apimyblog": {}
+        "myblogUser": {}
       },
       "auth": {
         "myblog804baec8": {

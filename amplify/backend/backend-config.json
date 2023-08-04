@@ -1,20 +1,5 @@
 {
-  "api": {
-    "apimyblog": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "myblog7e1c1b33"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
-    }
-  },
+  "api": {},
   "auth": {
     "myblog804baec8": {
       "customAuth": false,
@@ -25,20 +10,17 @@
     }
   },
   "function": {
-    "myblog7e1c1b33": {
+    "myblogUserTrigger66d974c7": {
       "build": true,
       "dependsOn": [
         {
-          "attributeEnvMap": {
-            "Arn": "TABLE_ARN",
-            "Name": "TABLE_NAME"
-          },
           "attributes": [
             "Name",
-            "Arn"
+            "Arn",
+            "StreamArn"
           ],
           "category": "storage",
-          "resourceName": "dynamoa5f07cda"
+          "resourceName": "myblogUser"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -78,25 +60,25 @@
         }
       ]
     },
-    "AMPLIFY_function_myblog7e1c1b33_deploymentBucketName": {
+    "AMPLIFY_function_myblogUserTrigger66d974c7_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "myblog7e1c1b33"
+          "resourceName": "myblogUserTrigger66d974c7"
         }
       ]
     },
-    "AMPLIFY_function_myblog7e1c1b33_s3Key": {
+    "AMPLIFY_function_myblogUserTrigger66d974c7_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "myblog7e1c1b33"
+          "resourceName": "myblogUserTrigger66d974c7"
         }
       ]
     }
   },
   "storage": {
-    "dynamoa5f07cda": {
+    "myblogUser": {
       "providerPlugin": "awscloudformation",
       "service": "DynamoDB"
     }

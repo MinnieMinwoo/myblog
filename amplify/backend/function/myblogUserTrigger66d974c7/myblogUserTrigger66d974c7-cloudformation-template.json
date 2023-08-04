@@ -2,27 +2,26 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.2.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
-    "CloudWatchRule": {
+    "env": {
+      "Type": "String"
+    },
+    "storagemyblogUserName": {
       "Type": "String",
-      "Default": "NONE",
-      "Description": " Schedule Expression"
+      "Default": "storagemyblogUserName"
+    },
+    "storagemyblogUserArn": {
+      "Type": "String",
+      "Default": "storagemyblogUserArn"
+    },
+    "storagemyblogUserStreamArn": {
+      "Type": "String",
+      "Default": "storagemyblogUserArn"
     },
     "deploymentBucketName": {
       "Type": "String"
     },
-    "env": {
-      "Type": "String"
-    },
     "s3Key": {
       "Type": "String"
-    },
-    "storagedynamoa5f07cdaName": {
-      "Type": "String",
-      "Default": "storagedynamoa5f07cdaName"
-    },
-    "storagedynamoa5f07cdaArn": {
-      "Type": "String",
-      "Default": "storagedynamoa5f07cdaArn"
     }
   },
   "Conditions": {
@@ -43,24 +42,16 @@
         "aws:asset:property": "Code"
       },
       "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Ref": "deploymentBucketName"
-          },
-          "S3Key": {
-            "Ref": "s3Key"
-          }
-        },
         "Handler": "index.handler",
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "myblog7e1c1b33",
+            "myblogUserTrigger66d974c7",
             {
               "Fn::Join": [
                 "",
                 [
-                  "myblog7e1c1b33",
+                  "myblogUserTrigger66d974c7",
                   "-",
                   {
                     "Ref": "env"
@@ -74,9 +65,6 @@
           "Variables": {
             "ENV": {
               "Ref": "env"
-            },
-            "REGION": {
-              "Ref": "AWS::Region"
             }
           }
         },
@@ -87,8 +75,15 @@
           ]
         },
         "Runtime": "nodejs18.x",
-        "Layers": [],
-        "Timeout": 25
+        "Timeout": 25,
+        "Code": {
+          "S3Bucket": {
+            "Ref": "deploymentBucketName"
+          },
+          "S3Key": {
+            "Ref": "s3Key"
+          }
+        }
       }
     },
     "LambdaExecutionRole": {
@@ -97,12 +92,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "myblogLambdaRolea2ffd91e",
+            "myblogUserLambdaRole66d974c7",
             {
               "Fn::Join": [
                 "",
                 [
-                  "myblogLambdaRolea2ffd91e",
+                  "myblogUserLambdaRole66d974c7",
                   "-",
                   {
                     "Ref": "env"
@@ -168,37 +163,62 @@
                   }
                 ]
               }
-            },
+            }
+          ]
+        }
+      }
+    },
+    "myblogUserTriggerPolicy": {
+      "DependsOn": [
+        "LambdaExecutionRole"
+      ],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-trigger-policy-myblogUser",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
             {
               "Effect": "Allow",
               "Action": [
-                "dynamodb:DescribeTable",
-                "dynamodb:GetItem",
-                "dynamodb:Query",
-                "dynamodb:Scan",
-                "dynamodb:PutItem",
-                "dynamodb:UpdateItem",
-                "dynamodb:DeleteItem"
+                "dynamodb:DescribeStream",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:ListStreams"
               ],
               "Resource": [
                 {
-                  "Ref": "storagedynamoa5f07cdaArn"
-                },
-                {
-                  "Fn::Join": [
-                    "/",
-                    [
-                      {
-                        "Ref": "storagedynamoa5f07cdaArn"
-                      },
-                      "index/*"
-                    ]
-                  ]
+                  "Ref": "storagemyblogUserStreamArn"
                 }
               ]
             }
           ]
         }
+      }
+    },
+    "myblogUserTrigger": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "DependsOn": [
+        "myblogUserTriggerPolicy"
+      ],
+      "Properties": {
+        "BatchSize": 100,
+        "Enabled": true,
+        "EventSourceArn": {
+          "Ref": "storagemyblogUserStreamArn"
+        },
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "LambdaFunction",
+            "Arn"
+          ]
+        },
+        "StartingPosition": "LATEST"
       }
     }
   },
