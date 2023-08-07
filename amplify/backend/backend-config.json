@@ -21,6 +21,13 @@
           ],
           "category": "storage",
           "resourceName": "myblogUser"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "myblog804baec8"
         }
       ],
       "providerPlugin": "awscloudformation",

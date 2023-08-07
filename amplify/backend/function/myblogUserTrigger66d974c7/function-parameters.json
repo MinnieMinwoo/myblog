@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "storage": {
+      "myblogUser": [
+        "create",
+        "read"
+      ]
+    },
+    "auth": {
+      "myblog804baec8": [
+        "create",
+        "read"
+      ]
+    }
+  }
+}
