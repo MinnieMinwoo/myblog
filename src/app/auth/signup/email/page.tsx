@@ -40,7 +40,7 @@ export default function AuthWithEmail() {
     };
     try {
       await signupEmail(userData);
-      router.push(`/verification?email=${email}`);
+      router.push(`/auth/verification?email=${email}`);
     } catch (error) {
       console.log(error);
       window.alert("Sign up Error");
