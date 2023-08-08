@@ -9,7 +9,15 @@
     "fieldName": "nickname",
     "fieldType": "string"
   },
-  "gsi": [],
+  "gsi": [
+    {
+      "name": "NicknameSort",
+      "partitionKey": {
+        "fieldName": "nickname",
+        "fieldType": "string"
+      }
+    }
+  ],
   "triggerFunctions": [
     "myblogUserTrigger66d974c7"
   ]

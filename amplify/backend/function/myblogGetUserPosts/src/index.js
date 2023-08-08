@@ -1,3 +1,13 @@
+/* Amplify Params - DO NOT EDIT
+	ENV
+	REGION
+	STORAGE_MYBLOGPOSTS_ARN
+	STORAGE_MYBLOGPOSTS_NAME
+	STORAGE_MYBLOGPOSTS_STREAMARN
+	STORAGE_MYBLOGUSER_ARN
+	STORAGE_MYBLOGUSER_NAME
+	STORAGE_MYBLOGUSER_STREAMARN
+Amplify Params - DO NOT EDIT */
 const awsServerlessExpress = require("aws-serverless-express");
 const awsServerlessExpressMiddleware = require("aws-serverless-express/middleware");
 
@@ -11,17 +21,51 @@ const {
   GetCommand,
   PutCommand,
   QueryCommand,
+  ScanCommand,
 } = require("@aws-sdk/lib-dynamodb");
-const ddbClient = new DynamoDBClient({ region: process.env.TABLE_REGION });
+const ddbClient = new DynamoDBClient({ region: "ap-northeast-2" });
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/posts/:nickname", (req, res) => {
+app.get("/posts/:nickname", async (req, res) => {
+  // set cors policy
   res.setHeader("Access-Control-Allow-origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.json({ response: true, msg: "test" });
+
+  const {
+    params: { nickname },
+  } = req;
+  try {
+    const userGetCommand = new ScanCommand({
+      TableName: "myblogUser-dev",
+      FilterExpression: "nickname = :nickname",
+      ExpressionAttributeValues: {
+        ":nickname": nickname,
+      },
+      ProjectionExpression: "id",
+    });
+    const { Count: userCount, Items: userIDList } = await ddbDocClient.send(userGetCommand);
+    if (userCount === 0) {
+      return res.statusCode(406);
+    }
+    const { id: idString } = userIDList[0];
+
+    const userPostCommand = new ScanCommand({
+      TableName: "myblogPosts-dev",
+      FilterExpression: "createdBy = :createdBy",
+      ExpressionAttributeValues: {
+        ":createdBy": idString,
+      },
+      ProjectionExpression: "title, thumbnailImageURL, thumbnailData, tag, createdBy",
+    });
+    const { Count: postCount, Items: postItems } = await ddbDocClient.send(userPostCommand);
+    res.json({ userData: idString, postCount: postCount, postList: postItems });
+  } catch (error) {
+    console.log(error);
+    res.statusCode(500);
+  }
 });
 
 /**

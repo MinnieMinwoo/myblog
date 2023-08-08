@@ -23,6 +23,30 @@
     "storagemyblogPostsArn": {
       "Type": "String",
       "Default": "storagemyblogPostsArn"
+    },
+    "storagemyblogUserName": {
+      "Type": "String",
+      "Default": "storagemyblogUserName"
+    },
+    "storagemyblogUserArn": {
+      "Type": "String",
+      "Default": "storagemyblogUserArn"
+    },
+    "storagemyblogUserStreamArn": {
+      "Type": "String",
+      "Default": "storagemyblogUserStreamArn"
+    },
+    "storagemyblogPostsStreamArn": {
+      "Type": "String",
+      "Default": "storagemyblogPostsStreamArn"
+    },
+    "apimyblogGetUserPostsApiName": {
+      "Type": "String",
+      "Default": "apimyblogGetUserPostsApiName"
+    },
+    "apimyblogGetUserPostsApiId": {
+      "Type": "String",
+      "Default": "apimyblogGetUserPostsApiId"
     }
   },
   "Conditions": {
@@ -77,6 +101,30 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "STORAGE_MYBLOGUSER_NAME": {
+              "Ref": "storagemyblogUserName"
+            },
+            "STORAGE_MYBLOGUSER_ARN": {
+              "Ref": "storagemyblogUserArn"
+            },
+            "STORAGE_MYBLOGUSER_STREAMARN": {
+              "Ref": "storagemyblogUserStreamArn"
+            },
+            "STORAGE_MYBLOGPOSTS_NAME": {
+              "Ref": "storagemyblogPostsName"
+            },
+            "STORAGE_MYBLOGPOSTS_ARN": {
+              "Ref": "storagemyblogPostsArn"
+            },
+            "STORAGE_MYBLOGPOSTS_STREAMARN": {
+              "Ref": "storagemyblogPostsStreamArn"
+            },
+            "API_MYBLOGGETUSERPOSTS_APINAME": {
+              "Ref": "apimyblogGetUserPostsApiName"
+            },
+            "API_MYBLOGGETUSERPOSTS_APIID": {
+              "Ref": "apimyblogGetUserPostsApiId"
             }
           }
         },
@@ -179,6 +227,81 @@
                 "dynamodb:PutItem",
                 "dynamodb:UpdateItem",
                 "dynamodb:DeleteItem"
+              ],
+              "Resource": [
+                {
+                  "Ref": "storagemyblogPostsArn"
+                },
+                {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      {
+                        "Ref": "storagemyblogPostsArn"
+                      },
+                      "index/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "AmplifyResourcesPolicy": {
+      "DependsOn": [
+        "LambdaExecutionRole"
+      ],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "amplify-lambda-execution-policy",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:PartiQLSelect"
+              ],
+              "Resource": [
+                {
+                  "Ref": "storagemyblogUserArn"
+                },
+                {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      {
+                        "Ref": "storagemyblogUserArn"
+                      },
+                      "index/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:PartiQLSelect"
               ],
               "Resource": [
                 {
