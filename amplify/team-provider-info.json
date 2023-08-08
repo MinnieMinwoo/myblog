@@ -16,10 +16,15 @@
         "myblogUserTrigger66d974c7": {
           "deploymentBucketName": "amplify-myblog-dev-150719-deployment",
           "s3Key": "amplify-builds/myblogUserTrigger66d974c7-6a77756c77654c665964-build.zip"
+        },
+        "myblogGetUserPosts": {
+          "deploymentBucketName": "amplify-myblog-dev-150719-deployment",
+          "s3Key": "amplify-builds/myblogGetUserPosts-4543736535704f646666-build.zip"
         }
       },
       "storage": {
-        "myblogUser": {}
+        "myblogUser": {},
+        "myblogPosts": {}
       },
       "auth": {
         "myblog804baec8": {
@@ -28,6 +33,9 @@
           "webClientId": "2qfr6bvss885kuttnofvfl4tig",
           "nativeClientId": "2qfr6bvss885kuttnofvfl4tig"
         }
+      },
+      "api": {
+        "myblogGetUserPosts": {}
       }
     }
   }
