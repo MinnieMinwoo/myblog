@@ -7,6 +7,13 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "function": {
+    "myBlogCheckNickname": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "myblogGetUserPosts": {
       "Arn": "string",
       "LambdaExecutionRole": "string",

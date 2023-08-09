@@ -20,6 +20,10 @@
         "myblogGetUserPosts": {
           "deploymentBucketName": "amplify-myblog-dev-150719-deployment",
           "s3Key": "amplify-builds/myblogGetUserPosts-65382f33687050357245-build.zip"
+        },
+        "myBlogCheckNickname": {
+          "deploymentBucketName": "amplify-myblog-dev-150719-deployment",
+          "s3Key": "amplify-builds/myBlogCheckNickname-5a4d5457395377383630-build.zip"
         }
       },
       "storage": {

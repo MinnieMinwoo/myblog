@@ -25,6 +25,29 @@
     }
   },
   "function": {
+    "myBlogCheckNickname": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "myblogUser"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "myblog804baec8"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "myblogGetUserPosts": {
       "build": true,
       "dependsOn": [
@@ -104,6 +127,22 @@
         {
           "category": "auth",
           "resourceName": "myblog804baec8"
+        }
+      ]
+    },
+    "AMPLIFY_function_myBlogCheckNickname_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myBlogCheckNickname"
+        }
+      ]
+    },
+    "AMPLIFY_function_myBlogCheckNickname_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myBlogCheckNickname"
         }
       ]
     },
