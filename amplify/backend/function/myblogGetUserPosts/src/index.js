@@ -9,20 +9,12 @@
 	STORAGE_MYBLOGUSER_STREAMARN
 Amplify Params - DO NOT EDIT */
 const awsServerlessExpress = require("aws-serverless-express");
-const awsServerlessExpressMiddleware = require("aws-serverless-express/middleware");
 
 const express = require("express");
 const app = express();
 
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const {
-  DeleteCommand,
-  DynamoDBDocumentClient,
-  GetCommand,
-  PutCommand,
-  QueryCommand,
-  ScanCommand,
-} = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocumentClient, QueryCommand } = require("@aws-sdk/lib-dynamodb");
 const ddbClient = new DynamoDBClient({ region: "ap-northeast-2" });
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
@@ -38,33 +30,38 @@ app.get("/posts/:nickname", async (req, res) => {
     params: { nickname },
   } = req;
   try {
-    const userGetCommand = new ScanCommand({
+    const userGetCommand = new QueryCommand({
       TableName: "myblogUser-dev",
-      FilterExpression: "nickname = :nickname",
+      IndexName: "NicknameSort",
+      KeyConditionExpression: "nickname = :nickname",
       ExpressionAttributeValues: {
         ":nickname": nickname,
       },
       ProjectionExpression: "id",
     });
+
     const { Count: userCount, Items: userIDList } = await ddbDocClient.send(userGetCommand);
     if (userCount === 0) {
-      return res.statusCode(406);
+      res.sendStatus(406);
+      return;
     }
     const { id: idString } = userIDList[0];
 
-    const userPostCommand = new ScanCommand({
+    const userPostCommand = new QueryCommand({
       TableName: "myblogPosts-dev",
-      FilterExpression: "createdBy = :createdBy",
+      IndexName: "NicknameAndTimeIndex",
+      KeyConditionExpression: "createdBy = :createdBy",
       ExpressionAttributeValues: {
         ":createdBy": idString,
       },
       ProjectionExpression: "title, thumbnailImageURL, thumbnailData, tag, createdBy",
+      ScanIndexForward: false,
     });
     const { Count: postCount, Items: postItems } = await ddbDocClient.send(userPostCommand);
     res.json({ userData: idString, postCount: postCount, postList: postItems });
   } catch (error) {
     console.log(error);
-    res.statusCode(500);
+    res.sendStatus(500);
   }
 });
 

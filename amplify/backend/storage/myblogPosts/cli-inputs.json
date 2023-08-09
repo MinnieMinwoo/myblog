@@ -11,25 +11,14 @@
   },
   "gsi": [
     {
-      "name": "SecondIndex",
+      "name": "NicknameAndTimeIndex",
       "partitionKey": {
-        "fieldName": "id",
-        "fieldType": "string"
-      },
-      "sortKey": {
         "fieldName": "createdBy",
-        "fieldType": "string"
-      }
-    },
-    {
-      "name": "ThirdIndex",
-      "partitionKey": {
-        "fieldName": "id",
         "fieldType": "string"
       },
       "sortKey": {
         "fieldName": "createdAt",
-        "fieldType": "string"
+        "fieldType": "number"
       }
     }
   ],
