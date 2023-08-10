@@ -1,0 +1,67 @@
+.scrollOpen {
+  visibility: visible;
+  animation-name: open;
+  animation-duration: 0.5s;
+  animation-duration: linear;
+}
+
+@keyframes open {
+  0% {
+    transform: translate(0, 100%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.scrollClose {
+  visibility: hidden;
+  animation-name: close;
+  animation-duration: 0.5s;
+  animation-duration: linear;
+}
+
+@keyframes close {
+  0% {
+    transform: translate(0, 0);
+    visibility: visible;
+  }
+  99.9% {
+    transform: translate(0, 99.9%);
+    visibility: visible;
+  }
+  100% {
+    transform: translate(0, 100%);
+    visibility: hidden;
+  }
+}
+
+.preview-layout {
+  position: fixed;
+  display: flex;
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .preview-layout {
+    position: absolute;
+    display: block;
+    padding: 30px 0;
+  }
+
+  .preview-overflow {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .preview-layout > div {
+    border-right: 0;
+    margin: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .preview-layout {
+    height: 100%;
+  }
+}

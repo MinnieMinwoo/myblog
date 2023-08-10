@@ -6,7 +6,8 @@ export default async function getCurrentUsetData() {
       attributes: { email, nickname },
       username,
     } = await Auth.currentUserInfo();
-    return { email, nickname, username };
+    const userData: UserInfo = { email: email, nickname: nickname, id: username };
+    return userData;
   } catch (error) {
     console.log(error);
     return null;

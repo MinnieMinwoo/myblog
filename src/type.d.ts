@@ -19,3 +19,18 @@ interface UserInfo {
   email: string;
   nickname: string;
 }
+
+interface PostEditData {
+  title: string;
+  category: string[];
+  postData: string;
+  thumbnailImgLink: string;
+  thumbnailData: string;
+  tag: string[];
+}
+
+interface CategoryData {
+  mainField: string;
+  subField: string[];
+  thumbnailLink: string[];
+}

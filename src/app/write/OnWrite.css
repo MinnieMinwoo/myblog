@@ -1,0 +1,44 @@
+.post-drag {
+  opacity: 0.3;
+}
+
+.post-input-bar {
+  border: 0;
+  border-bottom: 1px solid #eee;
+}
+
+.post-input-bar:focus {
+  outline: none;
+  border-bottom: 2px solid #777;
+}
+
+.post-editor {
+  min-height: 200px;
+  height: calc(100vh - 260px) !important;
+}
+
+.post-init-animation {
+  animation-name: post-init;
+  animation-duration: 1s;
+  animation-duration: linear;
+}
+
+@keyframes post-init {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.on-write-layout {
+  position: inherit;
+}
+
+@media (max-width: 767px) {
+  .on-write-layout {
+    position: absolute;
+    width: 100%;
+  }
+}
