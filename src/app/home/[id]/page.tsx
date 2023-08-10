@@ -39,21 +39,17 @@ export default function HomePage() {
   );
 
   return (
-    <section className="home_section flex-grow-1">
-      <div className="row">
-        <div className="col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3"></div>
-        <div className="col">{null}</div>
-        <div className="PostHeader mb-3 hstack gap-1">
-          <h2 className="fw-bold d-inline-block">Posts</h2>
-          <span className="text-primary fs-5">{`(${String(postNum)})`}</span>
-          {isSameUser ? (
-            <button className="btn btn-outline-primary ms-auto" type="button" onClick={() => {}}>
-              Write
-            </button>
-          ) : null}
-        </div>
-        <PostThumbnailBox postList={postData} />
+    <section className="flex-grow-1 px-md-3 my-4 mx-md-4">
+      <div className="PostHeader mb-3 hstack gap-1">
+        <h2 className="fw-bold d-inline-block">Posts</h2>
+        <span className="text-primary fs-5">{`(${String(postNum)})`}</span>
+        {isSameUser ? (
+          <button className="btn btn-outline-primary ms-auto" type="button" onClick={() => {}}>
+            Write
+          </button>
+        ) : null}
       </div>
+      <PostThumbnailBox postList={postData} />
     </section>
   );
 }
