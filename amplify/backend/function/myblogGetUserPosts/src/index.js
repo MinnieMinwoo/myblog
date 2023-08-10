@@ -54,7 +54,7 @@ app.get("/posts/:nickname", async (req, res) => {
       ExpressionAttributeValues: {
         ":createdBy": idString,
       },
-      ProjectionExpression: "title, thumbnailImageURL, thumbnailData, tag, createdBy",
+      ProjectionExpression: "id, title, thumbnailImageURL, thumbnailData, tag, createdBy, createdAt",
       ScanIndexForward: false,
     });
     const { Count: postCount, Items: postItems } = await ddbDocClient.send(userPostCommand);

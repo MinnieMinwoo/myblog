@@ -1,21 +1,59 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import getPostThumbnailData from "./getPostThumbnailData";
+import PostThumbnailBox from "components/PostThumbnailBox";
+import getCurrentUsetData from "logics/getCurrentUserData";
 
 export default function HomePage() {
   const params = useParams();
+  const router = useRouter();
+
+  const [postNum, setPostNum] = useState<number>(0);
+  const [postData, setPostData] = useState<PostThumbnail[]>([]);
 
   useEffect(() => {
-    fetch(`https://b88yhx9gmh.execute-api.ap-northeast-2.amazonaws.com/dev/posts/${params.id}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then(async (result) => {
-      console.log(result);
-      const response = await result.json();
-      console.log(response);
-    });
+    const { id } = params;
+    getPostThumbnailData(id)
+      .then(({ postCount, postList }) => {
+        setPostNum(postCount);
+        setPostData(postList);
+      })
+      .catch((error) => {
+        console.log(error);
+        router.push("/");
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return;
+
+  const [isSameUser, setIsSameUser] = useState(false);
+  useEffect(
+    () => {
+      getCurrentUsetData().then((userData) => {
+        if (userData !== null) setIsSameUser(params.id === userData.nickname);
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  return (
+    <section className="home_section flex-grow-1">
+      <div className="row">
+        <div className="col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3"></div>
+        <div className="col">{null}</div>
+        <div className="PostHeader mb-3 hstack gap-1">
+          <h2 className="fw-bold d-inline-block">Posts</h2>
+          <span className="text-primary fs-5">{`(${String(postNum)})`}</span>
+          {isSameUser ? (
+            <button className="btn btn-outline-primary ms-auto" type="button" onClick={() => {}}>
+              Write
+            </button>
+          ) : null}
+        </div>
+        <PostThumbnailBox postList={postData} />
+      </div>
+    </section>
+  );
 }
