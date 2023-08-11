@@ -119,6 +119,13 @@
       "service": "Lambda"
     }
   },
+  "hosting": {
+    "amplifyhosting": {
+      "providerPlugin": "awscloudformation",
+      "service": "amplifyhosting",
+      "type": "manual"
+    }
+  },
   "storage": {
     "myblogPosts": {
       "providerPlugin": "awscloudformation",

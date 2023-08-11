@@ -71,7 +71,7 @@
         },
         "amplifySaveUserData": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
-          "s3Key": "amplify-builds/amplifySaveUserData-446b71464b3975734830-build.zip"
+          "s3Key": "amplify-builds/amplifySaveUserData-30424e4e733944647156-build.zip"
         }
       },
       "auth": {
@@ -84,6 +84,12 @@
       },
       "api": {
         "myblogGetUserPosts": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d30lguc62630ad",
+          "type": "manual"
+        }
       }
     }
   }
