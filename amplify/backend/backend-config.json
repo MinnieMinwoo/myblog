@@ -126,6 +126,72 @@
       "type": "manual"
     }
   },
+  "parameters": {
+    "AMPLIFY_function_amplifySaveUserData_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "amplifySaveUserData"
+        }
+      ]
+    },
+    "AMPLIFY_function_amplifySaveUserData_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "amplifySaveUserData"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogGetUserPostLists_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogGetUserPostLists"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogGetUserPostLists_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogGetUserPostLists"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogVerifyNickname_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogVerifyNickname"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogVerifyNickname_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogVerifyNickname"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_appId": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_type": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    }
+  },
   "storage": {
     "myblogPosts": {
       "providerPlugin": "awscloudformation",
