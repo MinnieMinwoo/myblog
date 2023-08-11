@@ -3,7 +3,7 @@
   "paths": {
     "/posts/{users}": {
       "name": "/posts/{users}",
-      "lambdaFunction": "myblogGetUserPosts",
+      "lambdaFunction": "myblogGetUserPostLists",
       "permissions": {
         "setting": "open"
       }

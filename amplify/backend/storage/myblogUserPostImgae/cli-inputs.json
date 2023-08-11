@@ -1,0 +1,16 @@
+{
+  "resourceName": "myblogUserPostImgae",
+  "policyUUID": "b4048270",
+  "bucketName": "mybloguserpostimage",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

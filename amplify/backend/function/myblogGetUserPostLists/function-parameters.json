@@ -1,15 +1,13 @@
 {
-  "lambdaLayers": [],
   "permissions": {
     "storage": {
       "myblogUser": [
         "read"
-      ]
-    },
-    "auth": {
-      "myblog804baec8": [
+      ],
+      "myblogPosts": [
         "read"
       ]
     }
-  }
+  },
+  "lambdaLayers": []
 }

@@ -31,7 +31,7 @@ app.get("/posts/:nickname", async (req, res) => {
   } = req;
   try {
     const userGetCommand = new QueryCommand({
-      TableName: "myblogUser-dev",
+      TableName: "myblogUser-myblog",
       IndexName: "NicknameSort",
       KeyConditionExpression: "nickname = :nickname",
       ExpressionAttributeValues: {
@@ -48,7 +48,7 @@ app.get("/posts/:nickname", async (req, res) => {
     const { id: idString } = userIDList[0];
 
     const userPostCommand = new QueryCommand({
-      TableName: "myblogPosts-dev",
+      TableName: "myblogPosts-myblog",
       IndexName: "NicknameAndTimeIndex",
       KeyConditionExpression: "createdBy = :createdBy",
       ExpressionAttributeValues: {

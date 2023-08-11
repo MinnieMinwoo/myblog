@@ -6,22 +6,36 @@ export type AmplifyDependentResourcesAttributes = {
       "RootUrl": "string"
     }
   },
+  "auth": {
+    "myblog3f0a7747": {
+      "AppClientID": "string",
+      "AppClientIDWeb": "string",
+      "HostedUIDomain": "string",
+      "IdentityPoolId": "string",
+      "IdentityPoolName": "string",
+      "OAuthMetadata": "string",
+      "UserPoolArn": "string",
+      "UserPoolId": "string",
+      "UserPoolName": "string"
+    }
+  },
   "function": {
-    "myBlogCheckNickname": {
+    "amplifySaveUserData": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
       "Name": "string",
       "Region": "string"
     },
-    "myblogGetUserPosts": {
+    "myblogGetUserPostLists": {
       "Arn": "string",
+      "CloudWatchEventRule": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
       "Name": "string",
       "Region": "string"
     },
-    "myblogUserTrigger66d974c7": {
+    "myblogVerifyNickname": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
@@ -36,8 +50,6 @@ export type AmplifyDependentResourcesAttributes = {
       "PartitionKeyName": "string",
       "PartitionKeyType": "string",
       "Region": "string",
-      "SortKeyName": "string",
-      "SortKeyType": "string",
       "StreamArn": "string"
     },
     "myblogUser": {
@@ -46,9 +58,11 @@ export type AmplifyDependentResourcesAttributes = {
       "PartitionKeyName": "string",
       "PartitionKeyType": "string",
       "Region": "string",
-      "SortKeyName": "string",
-      "SortKeyType": "string",
       "StreamArn": "string"
+    },
+    "myblogUserPostImgae": {
+      "BucketName": "string",
+      "Region": "string"
     }
   }
 }

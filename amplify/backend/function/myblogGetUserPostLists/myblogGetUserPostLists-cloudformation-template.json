@@ -1,8 +1,19 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.2.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.2.3\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
+    "CloudWatchRule": {
+      "Type": "String",
+      "Default": "NONE",
+      "Description": " Schedule Expression"
+    },
+    "deploymentBucketName": {
+      "Type": "String"
+    },
     "env": {
+      "Type": "String"
+    },
+    "s3Key": {
       "Type": "String"
     },
     "storagemyblogUserName": {
@@ -17,15 +28,17 @@
       "Type": "String",
       "Default": "storagemyblogUserStreamArn"
     },
-    "deploymentBucketName": {
-      "Type": "String"
-    },
-    "s3Key": {
-      "Type": "String"
-    },
-    "authmyblog804baec8UserPoolId": {
+    "storagemyblogPostsName": {
       "Type": "String",
-      "Default": "authmyblog804baec8UserPoolId"
+      "Default": "storagemyblogPostsName"
+    },
+    "storagemyblogPostsArn": {
+      "Type": "String",
+      "Default": "storagemyblogPostsArn"
+    },
+    "storagemyblogPostsStreamArn": {
+      "Type": "String",
+      "Default": "storagemyblogPostsStreamArn"
     }
   },
   "Conditions": {
@@ -46,16 +59,24 @@
         "aws:asset:property": "Code"
       },
       "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "deploymentBucketName"
+          },
+          "S3Key": {
+            "Ref": "s3Key"
+          }
+        },
         "Handler": "index.handler",
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "myblogUserTrigger66d974c7",
+            "myblogGetUserPostLists",
             {
               "Fn::Join": [
                 "",
                 [
-                  "myblogUserTrigger66d974c7",
+                  "myblogGetUserPostLists",
                   "-",
                   {
                     "Ref": "env"
@@ -82,8 +103,14 @@
             "STORAGE_MYBLOGUSER_STREAMARN": {
               "Ref": "storagemyblogUserStreamArn"
             },
-            "AUTH_MYBLOG804BAEC8_USERPOOLID": {
-              "Ref": "authmyblog804baec8UserPoolId"
+            "STORAGE_MYBLOGPOSTS_NAME": {
+              "Ref": "storagemyblogPostsName"
+            },
+            "STORAGE_MYBLOGPOSTS_ARN": {
+              "Ref": "storagemyblogPostsArn"
+            },
+            "STORAGE_MYBLOGPOSTS_STREAMARN": {
+              "Ref": "storagemyblogPostsStreamArn"
             }
           }
         },
@@ -94,15 +121,8 @@
           ]
         },
         "Runtime": "nodejs18.x",
-        "Timeout": 25,
-        "Code": {
-          "S3Bucket": {
-            "Ref": "deploymentBucketName"
-          },
-          "S3Key": {
-            "Ref": "s3Key"
-          }
-        }
+        "Layers": [],
+        "Timeout": 25
       }
     },
     "LambdaExecutionRole": {
@@ -111,12 +131,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "myblogUserLambdaRole66d974c7",
+            "myblogLambdaRole6f0b6df1",
             {
               "Fn::Join": [
                 "",
                 [
-                  "myblogUserLambdaRole66d974c7",
+                  "myblogLambdaRole6f0b6df1",
                   "-",
                   {
                     "Ref": "env"
@@ -187,59 +207,6 @@
         }
       }
     },
-    "myblogUserTriggerPolicy": {
-      "DependsOn": [
-        "LambdaExecutionRole"
-      ],
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "lambda-trigger-policy-myblogUser",
-        "Roles": [
-          {
-            "Ref": "LambdaExecutionRole"
-          }
-        ],
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Action": [
-                "dynamodb:DescribeStream",
-                "dynamodb:GetRecords",
-                "dynamodb:GetShardIterator",
-                "dynamodb:ListStreams"
-              ],
-              "Resource": [
-                {
-                  "Ref": "storagemyblogUserStreamArn"
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "myblogUserTrigger": {
-      "Type": "AWS::Lambda::EventSourceMapping",
-      "DependsOn": [
-        "myblogUserTriggerPolicy"
-      ],
-      "Properties": {
-        "BatchSize": 100,
-        "Enabled": true,
-        "EventSourceArn": {
-          "Ref": "storagemyblogUserStreamArn"
-        },
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "LambdaFunction",
-            "Arn"
-          ]
-        },
-        "StartingPosition": "LATEST"
-      }
-    },
     "AmplifyResourcesPolicy": {
       "DependsOn": [
         "LambdaExecutionRole"
@@ -258,10 +225,6 @@
             {
               "Effect": "Allow",
               "Action": [
-                "dynamodb:Put*",
-                "dynamodb:Create*",
-                "dynamodb:BatchWriteItem",
-                "dynamodb:PartiQLInsert",
                 "dynamodb:Get*",
                 "dynamodb:BatchGetItem",
                 "dynamodb:List*",
@@ -290,86 +253,70 @@
             {
               "Effect": "Allow",
               "Action": [
-                "cognito-idp:ConfirmSignUp",
-                "cognito-idp:AdminCreateUser",
-                "cognito-idp:CreateUserImportJob",
-                "cognito-idp:AdminSetUserSettings",
-                "cognito-idp:AdminLinkProviderForUser",
-                "cognito-idp:CreateIdentityProvider",
-                "cognito-idp:AdminConfirmSignUp",
-                "cognito-idp:AdminDisableUser",
-                "cognito-idp:AdminRemoveUserFromGroup",
-                "cognito-idp:SetUserMFAPreference",
-                "cognito-idp:SetUICustomization",
-                "cognito-idp:SignUp",
-                "cognito-idp:VerifyUserAttribute",
-                "cognito-idp:SetRiskConfiguration",
-                "cognito-idp:StartUserImportJob",
-                "cognito-idp:AdminSetUserPassword",
-                "cognito-idp:AssociateSoftwareToken",
-                "cognito-idp:CreateResourceServer",
-                "cognito-idp:RespondToAuthChallenge",
-                "cognito-idp:CreateUserPoolClient",
-                "cognito-idp:AdminUserGlobalSignOut",
-                "cognito-idp:GlobalSignOut",
-                "cognito-idp:AddCustomAttributes",
-                "cognito-idp:CreateGroup",
-                "cognito-idp:CreateUserPool",
-                "cognito-idp:AdminForgetDevice",
-                "cognito-idp:AdminAddUserToGroup",
-                "cognito-idp:AdminRespondToAuthChallenge",
-                "cognito-idp:ForgetDevice",
-                "cognito-idp:CreateUserPoolDomain",
-                "cognito-idp:AdminEnableUser",
-                "cognito-idp:AdminUpdateDeviceStatus",
-                "cognito-idp:StopUserImportJob",
-                "cognito-idp:InitiateAuth",
-                "cognito-idp:AdminInitiateAuth",
-                "cognito-idp:AdminSetUserMFAPreference",
-                "cognito-idp:ConfirmForgotPassword",
-                "cognito-idp:SetUserSettings",
-                "cognito-idp:VerifySoftwareToken",
-                "cognito-idp:AdminDisableProviderForUser",
-                "cognito-idp:SetUserPoolMfaConfig",
-                "cognito-idp:ChangePassword",
-                "cognito-idp:ConfirmDevice",
-                "cognito-idp:AdminResetUserPassword",
-                "cognito-idp:ResendConfirmationCode",
-                "cognito-identity:Describe*",
-                "cognito-identity:Get*",
-                "cognito-identity:List*",
-                "cognito-idp:Describe*",
-                "cognito-idp:AdminGetDevice",
-                "cognito-idp:AdminGetUser",
-                "cognito-idp:AdminList*",
-                "cognito-idp:List*",
-                "cognito-sync:Describe*",
-                "cognito-sync:Get*",
-                "cognito-sync:List*",
-                "iam:ListOpenIdConnectProviders",
-                "iam:ListRoles",
-                "sns:ListPlatformApplications"
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:PartiQLSelect"
               ],
               "Resource": [
                 {
+                  "Ref": "storagemyblogPostsArn"
+                },
+                {
                   "Fn::Join": [
-                    "",
+                    "/",
                     [
-                      "arn:aws:cognito-idp:",
                       {
-                        "Ref": "AWS::Region"
+                        "Ref": "storagemyblogPostsArn"
                       },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":userpool/",
-                      "ap-northeast-2_cY5pxzEFs"
+                      "index/*"
                     ]
                   ]
                 }
               ]
             }
+          ]
+        }
+      }
+    },
+    "CloudWatchEvent": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Description": "Schedule rule for Lambda",
+        "ScheduleExpression": {
+          "Ref": "CloudWatchRule"
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": {
+              "Ref": "LambdaFunction"
+            }
+          }
+        ]
+      }
+    },
+    "PermissionForEventsToInvokeLambda": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "CloudWatchEvent",
+            "Arn"
           ]
         }
       }
@@ -397,6 +344,11 @@
     "LambdaExecutionRole": {
       "Value": {
         "Ref": "LambdaExecutionRole"
+      }
+    },
+    "CloudWatchEventRule": {
+      "Value": {
+        "Ref": "CloudWatchEvent"
       }
     },
     "LambdaExecutionRoleArn": {

@@ -16,6 +16,10 @@
     "s3Key": {
       "Type": "String"
     },
+    "authmyblog3f0a7747UserPoolId": {
+      "Type": "String",
+      "Default": "authmyblog3f0a7747UserPoolId"
+    },
     "storagemyblogUserName": {
       "Type": "String",
       "Default": "storagemyblogUserName"
@@ -27,10 +31,6 @@
     "storagemyblogUserStreamArn": {
       "Type": "String",
       "Default": "storagemyblogUserStreamArn"
-    },
-    "authmyblog804baec8UserPoolId": {
-      "Type": "String",
-      "Default": "authmyblog804baec8UserPoolId"
     }
   },
   "Conditions": {
@@ -63,12 +63,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "myBlogCheckNickname",
+            "amplifySaveUserData",
             {
               "Fn::Join": [
                 "",
                 [
-                  "myBlogCheckNickname",
+                  "amplifySaveUserData",
                   "-",
                   {
                     "Ref": "env"
@@ -86,6 +86,9 @@
             "REGION": {
               "Ref": "AWS::Region"
             },
+            "AUTH_MYBLOG3F0A7747_USERPOOLID": {
+              "Ref": "authmyblog3f0a7747UserPoolId"
+            },
             "STORAGE_MYBLOGUSER_NAME": {
               "Ref": "storagemyblogUserName"
             },
@@ -94,9 +97,6 @@
             },
             "STORAGE_MYBLOGUSER_STREAMARN": {
               "Ref": "storagemyblogUserStreamArn"
-            },
-            "AUTH_MYBLOG804BAEC8_USERPOOLID": {
-              "Ref": "authmyblog804baec8UserPoolId"
             }
           }
         },
@@ -117,12 +117,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "myblogLambdaRole322d616b",
+            "myblogLambdaRole70b01512",
             {
               "Fn::Join": [
                 "",
                 [
-                  "myblogLambdaRole322d616b",
+                  "myblogLambdaRole70b01512",
                   "-",
                   {
                     "Ref": "env"
@@ -211,34 +211,6 @@
             {
               "Effect": "Allow",
               "Action": [
-                "dynamodb:Get*",
-                "dynamodb:BatchGetItem",
-                "dynamodb:List*",
-                "dynamodb:Describe*",
-                "dynamodb:Scan",
-                "dynamodb:Query",
-                "dynamodb:PartiQLSelect"
-              ],
-              "Resource": [
-                {
-                  "Ref": "storagemyblogUserArn"
-                },
-                {
-                  "Fn::Join": [
-                    "/",
-                    [
-                      {
-                        "Ref": "storagemyblogUserArn"
-                      },
-                      "index/*"
-                    ]
-                  ]
-                }
-              ]
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
                 "cognito-identity:Describe*",
                 "cognito-identity:Get*",
                 "cognito-identity:List*",
@@ -268,7 +240,41 @@
                         "Ref": "AWS::AccountId"
                       },
                       ":userpool/",
-                      "ap-northeast-2_cY5pxzEFs"
+                      {
+                        "Ref": "authmyblog3f0a7747UserPoolId"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:Put*",
+                "dynamodb:Create*",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PartiQLInsert",
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:PartiQLSelect"
+              ],
+              "Resource": [
+                {
+                  "Ref": "storagemyblogUserArn"
+                },
+                {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      {
+                        "Ref": "storagemyblogUserArn"
+                      },
+                      "index/*"
                     ]
                   ]
                 }

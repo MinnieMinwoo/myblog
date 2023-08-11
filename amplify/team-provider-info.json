@@ -19,12 +19,14 @@
         },
         "myblogGetUserPosts": {
           "deploymentBucketName": "amplify-myblog-dev-150719-deployment",
-          "s3Key": "amplify-builds/myblogGetUserPosts-65382f33687050357245-build.zip"
+          "s3Key": "amplify-builds/myblogGetUserPosts-5250504d2f3844734f6b-build.zip"
         },
         "myBlogCheckNickname": {
           "deploymentBucketName": "amplify-myblog-dev-150719-deployment",
           "s3Key": "amplify-builds/myBlogCheckNickname-5a4d5457395377383630-build.zip"
-        }
+        },
+        "myblogUser": {},
+        "myblogPosts": {}
       },
       "storage": {
         "myblogUser": {},
@@ -37,6 +39,48 @@
           "webClientId": "2qfr6bvss885kuttnofvfl4tig",
           "nativeClientId": "2qfr6bvss885kuttnofvfl4tig"
         }
+      },
+      "api": {
+        "myblogGetUserPosts": {}
+      }
+    }
+  },
+  "myblog": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-myblog-myblog-153228-authRole",
+      "UnauthRoleArn": "arn:aws:iam::514744362550:role/amplify-myblog-myblog-153228-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::514744362550:role/amplify-myblog-myblog-153228-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-myblog-myblog-153228-deployment",
+      "UnauthRoleName": "amplify-myblog-myblog-153228-unauthRole",
+      "StackName": "amplify-myblog-myblog-153228",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:514744362550:stack/amplify-myblog-myblog-153228/ada06600-3747-11ee-bfa0-0a8256e4bab6",
+      "AmplifyAppId": "d30lguc62630ad"
+    },
+    "categories": {
+      "function": {
+        "myblogUser": {},
+        "myblogPosts": {},
+        "myblogGetUserPostLists": {
+          "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
+          "s3Key": "amplify-builds/myblogGetUserPostLists-7270754f534c6c4e554e-build.zip"
+        },
+        "myblogVerifyNickname": {
+          "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
+          "s3Key": "amplify-builds/myblogVerifyNickname-497a6e31346f545a5852-build.zip"
+        },
+        "amplifySaveUserData": {
+          "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
+          "s3Key": "amplify-builds/amplifySaveUserData-446b71464b3975734830-build.zip"
+        }
+      },
+      "auth": {
+        "myblog3f0a7747": {}
+      },
+      "storage": {
+        "myblogUserPostImgae": {},
+        "myblogUser": {},
+        "myblogPosts": {}
       },
       "api": {
         "myblogGetUserPosts": {}

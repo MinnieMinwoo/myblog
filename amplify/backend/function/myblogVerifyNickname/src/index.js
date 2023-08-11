@@ -1,11 +1,13 @@
 /* Amplify Params - DO NOT EDIT
-	AUTH_MYBLOG804BAEC8_USERPOOLID
+	AUTH_MYBLOG3F0A7747_USERPOOLID
 	ENV
 	REGION
 	STORAGE_MYBLOGUSER_ARN
 	STORAGE_MYBLOGUSER_NAME
 	STORAGE_MYBLOGUSER_STREAMARN
-Amplify Params - DO NOT EDIT */ const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+Amplify Params - DO NOT EDIT */
+
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, QueryCommand } = require("@aws-sdk/lib-dynamodb");
 const ddbClient = new DynamoDBClient({ region: "ap-northeast-2" });
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
@@ -23,7 +25,7 @@ exports.handler = async (event, context, callback) => {
   console.log(event);
 
   const userGetCommand = new QueryCommand({
-    TableName: "myblogUser-dev",
+    TableName: "myblogUser-myblog",
     IndexName: "NicknameSort",
     KeyConditionExpression: "nickname = :nickname",
     ExpressionAttributeValues: {
