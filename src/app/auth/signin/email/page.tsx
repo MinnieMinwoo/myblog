@@ -27,7 +27,10 @@ const AuthWithEmail = () => {
     };
     try {
       const user = await signinEmail(userData);
-      console.log(user);
+      const {
+        attributes: { nickname },
+      } = user;
+      router.push(`/home/${nickname}`);
     } catch (error) {
       console.log(error);
       console.log(error instanceof Error);

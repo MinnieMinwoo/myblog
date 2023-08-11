@@ -63,7 +63,7 @@
         "myblogPosts": {},
         "myblogGetUserPostLists": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
-          "s3Key": "amplify-builds/myblogGetUserPostLists-7270754f534c6c4e554e-build.zip"
+          "s3Key": "amplify-builds/myblogGetUserPostLists-533173396732566b6c2f-build.zip"
         },
         "myblogVerifyNickname": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",

@@ -39,6 +39,14 @@
     "storagemyblogPostsStreamArn": {
       "Type": "String",
       "Default": "storagemyblogPostsStreamArn"
+    },
+    "apimyblogGetUserPostsApiName": {
+      "Type": "String",
+      "Default": "apimyblogGetUserPostsApiName"
+    },
+    "apimyblogGetUserPostsApiId": {
+      "Type": "String",
+      "Default": "apimyblogGetUserPostsApiId"
     }
   },
   "Conditions": {
@@ -111,6 +119,12 @@
             },
             "STORAGE_MYBLOGPOSTS_STREAMARN": {
               "Ref": "storagemyblogPostsStreamArn"
+            },
+            "API_MYBLOGGETUSERPOSTS_APINAME": {
+              "Ref": "apimyblogGetUserPostsApiName"
+            },
+            "API_MYBLOGGETUSERPOSTS_APIID": {
+              "Ref": "apimyblogGetUserPostsApiId"
             }
           }
         },
@@ -222,6 +236,36 @@
         "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "apigateway:POST",
+                "apigateway:PUT",
+                "apigateway:GET",
+                "apigateway:HEAD",
+                "apigateway:OPTIONS",
+                "apigateway:PATCH",
+                "apigateway:DELETE"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "::/restapis/",
+                      {
+                        "Ref": "apimyblogGetUserPostsApiName"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
             {
               "Effect": "Allow",
               "Action": [

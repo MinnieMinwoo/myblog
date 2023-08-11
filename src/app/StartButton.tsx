@@ -7,7 +7,6 @@ export default function StartButton() {
   const router = useRouter();
   const onClick = async () => {
     const data = await Auth.currentUserInfo();
-    console.log(data);
     router.push(data === null ? "/auth/signin" : `home/${data.attributes.nickname}`);
   };
 
