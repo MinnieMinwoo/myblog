@@ -1,6 +1,6 @@
 export type AmplifyDependentResourcesAttributes = {
   "api": {
-    "myblogGetUserPosts": {
+    "myblog": {
       "ApiId": "string",
       "ApiName": "string",
       "RootUrl": "string"
@@ -21,6 +21,13 @@ export type AmplifyDependentResourcesAttributes = {
   },
   "function": {
     "amplifySaveUserData": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "myblogAllPosts": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",

@@ -1,6 +1,6 @@
 {
   "api": {
-    "myblogGetUserPosts": {
+    "myblog": {
       "dependsOn": [
         {
           "attributes": [
@@ -67,6 +67,11 @@
           "resourceName": "myblogUser"
         }
       ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "myblogAllPosts": {
+      "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
@@ -140,6 +145,22 @@
         {
           "category": "function",
           "resourceName": "amplifySaveUserData"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogAllPosts_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogAllPosts"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogAllPosts_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogAllPosts"
         }
       ]
     },

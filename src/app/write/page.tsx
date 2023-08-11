@@ -6,6 +6,7 @@ import OnWrite from "./OnWrite";
 import Preview from "./OnPreview";
 import getCurrentUsetData from "logics/getCurrentUserData";
 import Image from "next/image";
+import uploadPost from "./uploadPost";
 
 export default function WritePage() {
   const [userData, setUserData] = useState<UserInfo>();
@@ -84,9 +85,10 @@ export default function WritePage() {
         // todo: update post
         postID = params["*"];
       } else {
-        postID = params["*"]; // todo: set post
+        if (userData) await uploadPost(userData.id);
+        //postID = params["*"]; // todo: set post
       }
-      router.push(`/home/${userData?.nickname}/${postID}`);
+      //router.push(`/home/${userData?.nickname}/${postID}`);
     } catch (error) {
       console.log(error);
       window.alert("Post Submit failed. Try again later.");

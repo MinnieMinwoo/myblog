@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import getPostThumbnailData from "./getPostThumbnailData";
 import PostThumbnailBox from "components/PostThumbnailBox";
 import getCurrentUsetData from "logics/getCurrentUserData";
+import Link from "next/link";
 
 export default function HomePage() {
   const params = useParams();
@@ -44,9 +45,9 @@ export default function HomePage() {
         <h2 className="fw-bold d-inline-block">Posts</h2>
         <span className="text-primary fs-5">{`(${String(postNum)})`}</span>
         {isSameUser ? (
-          <button className="btn btn-outline-primary ms-auto" type="button" onClick={() => {}}>
+          <Link href="/write" role="button" className="btn btn-outline-primary ms-auto">
             Write
-          </button>
+          </Link>
         ) : null}
       </div>
       <PostThumbnailBox postList={postData} />

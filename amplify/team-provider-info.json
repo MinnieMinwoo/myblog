@@ -72,6 +72,10 @@
         "amplifySaveUserData": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
           "s3Key": "amplify-builds/amplifySaveUserData-30424e4e733944647156-build.zip"
+        },
+        "myblogAllPosts": {
+          "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
+          "s3Key": "amplify-builds/myblogAllPosts-7070365542746c524351-build.zip"
         }
       },
       "auth": {
@@ -82,14 +86,14 @@
         "myblogUser": {},
         "myblogPosts": {}
       },
-      "api": {
-        "myblogGetUserPosts": {}
-      },
       "hosting": {
         "amplifyhosting": {
           "appId": "d30lguc62630ad",
           "type": "manual"
         }
+      },
+      "api": {
+        "myblog": {}
       }
     }
   }

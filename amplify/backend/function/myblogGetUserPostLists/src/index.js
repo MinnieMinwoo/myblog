@@ -67,6 +67,14 @@ app.get("/posts/:nickname", async (req, res) => {
   }
 });
 
+app.post("/posts/:nickname", async (req, res) => {
+  // set cors policy
+  res.setHeader("Access-Control-Allow-origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  console.log("postTest");
+  res.sendStatus(400);
+});
+
 /**
  * @type {import('http').Server}
  */

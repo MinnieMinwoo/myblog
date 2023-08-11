@@ -1,8 +1,8 @@
 {
   "version": 1,
   "paths": {
-    "/posts/{users}": {
-      "name": "/posts/{users}",
+    "/posts/{id}": {
+      "name": "/posts/{id}",
       "lambdaFunction": "myblogGetUserPostLists",
       "permissions": {
         "setting": "open"
