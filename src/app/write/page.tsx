@@ -85,7 +85,7 @@ export default function WritePage() {
         // todo: update post
         postID = params["*"];
       } else {
-        if (userData) await uploadPost(userData.id);
+        if (userData) await uploadPost(userData.id, userData.nickname, postContent);
         //postID = params["*"]; // todo: set post
       }
       //router.push(`/home/${userData?.nickname}/${postID}`);

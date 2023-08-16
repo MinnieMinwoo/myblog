@@ -55,7 +55,8 @@
       "UnauthRoleName": "amplify-myblog-myblog-153228-unauthRole",
       "StackName": "amplify-myblog-myblog-153228",
       "StackId": "arn:aws:cloudformation:ap-northeast-2:514744362550:stack/amplify-myblog-myblog-153228/ada06600-3747-11ee-bfa0-0a8256e4bab6",
-      "AmplifyAppId": "d30lguc62630ad"
+      "AmplifyAppId": "d30lguc62630ad",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-myblog-myblog-153228-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
     },
     "categories": {
       "function": {
@@ -63,7 +64,7 @@
         "myblogPosts": {},
         "myblogGetUserPostLists": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
-          "s3Key": "amplify-builds/myblogGetUserPostLists-533173396732566b6c2f-build.zip"
+          "s3Key": "amplify-builds/myblogGetUserPostLists-69545a56685339553276-build.zip"
         },
         "myblogVerifyNickname": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",

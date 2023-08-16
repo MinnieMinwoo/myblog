@@ -5,7 +5,10 @@
         "read"
       ],
       "myblogPosts": [
-        "read"
+        "create",
+        "read",
+        "update",
+        "delete"
       ]
     }
   },

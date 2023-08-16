@@ -1,6 +1,4 @@
 /* Amplify Params - DO NOT EDIT
-	API_MYBLOGGETUSERPOSTS_APIID
-	API_MYBLOGGETUSERPOSTS_APINAME
 	ENV
 	REGION
 	STORAGE_MYBLOGPOSTS_ARN
@@ -15,18 +13,26 @@ const awsServerlessExpress = require("aws-serverless-express");
 const express = require("express");
 const app = express();
 
+const { v4: uuid } = require("uuid");
+
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { DynamoDBDocumentClient, QueryCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocumentClient, QueryCommand, PutCommand } = require("@aws-sdk/lib-dynamodb");
 const ddbClient = new DynamoDBClient({ region: "ap-northeast-2" });
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+/*
+ * Return post list if user with the nickname provided in the query exists.
+ */
 app.get("/posts/:nickname", async (req, res) => {
   // set cors policy
   res.setHeader("Access-Control-Allow-origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  // cloudwatch log
+  console.log(req);
 
   const {
     params: { nickname },
@@ -41,14 +47,14 @@ app.get("/posts/:nickname", async (req, res) => {
       },
       ProjectionExpression: "id",
     });
-
     const { Count: userCount, Items: userIDList } = await ddbDocClient.send(userGetCommand);
+
+    // Throw error code when user not exists
     if (userCount === 0) {
       res.sendStatus(406);
       return;
     }
     const { id: idString } = userIDList[0];
-
     const userPostCommand = new QueryCommand({
       TableName: "myblogPosts-myblog",
       IndexName: "NicknameAndTimeIndex",
@@ -64,15 +70,71 @@ app.get("/posts/:nickname", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
+    return;
   }
 });
 
+/*
+ * Post data on dynamoDB & S3.
+ */
 app.post("/posts/:nickname", async (req, res) => {
   // set cors policy
   res.setHeader("Access-Control-Allow-origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");
-  console.log("postTest");
-  res.sendStatus(400);
+
+  // cloudwatch log
+  console.log(req);
+
+  const {
+    params: { nickname },
+    body: postData,
+  } = req;
+
+  try {
+    const userGetCommand = new QueryCommand({
+      TableName: "myblogUser-myblog",
+      IndexName: "NicknameSort",
+      KeyConditionExpression: "nickname = :nickname",
+      ExpressionAttributeValues: {
+        ":nickname": nickname,
+      },
+      ProjectionExpression: "id",
+    });
+    const { Count: userCount, Items: userIDList } = await ddbDocClient.send(userGetCommand);
+
+    // Throw error code when user not exists
+    if (userCount === 0) {
+      console.log("invalid querystring");
+      res.sendStatus(406);
+      return;
+    }
+
+    const { id } = userIDList[0];
+    // Throw error code when client id is not same
+    if (postData.createdBy !== id) {
+      console.log("invalid querystring");
+      res.sendStatus(406);
+      return;
+    }
+
+    const date = new Date();
+    const postCommand = new PutCommand({
+      TableName: "myblogPosts-myblog",
+      Item: {
+        id: uuid(),
+        createdAt: date.getTime(),
+        ...postData,
+      },
+    });
+
+    await ddbDocClient.send(postCommand);
+    res.sendStatus(200);
+    return;
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+    return;
+  }
 });
 
 /**
