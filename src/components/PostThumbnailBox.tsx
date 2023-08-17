@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function PostThumbnailBox({ postList }: { postList: PostThumbnail[] }) {
@@ -8,12 +9,12 @@ export default function PostThumbnailBox({ postList }: { postList: PostThumbnail
           <Link
             className="PostItem px-0 py-4 d-flex text-decoration-none bt-light"
             key={post.id}
-            href={`/home/${post.id}`}
+            href={`/posts/${post.id}`}
           >
             <div className="vstack gap-1">
-              {post.thumbnailImageURL !== "" ? (
+              {post.thumbnailImageURL ? (
                 <div className="w-100 ratio ratio-16x9 mb-3">
-                  <img className="img-fluid object-fit-cover" src={post.thumbnailImageURL} alt="post" />
+                  <Image className="img-fluid object-fit-cover" src={post.thumbnailImageURL} alt="post" />
                 </div>
               ) : null}
               <h3 className="overflow-hidden fw-semibold text-111">{post.title}</h3>

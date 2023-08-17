@@ -10,9 +10,7 @@ export default function Home() {
         <nav className="navbar bg-white">
           <div className="container">
             <div className="navbar-brand">
-              <a href="/">
-                <Image className="me-2 pe-auto pe-on" src={"/logo.png"} width={40} height={40} alt="blog logo" />
-              </a>
+              <Image className="me-2" src={"/logo.png"} width={40} height={40} alt="blog logo" />
             </div>
           </div>
         </nav>

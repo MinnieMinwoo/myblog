@@ -1,10 +1,14 @@
 import Footer from "components/Footer";
 import HomeHeader from "./HomeHeader";
 
-export default function homeLayout({ children }: { children: React.ReactNode }) {
+interface PageParms {
+  id: string;
+}
+
+export default function homeLayout({ children, params }: { children: React.ReactNode; params: PageParms }) {
   return (
     <main className="d-flex flex-column min-vh-100 overflow-hidden">
-      <HomeHeader />
+      <HomeHeader userName={params.id} />
       {children}
       <Footer />
     </main>

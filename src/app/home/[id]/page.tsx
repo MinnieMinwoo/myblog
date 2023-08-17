@@ -6,6 +6,7 @@ import getPostThumbnailData from "./getPostThumbnailData";
 import PostThumbnailBox from "components/PostThumbnailBox";
 import getCurrentUsetData from "logics/getCurrentUserData";
 import Link from "next/link";
+import { GetServerSideProps } from "next";
 
 export default function HomePage() {
   const params = useParams();
@@ -18,6 +19,7 @@ export default function HomePage() {
     const { id } = params;
     getPostThumbnailData(id)
       .then(({ postCount, postList }) => {
+        console.log(postList);
         setPostNum(postCount);
         setPostData(postList);
       })
@@ -40,17 +42,21 @@ export default function HomePage() {
   );
 
   return (
-    <section className="flex-grow-1 px-md-3 my-4 mx-md-4">
-      <div className="PostHeader mb-3 hstack gap-1">
-        <h2 className="fw-bold d-inline-block">Posts</h2>
-        <span className="text-primary fs-5">{`(${String(postNum)})`}</span>
-        {isSameUser ? (
-          <Link href="/write" role="button" className="btn btn-outline-primary ms-auto">
-            Write
-          </Link>
-        ) : null}
+    <>
+      <div className="flex-grow-1 px-md-3 my-4 mx-md-4">
+        <div className=" col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
+          <section className=" mb-3 hstack gap-1">
+            <h2 className="fw-bold d-inline-block">Posts</h2>
+            <span className="text-primary fs-5">{`(${String(postNum)})`}</span>
+            {isSameUser ? (
+              <Link href="/write" role="button" className="btn btn-outline-primary ms-auto">
+                Write
+              </Link>
+            ) : null}
+          </section>
+          <PostThumbnailBox postList={postData} />
+        </div>
       </div>
-      <PostThumbnailBox postList={postData} />
-    </section>
+    </>
   );
 }

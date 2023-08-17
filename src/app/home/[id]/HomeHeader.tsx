@@ -1,19 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
 interface Props {
-  title?: string;
   userName?: string;
   outlet?: JSX.Element;
   isWarningAlert?: boolean;
 }
 
-export default function HomeHeader({ title, userName, outlet }: Props) {
-  const router = useRouter();
-
+export default function HomeHeader({ userName, outlet }: Props) {
   return (
     <header className="Header">
       <nav className="navbar bg-white">
@@ -22,7 +18,7 @@ export default function HomeHeader({ title, userName, outlet }: Props) {
             <Link href="/">
               <Image className="me-2 pe-auto pe-on" src={"/logo.png"} width={40} height={40} alt="blog logo" />
             </Link>
-            {title ?? ""}
+            {userName ? `${userName}'s blog` : ""}
           </div>
           {outlet ?? null}
         </div>
