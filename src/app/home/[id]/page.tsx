@@ -6,7 +6,6 @@ import getPostThumbnailData from "./getPostThumbnailData";
 import PostThumbnailBox from "components/PostThumbnailBox";
 import getCurrentUsetData from "logics/getCurrentUserData";
 import Link from "next/link";
-import { GetServerSideProps } from "next";
 
 export default function HomePage() {
   const params = useParams();
