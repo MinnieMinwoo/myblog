@@ -35,6 +35,7 @@ app.get("/posts/:nickname", async (req, res) => {
   console.log(req);
 
   const {
+    query: { currentIndex },
     params: { nickname },
   } = req;
   try {
@@ -64,9 +65,14 @@ app.get("/posts/:nickname", async (req, res) => {
       },
       ProjectionExpression: "id, title, thumbnailImageURL, thumbnailData, tag, createdBy, createdAt",
       ScanIndexForward: false,
+      Limit: 10,
+      ExclusiveStartKey: currentIndex ?? undefined,
     });
-    const { Count: postCount, Items: postItems } = await ddbDocClient.send(userPostCommand);
-    res.json({ userData: idString, postCount: postCount, postList: postItems });
+    const data = await ddbDocClient.send(userPostCommand);
+    console.log(data);
+    // LastEvaluatedKey : {id, createdBy, createdAt}
+    const { Count: postCount, Items: postItems, LastEvaluatedKey } = await ddbDocClient.send(userPostCommand);
+    res.json({ userData: idString, postCount: postCount, postList: postItems, LastEvaluatedKey });
   } catch (error) {
     console.log(error);
     res.sendStatus(500);

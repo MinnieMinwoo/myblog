@@ -1,3 +1,4 @@
+import getDate from "logics/getDate";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -26,7 +27,7 @@ export default function PostThumbnailBox({ postList }: { postList: PostThumbnail
                   </button>
                 ))}
               </div>
-              <span className="fs-14px text-999">{12345}</span>
+              <span className="fs-14px text-999">{getDate(post.createdAt)}</span>
             </div>
           </Link>
         </div>
