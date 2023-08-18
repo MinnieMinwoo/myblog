@@ -34,10 +34,15 @@ app.get("/posts/:nickname", async (req, res) => {
   // cloudwatch log
   console.log(req);
 
+  // querystring = last index key
   const {
-    query: { currentIndex },
+    query,
     params: { nickname },
   } = req;
+  // change querystring data to number
+  if (query.createdAt) query.createdAt = Number(query.createdAt);
+  console.log(query);
+
   try {
     const userGetCommand = new QueryCommand({
       TableName: "myblogUser-myblog",
@@ -56,6 +61,19 @@ app.get("/posts/:nickname", async (req, res) => {
       return;
     }
     const { id: idString } = userIDList[0];
+
+    const countCommand = new QueryCommand({
+      TableName: "myblogPosts-myblog",
+      IndexName: "NicknameAndTimeIndex",
+      KeyConditionExpression: "createdBy = :createdBy",
+      ExpressionAttributeValues: {
+        ":createdBy": idString,
+      },
+      ProjectionExpression: "id",
+      ScanIndexForward: false,
+    });
+    const { Count: postCount } = await ddbDocClient.send(countCommand);
+
     const userPostCommand = new QueryCommand({
       TableName: "myblogPosts-myblog",
       IndexName: "NicknameAndTimeIndex",
@@ -66,12 +84,12 @@ app.get("/posts/:nickname", async (req, res) => {
       ProjectionExpression: "id, title, thumbnailImageURL, thumbnailData, tag, createdBy, createdAt",
       ScanIndexForward: false,
       Limit: 10,
-      ExclusiveStartKey: currentIndex ?? undefined,
+      // ExclusiveStartKey = LastEvaluatedKey
+      ExclusiveStartKey: Object.keys(query).length > 0 ? query : undefined,
     });
-    const data = await ddbDocClient.send(userPostCommand);
-    console.log(data);
+
     // LastEvaluatedKey : {id, createdBy, createdAt}
-    const { Count: postCount, Items: postItems, LastEvaluatedKey } = await ddbDocClient.send(userPostCommand);
+    const { Items: postItems, LastEvaluatedKey } = await ddbDocClient.send(userPostCommand);
     res.json({ userData: idString, postCount: postCount, postList: postItems, LastEvaluatedKey });
   } catch (error) {
     console.log(error);

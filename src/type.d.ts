@@ -2,6 +2,7 @@ interface UserPostData {
   id: string[];
   postCount: number;
   postList: PostThumbnail[];
+  LastEvaluatedKey: LastPost;
 }
 
 interface PostThumbnail {
@@ -12,6 +13,12 @@ interface PostThumbnail {
   tag: string[];
   createdBy: string;
   createdAt: number;
+}
+
+interface LastPost {
+  id: string;
+  createdBy: string;
+  createdAt: string;
 }
 
 interface UserInfo {

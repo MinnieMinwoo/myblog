@@ -1,0 +1,4 @@
+.page-spinner-center {
+  margin-left: 50%;
+  transform: translateX(-1rem);
+}
