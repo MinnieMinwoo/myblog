@@ -1,25 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "./PostPagination.css";
+import { InfiniteQueryObserverResult } from "@tanstack/react-query";
 
 interface Props {
-  isLoading: boolean;
+  isFetching: boolean;
+  isFetchingNextPage: boolean;
   isLastPost: boolean;
-  callBack: () => Promise<void>;
+  callBack: () => Promise<InfiniteQueryObserverResult<UserPostData, unknown>>;
 }
 
-export default function PostPagination({ isLoading, isLastPost, callBack }: Props) {
-  const [isPagination, setIsPagination] = useState(false);
+export default function PostPagination({ isFetching, isFetchingNextPage, isLastPost, callBack }: Props) {
   const observeRef = useRef<HTMLDivElement>(null);
   const onPagination = async (entries: IntersectionObserverEntry[]) => {
     if (!entries[0].isIntersecting) return;
-    if (isPagination || isLastPost) return;
-    setIsPagination(true);
+    if (isLastPost) return;
     try {
       await callBack();
     } catch (error) {
       throw error;
-    } finally {
-      setIsPagination(false);
     }
   };
 
@@ -42,13 +40,13 @@ export default function PostPagination({ isLoading, isLastPost, callBack }: Prop
 
   return (
     <>
-      {isLastPost || isLoading ? null : (
+      {!isLastPost || isFetching || isFetchingNextPage ? (
         <div className="Pagination page-spinner-center mb-4">
           <div className="spinner-border text-secondary" role="status" ref={observeRef}>
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
-      )}
+      ) : null}
     </>
   );
 }

@@ -4,12 +4,12 @@ import { useRouter, useParams } from "next/navigation";
 
 import OnWrite from "./OnWrite";
 import Preview from "./OnPreview";
-import getCurrentUsetData from "logics/getCurrentUserData";
+import getCurrentUserData from "logics/getCurrentUserData";
 import Image from "next/image";
 import uploadPost from "./uploadPost";
+import { useQuery } from "@tanstack/react-query";
 
 export default function WritePage() {
-  const [userData, setUserData] = useState<UserInfo>();
   const [postContent, setPostContent] = useState<PostEditData>({
     title: "",
     category: [],
@@ -23,11 +23,13 @@ export default function WritePage() {
   const router = useRouter();
   const params = useParams();
 
+  const { data: userData, status } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUserData,
+  });
+
   useEffect(() => {
-    getCurrentUsetData().then((userData) => {
-      if (userData === null) router.push("/");
-      else setUserData(userData);
-    });
+    if (status === "error" || (status === "success" && !userData)) router.push("/");
     /*
     if (params["*"]) {
       getPostData(params["*"] as string)
@@ -74,7 +76,7 @@ export default function WritePage() {
     }
     */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [status]);
 
   const [isSubmit, setIsSubmit] = useState(false);
   const onSubmit = async () => {
