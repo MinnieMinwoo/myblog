@@ -1,34 +1,65 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# myBlog_Frontend
 
-## Getting Started
+Make my own blog project.
 
-First, run the development server:
+## features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+- Auth
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  - Sign in / up email with verification
+  - Social login with google, facebook, twitter
+  - Reset password when using email
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Blog home
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+  - Get blog posts list by user nickname
+  - View post thumbnail With images
+  - Get post data using infinite scroll
+  - Sort posts by category
+  - View post tags
+  - About page for introduce
+  - Search posts by title and tag (Search by starting point only)
 
-## Learn More
+- Post read
 
-To learn more about Next.js, take a look at the following resources:
+  - Read post written by markdown
+  - View table on contents in sidebar
+  - Like posts
+  - Share post link on facebook, twitter
+  - Copy post link on read
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Post edit & write
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+  - Set title and thumbnail data
+  - Write blog posts using markdown
+  - Drag & Drop image to fit the cursor during post edit
+  - Set category group
+  - Set tags group by comma
 
-## Deploy on Vercel
+- Setting
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  - Edit profile images
+  - Edit user description
+  - Edit user email address
+  - Link and unlink social account
+  - Withdrawal
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## project stack
+
+- Next.js
+- Typescript
+- React-Query
+- Bootstrap
+- react-md-editor
+- AWS
+  - Amplify
+  - API Gateway
+  - Cognito
+  - DynamoDB
+  - Lambda
+  - S3
+  - Hosting
+
+## demonstration
+
+[Link](https://myblog-backend.firebaseapp.com//)
