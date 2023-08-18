@@ -1,8 +1,11 @@
 import getDate from "logics/getDate";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 export default function PostThumbnailBox({ postList }: { postList: PostThumbnail[] }) {
+  const params = useParams();
+
   return (
     <article className="PostItemList vstack" hidden={false}>
       {postList.map((post) => (
@@ -10,7 +13,7 @@ export default function PostThumbnailBox({ postList }: { postList: PostThumbnail
           <Link
             className="PostItem px-0 py-4 d-flex text-decoration-none bt-light"
             key={post.id}
-            href={`/posts/${post.id}`}
+            href={`/home/${params.id}/${post.id}`}
           >
             <div className="vstack gap-1">
               {post.thumbnailImageURL ? (
