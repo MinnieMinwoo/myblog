@@ -85,7 +85,7 @@ const OnWrite = ({ isEdit, postContent, setPostContent, onPreview }: Props) => {
     if (!textarea) return;
     try {
       const imageLink = uuid(); //todo: upload image logic
-      const currentText = postContent.postData;
+      const currentText = postContent.postDetail;
       const textCursor = textarea.selectionStart;
       setPostContent((prev) => ({
         ...prev,
@@ -122,7 +122,7 @@ const OnWrite = ({ isEdit, postContent, setPostContent, onPreview }: Props) => {
               <MDEditor
                 className="post-editor"
                 data-color-mode="light"
-                value={postContent.postData}
+                value={postContent.postDetail}
                 visibleDragbar={false}
                 textareaProps={{
                   placeholder: "Write your story",
@@ -161,7 +161,7 @@ const OnWrite = ({ isEdit, postContent, setPostContent, onPreview }: Props) => {
                 onChange={(value = "") => {
                   setPostContent((prev) => ({
                     ...prev,
-                    postData: value,
+                    postDetail: value,
                   }));
                 }}
               />

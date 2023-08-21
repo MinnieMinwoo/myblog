@@ -80,7 +80,7 @@ app.get("/postlists/:nickname", async (req, res) => {
       ExpressionAttributeValues: {
         ":createdBy": idString,
       },
-      ProjectionExpression: "id, title, thumbnailImageURL, thumbnailData, tag, createdBy, createdAt",
+      ProjectionExpression: "id, title, thumbnailImageURL, thumbnailData, tag",
       ScanIndexForward: false,
       Limit: 10,
       // ExclusiveStartKey = LastEvaluatedKey
@@ -141,17 +141,18 @@ app.post("/postlists/:nickname", async (req, res) => {
     }
 
     const date = new Date();
+    const postID = uuid();
     const postCommand = new PutCommand({
       TableName: "myblogPosts-myblog",
       Item: {
-        id: uuid(),
-        createdAt: date.getTime(),
         ...postData,
+        id: postID,
+        createdAt: date.getTime(),
       },
     });
 
     await ddbDocClient.send(postCommand);
-    res.sendStatus(200);
+    res.json({ postID: postID });
     return;
   } catch (error) {
     console.log(error);

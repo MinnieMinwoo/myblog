@@ -44,10 +44,14 @@ app.get("/posts/:id", async (req, res) => {
       ExpressionAttributeValues: {
         ":id": postID,
       },
-      ProjectionExpression: "postData, category, createdAt, tag, createdBy, thumbnailImgLink, title",
+      ProjectionExpression:
+        "id, title, categoryMain, categorySub, createdAt, createdBy, createdNickname, thumbnailImageURL, postDetail, tag, likes",
     });
+    const result = await ddbDocClient.send(postGetCommand);
+    console.log(result);
 
     const { Count, Items } = await ddbDocClient.send(postGetCommand);
+    console.log(Items);
     // Throw error code when post not exists
     if (Count === 0) {
       res.sendStatus(406);

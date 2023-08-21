@@ -1,19 +1,22 @@
-export default async function uploadPost(id: string, nickname: string, postData: PostEditData) {
+export default async function uploadPost(postData: PostEditData) {
   const postBody = {
-    createdBy: id,
     ...postData,
   };
 
   try {
-    const result = fetch(`https://pazbu1m48b.execute-api.ap-northeast-2.amazonaws.com/myblog/posts/${nickname}`, {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(postBody),
-    });
-    return result;
+    const result = await fetch(
+      `https://pazbu1m48b.execute-api.ap-northeast-2.amazonaws.com/myblog/postlists/${postData.createdNickname}`,
+      {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postBody),
+      }
+    );
+    const { postID } = await result.json();
+    return postID;
   } catch (error) {
     throw error;
   }

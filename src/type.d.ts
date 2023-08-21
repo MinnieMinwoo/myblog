@@ -8,11 +8,12 @@ interface UserPostData {
 interface PostThumbnail {
   id: string;
   title: string;
+  createdBy: string;
+  createdNickname: string;
+  createdAt: number;
   thumbnailImageURL: string;
   thumbnailData: string;
   tag: string[];
-  createdBy: string;
-  createdAt: number;
 }
 
 interface LastPost {
@@ -21,20 +22,27 @@ interface LastPost {
   createdAt: string;
 }
 
+interface PostDetail {
+  id: string;
+  title: string;
+  createdBy: string;
+  createdNickname: string;
+  createdAt: number;
+  categoryMain: string;
+  categorySub: string;
+  thumbnailImageURL: string;
+  postDetail: string;
+  tag: string[];
+  likes: string[];
+}
+
 interface UserInfo {
   id: string;
   email: string;
   nickname: string;
 }
 
-interface PostEditData {
-  title: string;
-  category: string[];
-  postData: string;
-  thumbnailImgLink: string;
-  thumbnailData: string;
-  tag: string[];
-}
+type PostEditData = PostThumbnail & PostDetail;
 
 interface CategoryData {
   mainField: string;

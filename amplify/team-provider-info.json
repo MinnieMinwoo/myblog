@@ -63,11 +63,11 @@
         "myblogUser": {},
         "myblogPosts": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
-          "s3Key": "amplify-builds/myblogPosts-514275746169636a5555-build.zip"
+          "s3Key": "amplify-builds/myblogPosts-6d48576869752f454f69-build.zip"
         },
         "myblogGetUserPostLists": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
-          "s3Key": "amplify-builds/myblogGetUserPostLists-4c35486845345164556e-build.zip"
+          "s3Key": "amplify-builds/myblogGetUserPostLists-6d75754b2f3733717664-build.zip"
         },
         "myblogVerifyNickname": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",

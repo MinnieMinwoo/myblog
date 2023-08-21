@@ -10,15 +10,6 @@ import uploadPost from "./uploadPost";
 import { useQuery } from "@tanstack/react-query";
 
 export default function WritePage() {
-  const [postContent, setPostContent] = useState<PostEditData>({
-    title: "",
-    category: [],
-    postData: "",
-    thumbnailImgLink: "",
-    thumbnailData: "",
-    tag: [],
-  });
-
   const [isPreview, setIsPreview] = useState(false);
   const router = useRouter();
   const params = useParams();
@@ -28,69 +19,51 @@ export default function WritePage() {
     queryFn: getCurrentUserData,
   });
 
+  const [postContent, setPostContent] = useState<PostEditData>({
+    id: "",
+    createdBy: "",
+    createdAt: 0,
+    createdNickname: "",
+    title: "",
+    categoryMain: "",
+    categorySub: "",
+    postDetail: "",
+    thumbnailImageURL: "",
+    thumbnailData: "",
+    tag: [],
+    likes: [],
+  });
+
   useEffect(() => {
-    if (status === "error" || (status === "success" && !userData)) router.push("/");
-    /*
-    if (params["*"]) {
-      getPostData(params["*"] as string)
-        .then((post) => {
-          const auth = getAuth();
-          if (post.createdBy !== auth.currentUser?.uid) {
-            const userError = {
-              name: "Permission Denied",
-              code: "No_Permission",
-            };
-            throw userError;
-          }
-          setPostContent((prev) => ({
-            ...prev,
-            title: post.title,
-            category: post.category ?? [],
-            postData: post.detail,
-            thumbnailImgLink: post.thumbnailImageURL,
-            thumbnailData: post.thumbnailData,
-            imageList: post.imageList,
-            tag: post.tag,
-          }));
-        })
-        .catch((error) => {
-          console.log(error);
-          const errorTitle = "Post Loading failed";
-          let errorText;
-          switch (error?.code) {
-            case "No_PostData":
-              errorText = "You entered wrong url link";
-              break;
-            case "No_Permission":
-              errorText = "You don't have permission on this post.";
-              break;
-            default:
-              errorText = "Something wrong, try again later.";
-              break;
-          }
-          openModal(errorTitle, errorText, () => {
-            router("/");
-          });
-        })
-        .finally(() => setLoading(false));
+    if (status === "loading") return;
+    else if (status === "error") {
+      router.push("/");
+      return;
+    } else if (!userData?.id || !userData?.nickname) {
+      router.push("/");
+      return;
     }
-    */
+    setPostContent((prev) => ({
+      ...prev,
+      createdBy: userData?.id,
+      createdNickname: userData?.nickname,
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   const [isSubmit, setIsSubmit] = useState(false);
   const onSubmit = async () => {
+    if (!userData) return;
     setIsSubmit(true);
     try {
-      let postID: string;
       if (params["*"]) {
         // todo: update post
-        postID = params["*"];
+        const postID = params["*"];
+        router.push(`/home/${postContent.createdNickname}/${postID}`);
       } else {
-        if (userData) await uploadPost(userData.id, userData.nickname, postContent);
-        //postID = params["*"]; // todo: set post
+        const postID = await uploadPost(postContent);
+        router.push(`/home/${postContent.createdNickname}/${postID}`);
       }
-      //router.push(`/home/${userData?.nickname}/${postID}`);
     } catch (error) {
       console.log(error);
       window.alert("Post Submit failed. Try again later.");
@@ -104,7 +77,7 @@ export default function WritePage() {
     !postContent.thumbnailData &&
       setPostContent((prev) => ({
         ...prev,
-        thumbnailData: postContent.postData.replace(reg, "").substring(0, 150),
+        thumbnailData: postContent.postDetail.replace(reg, "").substring(0, 150),
       }));
     setIsPreview((prev) => !prev);
   };

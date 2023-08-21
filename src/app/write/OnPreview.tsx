@@ -32,7 +32,7 @@ const Preview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, is
         setCategoryIndex(String([mainIndex, subIndex]));
       });
       */
-  }, [postContent.category]);
+  }, [postContent.categoryMain, postContent.categorySub]);
 
   useEffect(() => {
     isPreview && setFirstOpen(true);
@@ -141,7 +141,7 @@ const Preview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, is
           <div className="ratio ratio-16x9">
             <Image
               className="img-thumbnail object-fit-cover bg-eee"
-              src={postContent.thumbnailImgLink ? postContent.thumbnailImgLink : "/altThumbnail.jpg"}
+              src={postContent.thumbnailImageURL ? postContent.thumbnailImageURL : "/altThumbnail.jpg"}
               width={100}
               height={100}
               alt="Thumbnail"
@@ -152,14 +152,14 @@ const Preview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, is
             type="file"
             accept="image/*"
             ref={imgRef}
-            src={postContent.thumbnailImgLink}
+            src={postContent.thumbnailImageURL}
             onChange={onImgUpload}
           />
           <div className="hstack gap-2">
             <button className="btn btn-primary" onClick={onUpload}>
               Upload Image
             </button>
-            <button className="btn btn-outline-primary" onClick={onDelete} hidden={!postContent.thumbnailImgLink}>
+            <button className="btn btn-outline-primary" onClick={onDelete} hidden={!postContent.thumbnailImageURL}>
               Delete Image
             </button>
           </div>
