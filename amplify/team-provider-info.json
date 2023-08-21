@@ -61,10 +61,13 @@
     "categories": {
       "function": {
         "myblogUser": {},
-        "myblogPosts": {},
+        "myblogPosts": {
+          "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
+          "s3Key": "amplify-builds/myblogPosts-514275746169636a5555-build.zip"
+        },
         "myblogGetUserPostLists": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
-          "s3Key": "amplify-builds/myblogGetUserPostLists-37357843356d79736f54-build.zip"
+          "s3Key": "amplify-builds/myblogGetUserPostLists-4c35486845345164556e-build.zip"
         },
         "myblogVerifyNickname": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
@@ -77,7 +80,9 @@
         "myblogAllPosts": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
           "s3Key": "amplify-builds/myblogAllPosts-7070365542746c524351-build.zip"
-        }
+        },
+        "myblogPostInfo": {},
+        "myblogPostDetail": {}
       },
       "auth": {
         "myblog3f0a7747": {}

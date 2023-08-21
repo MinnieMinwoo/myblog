@@ -8,7 +8,7 @@ export default async function getPostThumbnailData(id: string, queryObject?: Las
 
   try {
     const result = await fetch(
-      `https://pazbu1m48b.execute-api.ap-northeast-2.amazonaws.com/myblog/posts/${id}${queryString}`,
+      `https://pazbu1m48b.execute-api.ap-northeast-2.amazonaws.com/myblog/postlists/${id}${queryString}`,
       {
         headers: {
           "Content-Type": "application/json",

@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 /*
  * Return post list if user with the nickname provided in the query exists.
  */
-app.get("/posts/:nickname", async (req, res) => {
+app.get("/postlists/:nickname", async (req, res) => {
   // set cors policy
   res.setHeader("Access-Control-Allow-origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -41,7 +41,6 @@ app.get("/posts/:nickname", async (req, res) => {
   } = req;
   // change querystring data to number
   if (query.createdAt) query.createdAt = Number(query.createdAt);
-  console.log(query);
 
   try {
     const userGetCommand = new QueryCommand({
@@ -54,7 +53,7 @@ app.get("/posts/:nickname", async (req, res) => {
       ProjectionExpression: "id",
     });
     const { Count: userCount, Items: userIDList } = await ddbDocClient.send(userGetCommand);
-
+    console.log(userIDList);
     // Throw error code when user not exists
     if (userCount === 0) {
       res.sendStatus(406);
@@ -101,7 +100,7 @@ app.get("/posts/:nickname", async (req, res) => {
 /*
  * Post data on dynamoDB & S3.
  */
-app.post("/posts/:nickname", async (req, res) => {
+app.post("/postlists/:nickname", async (req, res) => {
   // set cors policy
   res.setHeader("Access-Control-Allow-origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");

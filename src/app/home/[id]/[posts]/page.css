@@ -1,0 +1,43 @@
+.page-outline {
+  display: inline-block;
+  position: fixed;
+  left: 75%;
+  top: 150px;
+  margin-left: 20px;
+  min-height: 200px;
+  max-height: calc(100% - 300px);
+  overflow-y: auto;
+}
+
+.page-outline::-webkit-scrollbar {
+  width: 2px;
+}
+
+.page-outline::-webkit-scrollbar-thumb {
+  background: #aaa;
+}
+
+@media (max-width: 1399px) {
+  .page-outline {
+    visibility: hidden;
+  }
+}
+
+.page-list {
+  padding-left: 20px !important;
+  border-left: 1px solid #eee;
+}
+
+.page-listItem {
+  list-style: none;
+}
+
+.page-listItem > a {
+  font-size: 13px;
+  color: #777;
+}
+
+.page-listItem > a:hover {
+  color: #333;
+  text-decoration-line: none;
+}

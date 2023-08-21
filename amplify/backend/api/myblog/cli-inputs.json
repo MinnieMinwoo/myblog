@@ -1,9 +1,16 @@
 {
   "version": 1,
   "paths": {
+    "/postlists/{id}": {
+      "name": "/postlists/{id}",
+      "lambdaFunction": "myblogGetUserPostLists",
+      "permissions": {
+        "setting": "open"
+      }
+    },
     "/posts/{id}": {
       "name": "/posts/{id}",
-      "lambdaFunction": "myblogGetUserPostLists",
+      "lambdaFunction": "myblogPosts",
       "permissions": {
         "setting": "open"
       }

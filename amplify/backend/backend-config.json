@@ -9,6 +9,14 @@
           ],
           "category": "function",
           "resourceName": "myblogGetUserPostLists"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "myblogPosts"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -76,6 +84,31 @@
       "service": "Lambda"
     },
     "myblogGetUserPostLists": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "myblogUser"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "myblogPosts"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "myblogPosts": {
       "build": true,
       "dependsOn": [
         {
@@ -177,6 +210,22 @@
         {
           "category": "function",
           "resourceName": "myblogGetUserPostLists"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogPosts_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogPosts"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogPosts_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogPosts"
         }
       ]
     },

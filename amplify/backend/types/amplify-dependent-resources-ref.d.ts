@@ -42,6 +42,13 @@ export type AmplifyDependentResourcesAttributes = {
       "Name": "string",
       "Region": "string"
     },
+    "myblogPosts": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "myblogVerifyNickname": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
