@@ -6,8 +6,8 @@ import MDEditor, { commands, ICommand } from "@uiw/react-md-editor";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 
-import "./OnWrite.css";
 import imageUpload from "logics/imageUpload";
+import "./OnWrite.css";
 
 interface Props {
   isEdit: boolean;
