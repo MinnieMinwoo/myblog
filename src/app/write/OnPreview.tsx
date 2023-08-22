@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import { uuid } from "uuidv4";
 import "./OnPreview.css";
 
 interface Props {
@@ -44,7 +43,7 @@ const Preview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, is
     } = event;
     if (!files) throw console.log("no image files");
     try {
-      const uploadURL = uuid(); //todo: upload img
+      const uploadURL = ""; //todo: upload img
       setPostContent((prev) => ({
         ...prev,
         thumbnailImgLink: uploadURL,

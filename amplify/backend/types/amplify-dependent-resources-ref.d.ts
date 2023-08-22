@@ -42,6 +42,13 @@ export type AmplifyDependentResourcesAttributes = {
       "Name": "string",
       "Region": "string"
     },
+    "myblogImages": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "myblogPosts": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
@@ -58,6 +65,10 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "storage": {
+    "myblogImages": {
+      "BucketName": "string",
+      "Region": "string"
+    },
     "myblogPosts": {
       "Arn": "string",
       "Name": "string",
@@ -73,10 +84,6 @@ export type AmplifyDependentResourcesAttributes = {
       "PartitionKeyType": "string",
       "Region": "string",
       "StreamArn": "string"
-    },
-    "myblogUserPostImgae": {
-      "BucketName": "string",
-      "Region": "string"
     }
   }
 }

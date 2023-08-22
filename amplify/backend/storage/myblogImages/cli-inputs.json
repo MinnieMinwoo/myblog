@@ -1,7 +1,7 @@
 {
-  "resourceName": "myblogUserPostImgae",
-  "policyUUID": "b4048270",
-  "bucketName": "mybloguserpostimage",
+  "resourceName": "myblogImages",
+  "policyUUID": "cd6077bc",
+  "bucketName": "myblogimages",
   "storageAccess": "authAndGuest",
   "guestAccess": [
     "READ"

@@ -80,7 +80,7 @@ app.get("/postlists/:nickname", async (req, res) => {
       ExpressionAttributeValues: {
         ":createdBy": idString,
       },
-      ProjectionExpression: "id, title, thumbnailImageURL, thumbnailData, tag",
+      ProjectionExpression: "id, title, createdBy, createdNickname, createdAt, thumbnailImageURL, thumbnailData, tag",
       ScanIndexForward: false,
       Limit: 10,
       // ExclusiveStartKey = LastEvaluatedKey

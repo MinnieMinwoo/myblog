@@ -17,6 +17,7 @@ export default async function getPostThumbnailData(id: string, queryObject?: Las
     );
 
     const response: UserPostData = await result.json();
+    console.log(response);
     return response;
   } catch (error) {
     throw error;

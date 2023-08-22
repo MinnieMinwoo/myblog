@@ -3,15 +3,16 @@ import ReactMarkdown from "react-markdown";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 
 import getPostDetail from "./getPostDetail";
-import "./page.css";
 import SyntaxHighlightProvider from "./SyntaxHIghlightProvider";
 import LikeButton from "./LikeButton";
 import ShareButton from "./ShareButton";
+import getDate from "logics/getDate";
+import EditSpan from "./EditSpan";
+import "./page.css";
 
 export default async function PostPage({ params }: { params: { id: string; posts: string } }) {
   const { id: userNickname, posts: postID } = params;
   const postData = await getPostDetail(postID);
-  let hidden = false;
 
   return (
     <main className="col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
@@ -35,17 +36,8 @@ export default async function PostPage({ params }: { params: { id: string; posts
           </div>
           {postData?.title ? <h2 className="fs-1 fw-normal mb-2">{postData?.title}</h2> : null}
           <span>{`by ${userNickname}`}</span>
-          {postData?.createdAt ? (
-            <span>{` ∙  ${
-              "12345" //todo: use getDate
-            }`}</span>
-          ) : null}
-          <span className="pe-on" hidden={hidden}>
-            ∙ Edit
-          </span>
-          <span className="pe-on" hidden={hidden}>
-            ∙ Delete
-          </span>
+          <span>{` ∙  ${getDate(postData.createdAt)}`}</span>
+          <EditSpan postID={postData.createdBy} />
         </div>
       </div>
       <article className="py-3" data-color-mode="light">

@@ -17,6 +17,14 @@
           ],
           "category": "function",
           "resourceName": "myblogPosts"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "myblogImages"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -103,6 +111,20 @@
           ],
           "category": "storage",
           "resourceName": "myblogPosts"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "myblogImages": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "myblogImages"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -213,6 +235,22 @@
         }
       ]
     },
+    "AMPLIFY_function_myblogImages_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogImages"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogImages_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogImages"
+        }
+      ]
+    },
     "AMPLIFY_function_myblogPosts_deploymentBucketName": {
       "usedBy": [
         {
@@ -263,6 +301,11 @@
     }
   },
   "storage": {
+    "myblogImages": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
+    },
     "myblogPosts": {
       "providerPlugin": "awscloudformation",
       "service": "DynamoDB"
@@ -270,11 +313,6 @@
     "myblogUser": {
       "providerPlugin": "awscloudformation",
       "service": "DynamoDB"
-    },
-    "myblogUserPostImgae": {
-      "dependsOn": [],
-      "providerPlugin": "awscloudformation",
-      "service": "S3"
     }
   }
 }

@@ -14,6 +14,13 @@
       "permissions": {
         "setting": "open"
       }
+    },
+    "/images": {
+      "name": "/images",
+      "lambdaFunction": "myblogImages",
+      "permissions": {
+        "setting": "open"
+      }
     }
   }
 }

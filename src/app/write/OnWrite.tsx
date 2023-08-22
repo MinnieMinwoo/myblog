@@ -1,6 +1,5 @@
 import React, { ChangeEvent, DragEvent, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { uuid } from "uuidv4";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import MDEditor, { commands, ICommand } from "@uiw/react-md-editor";
 
@@ -8,6 +7,7 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 
 import "./OnWrite.css";
+import imageUpload from "logics/imageUpload";
 
 interface Props {
   isEdit: boolean;
@@ -84,12 +84,12 @@ const OnWrite = ({ isEdit, postContent, setPostContent, onPreview }: Props) => {
     const textarea = inputRef.current?.querySelector("textarea") as HTMLTextAreaElement;
     if (!textarea) return;
     try {
-      const imageLink = uuid(); //todo: upload image logic
+      const imageLink = await imageUpload(image);
       const currentText = postContent.postDetail;
       const textCursor = textarea.selectionStart;
       setPostContent((prev) => ({
         ...prev,
-        postData: `${currentText.slice(0, textCursor)}![](${imageLink})${currentText.slice(textCursor)}`,
+        postDetail: `${currentText.slice(0, textCursor)}![](${imageLink})${currentText.slice(textCursor)}`,
       }));
     } catch (error) {
       console.log(error);

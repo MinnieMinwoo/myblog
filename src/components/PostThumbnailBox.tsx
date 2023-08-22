@@ -13,7 +13,7 @@ export default function PostThumbnailBox({ postList }: { postList: PostThumbnail
           <Link
             className="PostItem px-0 py-4 d-flex text-decoration-none bt-light"
             key={post.id}
-            href={`/home/${params.id}/${post.id}`}
+            href={`/home/${post.createdNickname}/${post.id}`}
           >
             <div className="vstack gap-1">
               {post.thumbnailImageURL ? (
