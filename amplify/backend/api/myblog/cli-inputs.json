@@ -1,13 +1,6 @@
 {
   "version": 1,
   "paths": {
-    "/postlists/{id}": {
-      "name": "/postlists/{id}",
-      "lambdaFunction": "myblogGetUserPostLists",
-      "permissions": {
-        "setting": "open"
-      }
-    },
     "/posts/{id}": {
       "name": "/posts/{id}",
       "lambdaFunction": "myblogPosts",
@@ -18,6 +11,20 @@
     "/images": {
       "name": "/images",
       "lambdaFunction": "myblogImages",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/category/{id}": {
+      "name": "/category/{id}",
+      "lambdaFunction": "myblogCategory",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/postlists/{id}": {
+      "name": "/postlists/{id}",
+      "lambdaFunction": "myblogAllPosts",
       "permissions": {
         "setting": "open"
       }

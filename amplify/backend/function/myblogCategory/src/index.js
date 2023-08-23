@@ -1,31 +1,26 @@
 /* Amplify Params - DO NOT EDIT
 	ENV
 	REGION
-	STORAGE_MYBLOGPOSTS_ARN
-	STORAGE_MYBLOGPOSTS_NAME
-	STORAGE_MYBLOGPOSTS_STREAMARN
 	STORAGE_MYBLOGUSER_ARN
 	STORAGE_MYBLOGUSER_NAME
 	STORAGE_MYBLOGUSER_STREAMARN
 Amplify Params - DO NOT EDIT */
-
 const awsServerlessExpress = require("aws-serverless-express");
-
 const express = require("express");
 const app = express();
 
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, QueryCommand } = require("@aws-sdk/lib-dynamodb");
 const ddbClient = new DynamoDBClient({ region: "ap-northeast-2" });
-const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
+const ddbDocClient = DynamoDBDocumentClient.from(ddbClient, {});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /*
- * Return post list if user with the nickname provided in the query exists.
+ * Return category list by user.
  */
-app.get("/posts/:id", async (req, res) => {
+app.get("/category/:nickname", async (req, res) => {
   // set cors policy
   res.setHeader("Access-Control-Allow-origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -34,28 +29,27 @@ app.get("/posts/:id", async (req, res) => {
   console.log(req);
 
   const {
-    params: { id: postID },
+    params: { nickname },
   } = req;
 
   try {
-    const postGetCommand = new QueryCommand({
-      TableName: "myblogPosts-myblog",
-      KeyConditionExpression: "id = :id",
+    const categoryQueryCommand = new QueryCommand({
+      TableName: "myblogUser-myblog",
+      IndexName: "NicknameSort",
+      KeyConditionExpression: "nickname = :nickname",
       ExpressionAttributeValues: {
-        ":id": postID,
+        ":nickname": nickname,
       },
-      ProjectionExpression:
-        "id, title, categoryMain, categorySub, createdAt, createdBy, createdNickname, thumbnailImageURL, postDetail, tag, likes",
+      ProjectionExpression: "id, nickname, category",
     });
-    const result = await ddbDocClient.send(postGetCommand);
-    console.log(result);
 
-    const { Count, Items } = await ddbDocClient.send(postGetCommand);
+    const { Count, Items } = await ddbDocClient.send(categoryQueryCommand);
     console.log(Items);
+
     // Throw error code when post not exists
     if (Count === 0) {
-      res.status(404).json({
-        message: "Post not exists in database.",
+      res.status(400).json({
+        message: "User not exists in database.",
       });
     } else res.json(Items[0]);
   } catch (error) {

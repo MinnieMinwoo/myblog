@@ -8,7 +8,6 @@
 Amplify Params - DO NOT EDIT */
 
 const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
-const { UpdateCommand } = require("@aws-sdk/lib-dynamodb");
 const ddbDocClient = new DynamoDBClient({ region: "ap-northeast-2" });
 
 exports.handler = async (event, context) => {
@@ -31,6 +30,7 @@ exports.handler = async (event, context) => {
         email: { S: email },
         profileImage: { S: "" },
         description: { S: "Hello my blog Page!" },
+        category: {},
       },
     };
 

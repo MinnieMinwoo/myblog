@@ -8,14 +8,6 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "myblogGetUserPostLists"
-        },
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
           "resourceName": "myblogPosts"
         },
         {
@@ -25,6 +17,22 @@
           ],
           "category": "function",
           "resourceName": "myblogImages"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "myblogCategory"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "myblogAllPosts"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -88,11 +96,6 @@
     },
     "myblogAllPosts": {
       "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "myblogGetUserPostLists": {
-      "build": true,
       "dependsOn": [
         {
           "attributes": [
@@ -111,6 +114,22 @@
           ],
           "category": "storage",
           "resourceName": "myblogPosts"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "myblogCategory": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "myblogUser"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -184,120 +203,6 @@
       "providerPlugin": "awscloudformation",
       "service": "amplifyhosting",
       "type": "manual"
-    }
-  },
-  "parameters": {
-    "AMPLIFY_function_amplifySaveUserData_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "amplifySaveUserData"
-        }
-      ]
-    },
-    "AMPLIFY_function_amplifySaveUserData_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "amplifySaveUserData"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogAllPosts_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogAllPosts"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogAllPosts_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogAllPosts"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogGetUserPostLists_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogGetUserPostLists"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogGetUserPostLists_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogGetUserPostLists"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogImages_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogImages"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogImages_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogImages"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogPosts_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogPosts"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogPosts_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogPosts"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogVerifyNickname_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogVerifyNickname"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogVerifyNickname_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogVerifyNickname"
-        }
-      ]
-    },
-    "AMPLIFY_hosting_amplifyhosting_appId": {
-      "usedBy": [
-        {
-          "category": "hosting",
-          "resourceName": "amplifyhosting"
-        }
-      ]
-    },
-    "AMPLIFY_hosting_amplifyhosting_type": {
-      "usedBy": [
-        {
-          "category": "hosting",
-          "resourceName": "amplifyhosting"
-        }
-      ]
     }
   },
   "storage": {

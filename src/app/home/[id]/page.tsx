@@ -20,7 +20,7 @@ export default function HomePage() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["postAllLists"],
+    queryKey: ["postAllLists", id],
     queryFn: async ({ pageParam }) => getPostThumbnailData(id, pageParam),
     getNextPageParam: (postData) => postData.LastEvaluatedKey,
   });
