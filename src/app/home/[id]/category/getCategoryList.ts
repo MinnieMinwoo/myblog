@@ -14,7 +14,6 @@ export default async function getCategoryList(nickname: string): Promise<Categor
     if (!response.category) throw new Error("No category data.");
 
     const categoryData: CategoryMainData[] = response.category;
-    console.log(categoryData);
     return categoryData;
   } catch (error) {
     throw error;

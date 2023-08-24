@@ -14,7 +14,7 @@ interface Props {
 
 const Preview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, isSubmit, onSubmit }: Props) => {
   const imgRef = useRef<HTMLInputElement | null>(null);
-  const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
+  const [categoryData, setCategoryData] = useState<CategoryMainData[]>([]);
   const [categoryIndex, setCategoryIndex] = useState("");
   const [firstOpen, setFirstOpen] = useState(false);
 

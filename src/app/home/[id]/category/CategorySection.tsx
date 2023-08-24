@@ -1,44 +1,73 @@
-import { useRef } from "react";
 import PostCategoryCard from "./CategoryCard";
 
 interface Props {
   isEdit: boolean;
-  categoryData: CategoryMainData[];
+  categoryList: CategoryMainData[];
 }
 
-export default function CategorySection({ isEdit, categoryData }: Props) {
-  const categoryRef = useRef<HTMLInputElement>(null);
+export default function CategorySection({ isEdit, categoryList }: Props) {
+  const onAdd = (index: number) => {
+    const name = window.prompt("Add new sub category name");
+    if (!name) return; // no name
+    // duplicate name
+    if (categoryList[index].subCategory.findIndex((subCategory) => subCategory.name === name)) {
+      window.alert("duplicate name");
+      return;
+    }
+
+    const newCategoryList = structuredClone(categoryList);
+    newCategoryList[index].subCategory.push({ name: name, thumbnailImageURL: "" });
+  };
+
+  const onEdit = (index: number) => {
+    const name = window.prompt("Insert new main category name");
+    if (!name) return; // no name
+    // duplicate name
+    if (categoryList[index].subCategory.findIndex((subCategory) => subCategory.name === name)) {
+      window.alert("duplicate name");
+      return;
+    }
+
+    const newCategoryList = structuredClone(categoryList);
+    newCategoryList[index].name = name;
+  };
+
+  const onDelete = (index: number) => {
+    if (!window.confirm("If you really want delete this category?")) return; //confirm
+    const newCategoryList = categoryList.filter((_, i) => i !== index);
+  };
 
   return (
     <div className="PostCategorySection col">
-      {categoryData.map((categoryMainData, id) => {
+      {categoryList.map((categoryMainData, id) => {
         return (
           <section className="pt-3 pb-4 bt-light" key={id}>
             <div className="hstack gap-1 mb-1">
               <h3 className="fw-semibold d-inline-block text-333">{categoryMainData.name}</h3>
               <span className="text-info fs-5">({categoryMainData.subCategory.length})</span>
-              {isEdit ? (
+              {isEdit && (
                 <>
-                  <button className="btn btn-outline-primary w-100px ms-auto" id={`${id},1`} name="addSubCategory">
+                  <button className="btn btn-outline-primary w-100px ms-auto" onClick={() => onAdd(id)}>
                     Add
                   </button>
-                  <button className="btn btn-outline-secondary w-100px " id={`${id},2`} name="editMainCategory">
+                  <button className="btn btn-outline-info w-100px " onClick={() => onEdit(id)}>
                     Edit
                   </button>
-                  <button className="btn btn-danger w-100px " id={`${id},3`} name="deleteMainCategory">
+                  <button className="btn btn-danger w-100px " onClick={() => onDelete(id)}>
                     Delete
                   </button>
                 </>
-              ) : null}
+              )}
             </div>
             <div className="container p-0 d-flex flex-wrap w-100">
-              {categoryMainData.subCategory.map((subCategory, subID) => (
+              {categoryMainData.subCategory.map((subCategory) => (
                 <PostCategoryCard
                   key={`${categoryMainData.name}-${subCategory.name}`}
                   isEdit={isEdit}
                   mainCategoryName={categoryMainData.name}
                   subCategoryName={subCategory.name}
                   thumbnailImageURL={subCategory.thumbnailImageURL}
+                  categoryList={categoryList}
                 />
               ))}
             </div>
