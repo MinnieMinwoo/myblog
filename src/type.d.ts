@@ -44,8 +44,12 @@ interface UserInfo {
 
 type PostEditData = PostThumbnail & PostDetail;
 
-interface CategoryData {
-  mainField: string;
-  subField: string[];
-  thumbnailLink: string[];
+interface CategoryMainData {
+  name: string;
+  subCategory: categorySubData[];
+}
+
+interface categorySubData {
+  name: string;
+  thumbnailImageURL: string;
 }

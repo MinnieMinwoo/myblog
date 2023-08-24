@@ -205,6 +205,120 @@
       "type": "manual"
     }
   },
+  "parameters": {
+    "AMPLIFY_function_amplifySaveUserData_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "amplifySaveUserData"
+        }
+      ]
+    },
+    "AMPLIFY_function_amplifySaveUserData_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "amplifySaveUserData"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogAllPosts_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogAllPosts"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogAllPosts_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogAllPosts"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogCategory_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogCategory"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogCategory_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogCategory"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogImages_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogImages"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogImages_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogImages"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogPosts_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogPosts"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogPosts_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogPosts"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogVerifyNickname_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogVerifyNickname"
+        }
+      ]
+    },
+    "AMPLIFY_function_myblogVerifyNickname_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "myblogVerifyNickname"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_appId": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_type": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    }
+  },
   "storage": {
     "myblogImages": {
       "dependsOn": [],
