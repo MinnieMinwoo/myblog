@@ -13,10 +13,10 @@ export default function EditSpan({ postID }: { postID: string }) {
 
   return (
     <>
-      <span className="pe-on" hidden={hidden}>
+      <span className="pe-on" hidden={hidden} onClick={() => {}}>
         ∙ Edit
       </span>
-      <span className="pe-on" hidden={hidden}>
+      <span className="pe-on" hidden={hidden} onClick={() => {}}>
         ∙ Delete
       </span>
     </>
