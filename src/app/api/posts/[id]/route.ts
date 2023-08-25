@@ -7,6 +7,7 @@ const ddbClient = new DynamoDBClient({
   secretAccessKey: process.env.AMPLIFY_SECRET_ACCESS_KEY,
   region: "ap-northeast-2",
 } as any);
+
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
