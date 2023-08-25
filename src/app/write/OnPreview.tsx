@@ -95,7 +95,7 @@ const Preview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, is
     const index = value.split(",").map(Number);
     setPostContent((prev) => ({
       ...prev,
-      category: [categoryData[index[0]].mainField, categoryData[index[0]].subField[index[1]]] ?? [],
+      category: [categoryData[index[0]].name, categoryData[index[0]].subCategory[index[1]]] ?? [],
     }));
   };
 
@@ -201,9 +201,9 @@ const Preview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, is
             <option value={""}>None</option>
             {categoryData &&
               categoryData.map((category, id) => {
-                return category.subField.map((subCategory, index) => (
+                return category.subCategory.map((subCategory, index) => (
                   <option key={index} value={String([[id, index]])}>
-                    {`${category.mainField} - ${subCategory}`}
+                    {`${category.name} - ${subCategory}`}
                   </option>
                 ));
               })}
