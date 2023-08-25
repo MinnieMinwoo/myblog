@@ -1,7 +1,6 @@
-import { Auth } from "aws-amplify";
-
 export default async function getCurrentUserData() {
   try {
+    const { Auth } = await import("aws-amplify");
     const {
       attributes: { email, nickname },
       username,

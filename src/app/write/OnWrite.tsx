@@ -1,8 +1,7 @@
-import React, { ChangeEvent, DragEvent, useState, useRef } from "react";
+import { ChangeEvent, DragEvent, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
-import MDEditor, { commands, ICommand } from "@uiw/react-md-editor";
-
+import Editor, { commands, ICommand } from "@uiw/react-md-editor";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 
@@ -16,7 +15,7 @@ interface Props {
   onPreview: () => void;
 }
 
-const OnWrite = ({ isEdit, postContent, setPostContent, onPreview }: Props) => {
+export default function OnWrite({ isEdit, postContent, setPostContent, onPreview }: Props) {
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
@@ -105,9 +104,9 @@ const OnWrite = ({ isEdit, postContent, setPostContent, onPreview }: Props) => {
   };
 
   return (
-    <div className={`OnWrite on-write-layout ${isDragging ? "post-drag" : ""}`}>
+    <div className={`on-write-layout ${isDragging ? "post-drag" : ""}`}>
       <div className="post-init-animation">
-        <div className="OnWrite mt-3 col col-sm-10 offset-sm-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
+        <div className="mt-3 col col-sm-10 offset-sm-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
           <section onDragEnter={onDrag} onDragLeave={onDrag} onDragOver={onDrag} onDrop={onDrag}>
             <input hidden type="file" accept="image/*" ref={imageRef} defaultValue={""} onChange={onInputImgChange} />
             <input
@@ -119,7 +118,7 @@ const OnWrite = ({ isEdit, postContent, setPostContent, onPreview }: Props) => {
               required
             />
             <div ref={inputRef}>
-              <MDEditor
+              <Editor
                 className="post-editor"
                 data-color-mode="light"
                 value={postContent.postDetail}
@@ -177,6 +176,4 @@ const OnWrite = ({ isEdit, postContent, setPostContent, onPreview }: Props) => {
       </div>
     </div>
   );
-};
-
-export default OnWrite;
+}

@@ -12,7 +12,7 @@ interface Props {
   onSubmit: () => void;
 }
 
-const Preview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, isSubmit, onSubmit }: Props) => {
+const OnPreview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, isSubmit, onSubmit }: Props) => {
   const imgRef = useRef<HTMLInputElement | null>(null);
   const [categoryData, setCategoryData] = useState<CategoryMainData[]>([]);
   const [categoryIndex, setCategoryIndex] = useState("");
@@ -245,4 +245,4 @@ const Preview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, is
   );
 };
 
-export default Preview;
+export default OnPreview;

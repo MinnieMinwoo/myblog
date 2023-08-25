@@ -1,13 +1,16 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useParams } from "next/navigation";
 
-import OnWrite from "./OnWrite";
-import Preview from "./OnPreview";
 import getCurrentUserData from "logics/getCurrentUserData";
 import Image from "next/image";
 import uploadPost from "./uploadPost";
 import { useQuery } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
+import EditorLoading from "./loading";
+
+const OnWrite = dynamic(() => import("./OnWrite"), { ssr: false, loading: () => <EditorLoading /> });
+const OnPreview = dynamic(() => import("./OnPreview"));
 
 export default function WritePage() {
   const [isPreview, setIsPreview] = useState(false);
@@ -95,7 +98,7 @@ export default function WritePage() {
           </div>
         </nav>
       </header>
-      <Preview
+      <OnPreview
         isEdit={Boolean(params["*"])}
         isPreview={isPreview}
         postContent={postContent}

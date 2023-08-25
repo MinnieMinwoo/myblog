@@ -1,4 +1,3 @@
-import { Auth } from "aws-amplify";
 import { errorCode } from "./emailErrorCode";
 
 interface UserAuth {
@@ -8,8 +7,9 @@ interface UserAuth {
 
 export default async function signinEmail(userData: UserAuth) {
   const { email, password } = userData;
-  const username = email;
   try {
+    const { Auth } = await import("aws-amplify");
+
     const user = await Auth.signIn(email, password);
     return user;
   } catch (error) {
