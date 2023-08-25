@@ -4,7 +4,7 @@ export default async function getPostDetail(id: string) {
       headers: {
         "Content-Type": "application/json",
       },
-      next: { revalidate: 11 },
+      next: { revalidate: 10 },
     });
     const response: PostDetail = await result.json();
     return response;
