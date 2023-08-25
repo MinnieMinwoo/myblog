@@ -1,5 +1,6 @@
 import Footer from "components/Footer";
 import HomeHeader from "./HomeHeader";
+import CategorySideBar from "../../../components/CategorySideBar";
 
 interface PageParms {
   id: string;

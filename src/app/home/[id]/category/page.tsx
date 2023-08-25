@@ -7,6 +7,7 @@ import getCurrentUserData from "logics/getCurrentUserData";
 import getCategoryList from "./getCategoryList";
 import CategorySection from "./CategorySection";
 import updateCategoryList from "logics/updateCategoryList";
+import CategorySideBar from "../../../../components/CategorySideBar";
 
 export default function CategoryPage() {
   const params = useParams();
@@ -65,30 +66,35 @@ export default function CategoryPage() {
   return (
     <>
       <div className="flex-grow-1 px-md-3 my-4 mx-md-4">
-        <div className=" col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
-          {status === "loading" ? (
-            <></>
-          ) : status === "error" || !categoryList ? (
-            <p>Something Wrong... Try again</p>
-          ) : (
-            <>
-              <section className=" mb-3 hstack gap-1">
-                <h2 className="fw-bold d-inline-block">{"Categories"}</h2>
-                <span className="text-primary fs-5">{`(${categoryList.length})`}</span>
-                {isEdit && (
-                  <button className="btn btn-outline-primary ms-auto w-100px" name="addMainCategory" onClick={onAdd}>
-                    Add
-                  </button>
-                )}
-                {id === userData?.nickname && (
-                  <button className={`btn btn-primary ${isEdit ? null : "ms-auto"}`} onClick={onEdit}>
-                    {isEdit ? "Complete" : "Edit"}
-                  </button>
-                )}
-              </section>
-              <CategorySection isEdit={isEdit} categoryList={categoryList} />
-            </>
-          )}
+        <div className="row">
+          <div className=" col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
+            {status === "loading" ? (
+              <></>
+            ) : status === "error" || !categoryList ? (
+              <p>Something Wrong... Try again</p>
+            ) : (
+              <>
+                <section className=" mb-3 hstack gap-1">
+                  <h2 className="fw-bold d-inline-block">{"Categories"}</h2>
+                  <span className="text-primary fs-5">{`(${categoryList.length})`}</span>
+                  {isEdit && (
+                    <button className="btn btn-outline-primary ms-auto w-100px" name="addMainCategory" onClick={onAdd}>
+                      Add
+                    </button>
+                  )}
+                  {id === userData?.nickname && (
+                    <button className={`btn btn-primary ${isEdit ? null : "ms-auto"}`} onClick={onEdit}>
+                      {isEdit ? "Complete" : "Edit"}
+                    </button>
+                  )}
+                </section>
+                <CategorySection isEdit={isEdit} categoryList={categoryList} />
+              </>
+            )}
+          </div>
+          <div className="col">
+            <CategorySideBar />
+          </div>
         </div>
       </div>
     </>

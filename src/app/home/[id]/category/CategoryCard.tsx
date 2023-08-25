@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import useCategoryUpdate from "hooks/useCategoryUpdate";
 import getCurrentUserData from "logics/getCurrentUserData";
 import updateCategoryList from "logics/updateCategoryList";
 import { useParams } from "next/navigation";
