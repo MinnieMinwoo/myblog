@@ -85,7 +85,7 @@
         },
         "myblogCategory": {
           "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
-          "s3Key": "amplify-builds/myblogCategory-6d4e467963344c554f58-build.zip"
+          "s3Key": "amplify-builds/myblogCategory-54372f3549674d5a3436-build.zip"
         }
       },
       "auth": {

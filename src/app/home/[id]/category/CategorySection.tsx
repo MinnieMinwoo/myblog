@@ -1,4 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import PostCategoryCard from "./CategoryCard";
+import updateCategoryList from "./updateCategoryList";
+import getCurrentUserData from "logics/getCurrentUserData";
+import { useParams } from "next/navigation";
 
 interface Props {
   isEdit: boolean;
@@ -6,24 +10,32 @@ interface Props {
 }
 
 export default function CategorySection({ isEdit, categoryList }: Props) {
-  const onAdd = (index: number) => {
+  const params = useParams();
+  const { data: userData } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUserData,
+  });
+
+  const onAdd = async (index: number) => {
+    if (!userData?.id || params.id !== userData?.nickname) return; // invalid access
     const name = window.prompt("Add new sub category name");
     if (!name) return; // no name
     // duplicate name
-    if (categoryList[index].subCategory.findIndex((subCategory) => subCategory.name === name)) {
+    if (categoryList[index].subCategory.findIndex((subCategory) => subCategory.name === name) !== -1) {
       window.alert("duplicate name");
       return;
     }
 
     const newCategoryList = structuredClone(categoryList);
     newCategoryList[index].subCategory.push({ name: name, thumbnailImageURL: "" });
+    await updateCategoryList(userData.id, params.id, newCategoryList);
   };
 
   const onEdit = (index: number) => {
     const name = window.prompt("Insert new main category name");
     if (!name) return; // no name
     // duplicate name
-    if (categoryList[index].subCategory.findIndex((subCategory) => subCategory.name === name)) {
+    if (categoryList[index].subCategory.findIndex((subCategory) => subCategory.name === name) !== -1) {
       window.alert("duplicate name");
       return;
     }
