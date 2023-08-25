@@ -1,6 +1,6 @@
 export default async function getPostDetail(id: string) {
   try {
-    const result = await fetch(`https://pazbu1m48b.execute-api.ap-northeast-2.amazonaws.com/myblog/posts/${id}`, {
+    const result = await fetch(`http://localhost:3000/api/posts/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },

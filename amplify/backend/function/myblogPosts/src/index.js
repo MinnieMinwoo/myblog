@@ -47,8 +47,6 @@ app.get("/posts/:id", async (req, res) => {
       ProjectionExpression:
         "id, title, categoryMain, categorySub, createdAt, createdBy, createdNickname, thumbnailImageURL, postDetail, tag, likes",
     });
-    const result = await ddbDocClient.send(postGetCommand);
-    console.log(result);
 
     const { Count, Items } = await ddbDocClient.send(postGetCommand);
     console.log(Items);
