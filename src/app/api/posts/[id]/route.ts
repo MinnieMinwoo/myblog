@@ -11,6 +11,10 @@ const ddbClient = new DynamoDBClient({
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
+  // logging
+  console.log(request);
+  console.log(params);
+
   const { id: postID } = params;
 
   try {
