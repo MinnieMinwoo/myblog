@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import PostCategoryCard from "./CategoryCard";
-import updateCategoryList from "./updateCategoryList";
+import updateCategoryList from "../../../../logics/updateCategoryList";
 import getCurrentUserData from "logics/getCurrentUserData";
 import { useParams } from "next/navigation";
 
@@ -16,6 +16,26 @@ export default function CategorySection({ isEdit, categoryList }: Props) {
     queryFn: getCurrentUserData,
   });
 
+  const queryClient = useQueryClient();
+  const { mutate: updateCategory } = useMutation({
+    mutationFn: (categoryData) => {
+      if (!userData) throw new Error("no user data");
+      else return updateCategoryList(userData.id, userData.nickname, categoryData);
+    },
+    onMutate: async (newCategoryData: CategoryMainData[]) => {
+      await queryClient.cancelQueries({ queryKey: ["CategoryLists", params.id] });
+      const previousCategoryData = queryClient.getQueryData(["CategoryLists", params.id]);
+      queryClient.setQueryData(["CategoryLists", params.id], () => newCategoryData);
+      return { previousCategoryData };
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(["CategoryLists", params.id], context?.previousCategoryData ?? {});
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["CategoryLists", params.id] });
+    },
+  });
+
   const onAdd = async (index: number) => {
     if (!userData?.id || params.id !== userData?.nickname) return; // invalid access
     const name = window.prompt("Add new sub category name");
@@ -28,10 +48,11 @@ export default function CategorySection({ isEdit, categoryList }: Props) {
 
     const newCategoryList = structuredClone(categoryList);
     newCategoryList[index].subCategory.push({ name: name, thumbnailImageURL: "" });
-    await updateCategoryList(userData.id, params.id, newCategoryList);
+    updateCategory(newCategoryList);
   };
 
   const onEdit = (index: number) => {
+    if (!userData?.id || params.id !== userData?.nickname) return; // invalid access
     const name = window.prompt("Insert new main category name");
     if (!name) return; // no name
     // duplicate name
@@ -42,11 +63,14 @@ export default function CategorySection({ isEdit, categoryList }: Props) {
 
     const newCategoryList = structuredClone(categoryList);
     newCategoryList[index].name = name;
+    updateCategory(newCategoryList);
   };
 
   const onDelete = (index: number) => {
+    if (!userData?.id || params.id !== userData?.nickname) return; // invalid access
     if (!window.confirm("If you really want delete this category?")) return; //confirm
     const newCategoryList = categoryList.filter((_, i) => i !== index);
+    updateCategory(newCategoryList);
   };
 
   return (
