@@ -1,7 +1,8 @@
 export default async function getPostDetail(id: string) {
+  console.log(process.env.WEB_DOMAIN);
   console.log(id);
   try {
-    const result = await fetch(`${process.env.WEB_DOMAIN}/${id}`, {
+    const result = await fetch(`${process.env.WEB_DOMAIN}/posts/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },
