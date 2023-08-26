@@ -1,20 +1,5 @@
 {
-  "api": {
-    "myblog": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "myblogImages"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
-    }
-  },
+  "api": {},
   "auth": {
     "myblog3f0a7747": {
       "customAuth": false,
@@ -70,20 +55,6 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "myblogImages": {
-      "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "BucketName"
-          ],
-          "category": "storage",
-          "resourceName": "myblogImages"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
     "myblogVerifyNickname": {
       "build": true,
       "dependsOn": [
@@ -129,22 +100,6 @@
         {
           "category": "function",
           "resourceName": "amplifySaveUserData"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogImages_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogImages"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogImages_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogImages"
         }
       ]
     },

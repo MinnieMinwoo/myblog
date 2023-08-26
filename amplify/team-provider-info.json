@@ -70,11 +70,7 @@
           "s3Key": "amplify-builds/amplifySaveUserData-396f374873645a635759-build.zip"
         },
         "myblogPostInfo": {},
-        "myblogPostDetail": {},
-        "myblogImages": {
-          "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
-          "s3Key": "amplify-builds/myblogImages-717a6a596655414c6576-build.zip"
-        }
+        "myblogPostDetail": {}
       },
       "auth": {
         "myblog3f0a7747": {}
@@ -89,9 +85,6 @@
           "appId": "d30lguc62630ad",
           "type": "manual"
         }
-      },
-      "api": {
-        "myblog": {}
       }
     }
   }
