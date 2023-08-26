@@ -1,8 +1,6 @@
 export default async function getPostDetail(id: string) {
-  console.log(process.env.WEB_DOMAIN);
-  console.log(id);
   try {
-    const result = await fetch(`${process.env.WEB_DOMAIN}/posts/detail/${id}`, {
+    const result = await fetch(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/posts/detail/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },

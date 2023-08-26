@@ -27,7 +27,7 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
         },
         { status: 400 }
       );
-    } else NextResponse.json(Items[0]);
+    } else return NextResponse.json(Items[0]);
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

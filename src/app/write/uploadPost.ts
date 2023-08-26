@@ -4,7 +4,7 @@ export default async function uploadPost(postData: PostEditData) {
   };
 
   try {
-    const result = await fetch(`${process.env.WEB_DOMAIN}/posts/${postData.createdNickname}`, {
+    const result = await fetch(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/posts/${postData.createdNickname}`, {
       method: "POST",
       mode: "cors",
       headers: {

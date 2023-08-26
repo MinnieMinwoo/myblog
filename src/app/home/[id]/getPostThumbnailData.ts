@@ -7,7 +7,7 @@ export default async function getPostThumbnailData(id: string, queryObject?: Las
     : "";
 
   try {
-    const result = await fetch(`${process.env.WEB_DOMAIN}/posts/${id}${queryString}`, {
+    const result = await fetch(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/posts/${id}${queryString}`, {
       headers: {
         "Content-Type": "application/json",
       },

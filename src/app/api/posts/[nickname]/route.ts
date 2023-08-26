@@ -59,7 +59,7 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
       ScanIndexForward: false,
       Limit: 10,
       // ExclusiveStartKey = LastEvaluatedKey
-      ExclusiveStartKey: Object.keys(queryString).length > 0 ? queryString : undefined,
+      ExclusiveStartKey: queryString.createdAt && queryString.createdBy ? queryString : undefined,
     });
 
     // LastEvaluatedKey : {id, createdBy, createdAt}
@@ -74,7 +74,7 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
   }
 }
 
-export default async function POST(request: Request, { params: { nickname } }: { params: { nickname: string } }) {
+export async function POST(request: Request, { params: { nickname } }: { params: { nickname: string } }) {
   //logging
   console.log(request);
   const postData = await request.json();
