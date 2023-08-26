@@ -16,9 +16,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const fileNameList = (image as any).name.split(".");
     const imageArrayBuffer = await (image as any).arrayBuffer();
     const imageBuffer = Buffer.from(imageArrayBuffer);
+    const fileNameList = (image as any).name.split(".");
     const imageName = `${uuid()}.${fileNameList[fileNameList.length - 1]}`;
     const command = new PutObjectCommand({
       Bucket: "mybloguserpostimage153228-myblog",
