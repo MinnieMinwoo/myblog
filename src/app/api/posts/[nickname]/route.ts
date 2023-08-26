@@ -1,7 +1,7 @@
 import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { dbClient } from "logics/aws";
 import { NextResponse } from "next/server";
-import { uuid } from "uuidv4";
+import { v4 as uuid } from "uuid";
 
 export async function GET(request: Request, { params: { nickname } }: { params: { nickname: string } }) {
   //logging
