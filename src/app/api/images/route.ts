@@ -6,7 +6,7 @@ import { v4 as uuid } from "uuid";
 export async function POST(request: Request) {
   const formData = await request.formData();
   const image = formData.get("image");
-  if (!(image instanceof File)) {
+  if (!image) {
     return NextResponse.json(
       {
         message: "No image data",
@@ -15,8 +15,8 @@ export async function POST(request: Request) {
     );
   }
   try {
-    const fileNameList = image.name.split(".");
-    const imageArrayBuffer = await image.arrayBuffer();
+    const fileNameList = (image as any).name.split(".");
+    const imageArrayBuffer = await (image as any).arrayBuffer();
     const imageBuffer = Buffer.from(imageArrayBuffer);
     const imageName = `${uuid()}.${fileNameList[fileNameList.length - 1]}`;
     const command = new PutObjectCommand({
