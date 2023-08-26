@@ -1,36 +1,23 @@
 import { NextResponse } from "next/server";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { dbClient } from "logics/aws";
 
-const ddbClient = new DynamoDBClient({
-  credentials: {
-    accessKeyId: process.env.AMPLIFY_ACCESS_KEY!,
-    secretAccessKey: process.env.AMPLIFY_SECRET_ACCESS_KEY!,
-  },
-  region: "ap-northeast-2",
-});
-
-const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
-
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params: { id } }: { params: { id: string } }) {
   // logging
   console.log(request);
-  console.log(params);
-
-  const { id: postID } = params;
 
   try {
     const postGetCommand = new QueryCommand({
       TableName: "myblogPosts-myblog",
       KeyConditionExpression: "id = :id",
       ExpressionAttributeValues: {
-        ":id": postID,
+        ":id": id,
       },
       ProjectionExpression:
         "id, title, categoryMain, categorySub, createdAt, createdBy, createdNickname, thumbnailImageURL, postDetail, tag, likes",
     });
 
-    const { Count, Items } = (await ddbDocClient.send(postGetCommand as any)) as any;
+    const { Count, Items } = (await dbClient.send(postGetCommand as any)) as any;
     console.log(Items);
     // Throw error code when post not exists
     if (Count === 0) {

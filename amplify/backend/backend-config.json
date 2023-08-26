@@ -8,31 +8,7 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "myblogPosts"
-        },
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
           "resourceName": "myblogImages"
-        },
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "myblogCategory"
-        },
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "myblogAllPosts"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -94,47 +70,6 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "myblogAllPosts": {
-      "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn",
-            "StreamArn"
-          ],
-          "category": "storage",
-          "resourceName": "myblogUser"
-        },
-        {
-          "attributes": [
-            "Name",
-            "Arn",
-            "StreamArn"
-          ],
-          "category": "storage",
-          "resourceName": "myblogPosts"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "myblogCategory": {
-      "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn",
-            "StreamArn"
-          ],
-          "category": "storage",
-          "resourceName": "myblogUser"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
     "myblogImages": {
       "build": true,
       "dependsOn": [
@@ -144,31 +79,6 @@
           ],
           "category": "storage",
           "resourceName": "myblogImages"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "myblogPosts": {
-      "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn",
-            "StreamArn"
-          ],
-          "category": "storage",
-          "resourceName": "myblogUser"
-        },
-        {
-          "attributes": [
-            "Name",
-            "Arn",
-            "StreamArn"
-          ],
-          "category": "storage",
-          "resourceName": "myblogPosts"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -222,38 +132,6 @@
         }
       ]
     },
-    "AMPLIFY_function_myblogAllPosts_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogAllPosts"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogAllPosts_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogAllPosts"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogCategory_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogCategory"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogCategory_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogCategory"
-        }
-      ]
-    },
     "AMPLIFY_function_myblogImages_deploymentBucketName": {
       "usedBy": [
         {
@@ -267,22 +145,6 @@
         {
           "category": "function",
           "resourceName": "myblogImages"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogPosts_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogPosts"
-        }
-      ]
-    },
-    "AMPLIFY_function_myblogPosts_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "myblogPosts"
         }
       ]
     },
