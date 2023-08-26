@@ -14,6 +14,7 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
+
   try {
     const fileNameList = (image as any).name.split(".");
     const imageArrayBuffer = await (image as any).arrayBuffer();
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        imageURL: `${process.env.AMPLIFY_S3_DOMAIN}/${imageName}`,
+        imageURL: `${process.env.NEXT_PUBLIC_S3_DOMAIN}/${imageName}`,
       },
       { status: 201 }
     );
