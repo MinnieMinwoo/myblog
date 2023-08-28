@@ -2,9 +2,10 @@
 
 import { useQuery } from "@tanstack/react-query";
 import getCurrentUserData from "logics/getCurrentUserData";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function EditSpan({ createdBy }: { createdBy: string }) {
+  const router = useRouter();
   const params = useParams();
   const { postid } = params;
 
@@ -25,8 +26,10 @@ export default function EditSpan({ createdBy }: { createdBy: string }) {
         },
         body: JSON.stringify({
           id: userData?.id,
+          nickname: userData?.nickname,
         }),
       });
+      router.push(`/home/${userData?.nickname}`);
     } catch (error) {
       console.log(error);
       window.alert("Post delete failed.");
