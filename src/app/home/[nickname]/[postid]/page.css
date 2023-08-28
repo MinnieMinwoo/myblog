@@ -1,3 +1,7 @@
+.MarkdownView img {
+  width: 100%;
+}
+
 .page-outline {
   display: inline-block;
   position: fixed;

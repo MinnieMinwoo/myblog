@@ -51,7 +51,7 @@ export default async function PostPage({
             <EditSpan createdBy={postData.createdBy} />
           </div>
         </div>
-        <article className="py-3" data-color-mode="light">
+        <article className="MarkdownView py-3" data-color-mode="light">
           <ReactMarkdown
             components={{
               code({ node, inline, className, children, ...props }) {
