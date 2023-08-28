@@ -5,8 +5,8 @@ import { v4 as uuid } from "uuid";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
-  const image = formData.get("image");
-  if (!image) {
+  const image = formData.get("image") as File;
+  if (!image || !("arrayBuffer" in image)) {
     return NextResponse.json(
       {
         message: "No image data",
@@ -16,9 +16,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const imageArrayBuffer = await (image as any).arrayBuffer();
+    const imageArrayBuffer = await image.arrayBuffer();
     const imageBuffer = Buffer.from(imageArrayBuffer);
-    const fileNameList = (image as any).name.split(".");
+    const fileNameList = image.name.split(".");
     const imageName = `${uuid()}.${fileNameList[fileNameList.length - 1]}`;
     const command = new PutObjectCommand({
       Bucket: "mybloguserpostimage153228-myblog",

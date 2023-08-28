@@ -23,10 +23,10 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
       },
       ProjectionExpression: "id",
     });
-    const { Count: userCount, Items: userIDList } = (await dbClient.send(userGetCommand as any)) as any;
-    console.log(userIDList);
+    const { Count: userCount, Items: userIDList } = await dbClient.send(userGetCommand);
+
     // Throw error code when user not exists
-    if (userCount === 0) {
+    if (userCount === 0 || !userIDList) {
       return NextResponse.json(
         {
           message: "User not exists in database.",
@@ -46,7 +46,7 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
       ProjectionExpression: "id",
       ScanIndexForward: false,
     });
-    const { Count: postCount } = (await dbClient.send(countCommand as any)) as any;
+    const { Count: postCount } = await dbClient.send(countCommand);
 
     const userPostCommand = new QueryCommand({
       TableName: "myblogPosts-myblog",
@@ -63,7 +63,7 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
     });
 
     // LastEvaluatedKey : {id, createdBy, createdAt}
-    const { Items: postItems, LastEvaluatedKey } = (await dbClient.send(userPostCommand as any)) as any;
+    const { Items: postItems, LastEvaluatedKey } = await dbClient.send(userPostCommand);
     return NextResponse.json(
       { userData: idString, postCount: postCount, postList: postItems, LastEvaluatedKey },
       { status: 200 }
@@ -89,10 +89,10 @@ export async function POST(request: Request, { params: { nickname } }: { params:
       },
       ProjectionExpression: "id",
     });
-    const { Count: userCount, Items: userIDList } = (await dbClient.send(userGetCommand as any)) as any;
+    const { Count: userCount, Items: userIDList } = await dbClient.send(userGetCommand);
 
     // Throw error code when user not exists
-    if (userCount === 0) {
+    if (userCount === 0 || !userIDList) {
       console.log("invalid querystring");
       return NextResponse.json(
         {
@@ -125,7 +125,7 @@ export async function POST(request: Request, { params: { nickname } }: { params:
       },
     });
 
-    await dbClient.send(postCommand as any);
+    await dbClient.send(postCommand);
     return NextResponse.json({ postID: postID }, { status: 201 });
   } catch (error) {
     console.log(error);

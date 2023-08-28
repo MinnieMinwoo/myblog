@@ -17,10 +17,10 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
       ProjectionExpression: "id, nickname, category",
     });
 
-    const { Count, Items } = (await dbClient.send(categoryQueryCommand as any)) as any;
+    const { Count, Items } = await dbClient.send(categoryQueryCommand);
 
     // Throw error code when post not exists
-    if (Count === 0) {
+    if (Count === 0 || !Items) {
       return NextResponse.json(
         {
           message: "User not exists in database.",
@@ -50,10 +50,10 @@ export async function PUT(request: Request, { params: { nickname } }: { params: 
       ProjectionExpression: "id, nickname",
     });
 
-    const { Count, Items } = (await dbClient.send(userQueryCommand as any)) as any;
+    const { Count, Items } = await dbClient.send(userQueryCommand);
 
     // Throw error code when post not exists
-    if (Count === 0) {
+    if (Count === 0 || !Items) {
       return NextResponse.json(
         {
           message: "User not exists in database.",
@@ -84,9 +84,9 @@ export async function PUT(request: Request, { params: { nickname } }: { params: 
       ReturnValues: "ALL_NEW",
     });
 
-    const { Attributes } = (await dbClient.send(categoryPutCommand as any)) as any;
-
-    NextResponse.json(
+    const { Attributes } = await dbClient.send(categoryPutCommand);
+    if (!Attributes) return NextResponse.json({ error: "Connection error to database" }, { status: 502 });
+    return NextResponse.json(
       {
         id: Attributes.id,
         category: Attributes.category,

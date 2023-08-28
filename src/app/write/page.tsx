@@ -1,10 +1,9 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 
 import getCurrentUserData from "logics/getCurrentUserData";
 import Image from "next/image";
-import uploadPost from "./uploadPost";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import EditorLoading from "./loading";
@@ -64,7 +63,15 @@ export default function WritePage() {
         const postID = params["*"];
         router.push(`/home/${postContent.createdNickname}/${postID}`);
       } else {
-        const postID = await uploadPost(postContent);
+        const result = await fetch(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/posts/${postContent.createdNickname}`, {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postContent),
+        });
+        const { postID } = await result.json();
         router.push(`/home/${postContent.createdNickname}/${postID}`);
       }
     } catch (error) {

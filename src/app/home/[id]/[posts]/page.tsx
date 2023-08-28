@@ -2,7 +2,6 @@ import toc from "@jsdevtools/rehype-toc";
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 
-import getPostDetail from "./getPostDetail";
 import SyntaxHighlightProvider from "./SyntaxHIghlightProvider";
 import LikeButton from "./LikeButton";
 import ShareButton from "./ShareButton";
@@ -10,9 +9,18 @@ import getDate from "logics/getDate";
 import EditSpan from "./EditSpan";
 import "./page.css";
 
-export default async function PostPage({ params }: { params: { id: string; posts: string } }) {
-  const { id: userNickname, posts: postID } = params;
-  const postData = await getPostDetail(postID);
+export default async function PostPage({
+  params: { id: userNickname, posts: postID },
+}: {
+  params: { id: string; posts: string };
+}) {
+  const postData: PostDetail = await (
+    await fetch(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/posts/detail/${postID}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  ).json();
 
   return (
     <main className="col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">

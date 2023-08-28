@@ -1,10 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import getCurrentUserData from "logics/getCurrentUserData";
-import getCategoryList from "./getCategoryList";
 import CategorySection from "./CategorySection";
 import updateCategoryList from "logics/updateCategoryList";
 import CategorySideBar from "../../../../components/CategorySideBar";
@@ -20,7 +19,22 @@ export default function CategoryPage() {
 
   const { status, data: categoryList } = useQuery({
     queryKey: ["CategoryLists", id],
-    queryFn: () => getCategoryList(id),
+    queryFn: async (): Promise<CategoryMainData[]> => {
+      try {
+        const data = await (
+          await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/categories/${id}`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+        ).json();
+        if (!data.category) throw new Error("No category data.");
+        else return data.category;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
   });
 
   const queryClient = useQueryClient();

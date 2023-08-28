@@ -1,7 +1,6 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import getPostThumbnailData from "./getPostThumbnailData";
 import PostThumbnailBox from "components/PostThumbnailBox";
 import getCurrentUserData from "logics/getCurrentUserData";
 import Link from "next/link";
@@ -22,7 +21,26 @@ export default function HomePage() {
     status,
   } = useInfiniteQuery({
     queryKey: ["postAllLists", id],
-    queryFn: async ({ pageParam }) => getPostThumbnailData(id, pageParam),
+    queryFn: async ({ pageParam }): Promise<UserPostData> => {
+      const queryString = pageParam
+        ? `?${Object.entries(pageParam)
+            .map(([key, value]) => value && key + "=" + value)
+            .filter((v) => v)
+            .join("&")}`
+        : "";
+
+      try {
+        return await (
+          await fetch(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/posts/${id}${queryString}`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+        ).json();
+      } catch (error) {
+        throw error;
+      }
+    },
     getNextPageParam: (postData) => postData.LastEvaluatedKey,
   });
 

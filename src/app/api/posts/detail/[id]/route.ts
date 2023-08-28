@@ -17,10 +17,10 @@ export async function GET(request: Request, { params: { id } }: { params: { id: 
         "id, title, categoryMain, categorySub, createdAt, createdBy, createdNickname, thumbnailImageURL, postDetail, tag, likes",
     });
 
-    const { Count, Items } = (await dbClient.send(postGetCommand as any)) as any;
+    const { Count, Items } = await dbClient.send(postGetCommand);
     console.log(Items);
     // Throw error code when post not exists
-    if (Count === 0) {
+    if (Count === 0 || !Items) {
       return NextResponse.json(
         {
           message: "Post not exists in database.",
