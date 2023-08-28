@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { DeleteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { dbClient } from "logics/aws";
+import { revalidatePath } from "next/cache";
 
 export async function GET(request: Request, { params: { postid } }: { params: { postid: string } }) {
   // logging
@@ -13,8 +14,37 @@ export async function GET(request: Request, { params: { postid } }: { params: { 
       ExpressionAttributeValues: {
         ":id": postid,
       },
-      ProjectionExpression:
-        "id, title, categoryMain, categorySub, createdAt, createdBy, createdNickname, thumbnailImageURL, postDetail, tag, likes",
+    });
+
+    const { Count, Items } = await dbClient.send(postGetCommand);
+    // Throw error code when post not exists
+    if (Count === 0 || !Items) {
+      return NextResponse.json(
+        {
+          message: "Post not exists in database.",
+        },
+        { status: 400 }
+      );
+    } else return NextResponse.json(Items[0]);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request, { params: { postid } }: { params: { postid: string } }) {
+  // logging
+  console.log(request);
+
+  const postData = await request.json();
+
+  try {
+    const postGetCommand = new QueryCommand({
+      TableName: "myblogPosts-myblog",
+      KeyConditionExpression: "id = :id",
+      ExpressionAttributeValues: {
+        ":id": postid,
+      },
     });
 
     const { Count, Items } = await dbClient.send(postGetCommand);
@@ -27,7 +57,18 @@ export async function GET(request: Request, { params: { postid } }: { params: { 
         },
         { status: 400 }
       );
-    } else return NextResponse.json(Items[0]);
+    }
+
+    const postCommand = new PutCommand({
+      TableName: "myblogPosts-myblog",
+      Item: {
+        ...postData,
+      },
+    });
+
+    await dbClient.send(postCommand);
+    revalidatePath(`/home/[nickname]/[postid]`);
+    return NextResponse.json({ postID: postData.id }, { status: 201 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

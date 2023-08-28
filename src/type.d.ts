@@ -22,27 +22,18 @@ interface LastPost {
   createdAt: string;
 }
 
-interface PostDetail {
-  id: string;
-  title: string;
-  createdBy: string;
-  createdNickname: string;
-  createdAt: number;
+type PostDetail = PostThumbnail & {
   categoryMain: string;
   categorySub: string;
-  thumbnailImageURL: string;
   postDetail: string;
-  tag: string[];
   likes: string[];
-}
+};
 
 interface UserInfo {
   id: string;
   email: string;
   nickname: string;
 }
-
-type PostEditData = PostThumbnail & PostDetail;
 
 interface CategoryMainData {
   name: string;

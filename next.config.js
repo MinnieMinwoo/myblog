@@ -8,6 +8,14 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 /** @type {import('next').NextConfig} */
 const config = {
   // …
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "mybloguserpostimage153228-myblog.s3.ap-northeast-2.amazonaws.com",
+      },
+    ],
+  },
   webpack: (config, { isServer, nextRuntime }) => {
     // Avoid AWS SDK Node.js require issue
     if (isServer && nextRuntime === "nodejs")

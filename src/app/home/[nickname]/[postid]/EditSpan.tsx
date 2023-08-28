@@ -16,6 +16,10 @@ export default function EditSpan({ createdBy }: { createdBy: string }) {
 
   const hidden = !(userData && createdBy === userData.id);
 
+  const onEdit = () => {
+    router.push(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/write?id=${postid}`);
+  };
+
   const onDelete = async () => {
     if (!window.confirm("If you want to delete this post?")) return;
     try {
@@ -37,7 +41,7 @@ export default function EditSpan({ createdBy }: { createdBy: string }) {
   };
   return (
     <>
-      <span className="pe-on" hidden={hidden} onClick={() => {}}>
+      <span className="pe-on" hidden={hidden} onClick={onEdit}>
         ∙ Edit
       </span>
       <span className="pe-on" hidden={hidden} onClick={onDelete}>

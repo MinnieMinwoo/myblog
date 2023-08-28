@@ -1,10 +1,6 @@
 import Footer from "components/Footer";
 import HomeHeader from "./HomeHeader";
-import CategorySideBar from "../../../components/CategorySideBar";
-
-interface PageParms {
-  id: string;
-}
+import NicknameParamCheck from "app/home/[nickname]/[postid]/ParamCheck";
 
 export default function homeLayout({
   children,

@@ -18,7 +18,13 @@ export default function PostThumbnailBox({ postList }: { postList: PostThumbnail
             <div className="vstack gap-1">
               {post.thumbnailImageURL ? (
                 <div className="w-100 ratio ratio-16x9 mb-3">
-                  <Image className="img-fluid object-fit-cover" src={post.thumbnailImageURL} alt="post" />
+                  <Image
+                    className="img-fluid object-fit-cover"
+                    src={post.thumbnailImageURL}
+                    alt="post"
+                    width={1000}
+                    height={1000}
+                  />
                 </div>
               ) : null}
               <h3 className="overflow-hidden fw-semibold text-111">{post.title}</h3>

@@ -1,12 +1,13 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import "./OnPreview.css";
+import imageUpload from "logics/imageUpload";
 
 interface Props {
   isEdit: boolean;
   isPreview: boolean;
-  postContent: PostEditData;
-  setPostContent: React.Dispatch<React.SetStateAction<PostEditData>>;
+  postContent: PostDetail;
+  setPostContent: React.Dispatch<React.SetStateAction<PostDetail>>;
   onPreview: () => void;
   isSubmit: boolean;
   onSubmit: () => void;
@@ -43,10 +44,11 @@ const OnPreview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, 
     } = event;
     if (!files) throw console.log("no image files");
     try {
-      const uploadURL = ""; //todo: upload img
+      const uploadURL = await imageUpload(files[0]);
+      console.log(uploadURL);
       setPostContent((prev) => ({
         ...prev,
-        thumbnailImgLink: uploadURL,
+        thumbnailImageURL: uploadURL,
       }));
     } catch (error) {
       console.log(error);
@@ -58,16 +60,12 @@ const OnPreview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, 
     imgRef.current?.click();
   };
 
-  //todo: delete img
   const onDelete = () => {
-    /*
-    postContent.thumbnailImgLink && deleteImg(postContent.thumbnailImgLink);
     setPostContent((prev) => ({
       ...prev,
-      thumbnailImgLink: "",
+      thumbnailImageURL: "",
     }));
     if (imgRef.current?.value) imgRef.current.value = "";
-    */
   };
 
   const onEditDescription = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -141,8 +139,8 @@ const OnPreview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, 
             <Image
               className="img-thumbnail object-fit-cover bg-eee"
               src={postContent.thumbnailImageURL ? postContent.thumbnailImageURL : "/altThumbnail.jpg"}
-              width={100}
-              height={100}
+              width={500}
+              height={500}
               alt="Thumbnail"
             />
           </div>

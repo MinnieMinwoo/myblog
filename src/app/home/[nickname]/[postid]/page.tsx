@@ -8,6 +8,7 @@ import ShareButton from "./ShareButton";
 import getDate from "logics/getDate";
 import EditSpan from "./EditSpan";
 import "./page.css";
+import ParamCheck from "./ParamCheck";
 
 export default async function PostPage({
   params: { nickname, postid },
@@ -23,87 +24,90 @@ export default async function PostPage({
   ).json();
 
   return (
-    <main className="col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
-      <div className="w-100 h-340px">
-        <div
-          className="w-100 h-100 px-4 py-0 position-relative"
-          style={{
-            background: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    <>
+      <ParamCheck userName={postData.createdNickname} postID={postData.id} />
+      <main className="col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
+        <div className="w-100 h-340px">
+          <div
+            className="w-100 h-100 px-4 py-0 position-relative"
+            style={{
+              background: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
             url(${postData?.thumbnailImageURL}) center/cover no-repeat`,
-            color: "#eee",
-          }}
-        >
-          <div className="pb-1 pt-140px">
-            {postData.categoryMain ? (
-              postData.categorySub ? (
-                <span>{`${postData.categoryMain} - ${postData.categorySub}`}</span>
-              ) : (
-                <span>{`${postData.categoryMain}`}</span>
-              )
-            ) : null}
+              color: "#eee",
+            }}
+          >
+            <div className="pb-1 pt-140px">
+              {postData.categoryMain ? (
+                postData.categorySub ? (
+                  <span>{`${postData.categoryMain} - ${postData.categorySub}`}</span>
+                ) : (
+                  <span>{`${postData.categoryMain}`}</span>
+                )
+              ) : null}
+            </div>
+            {postData?.title ? <h2 className="fs-1 fw-normal mb-2">{postData?.title}</h2> : null}
+            <span>{`by ${nickname}`}</span>
+            <span>{` ∙  ${getDate(postData.createdAt)}`}</span>
+            <EditSpan createdBy={postData.createdBy} />
           </div>
-          {postData?.title ? <h2 className="fs-1 fw-normal mb-2">{postData?.title}</h2> : null}
-          <span>{`by ${nickname}`}</span>
-          <span>{` ∙  ${getDate(postData.createdAt)}`}</span>
-          <EditSpan createdBy={postData.createdBy} />
         </div>
-      </div>
-      <article className="py-3" data-color-mode="light">
-        <ReactMarkdown
-          components={{
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || "");
-              return !inline && match ? (
-                <SyntaxHighlightProvider props={props} match={match}>
-                  {String(children).replace(/\n$/, "")}
-                </SyntaxHighlightProvider>
-              ) : (
-                <code {...props} className={className}>
-                  {children}
-                </code>
-              );
-            },
-          }}
-          rehypePlugins={[
-            [
-              rehypeSanitize,
-              {
-                ...defaultSchema,
-                attributes: {
-                  ...defaultSchema.attributes,
-                  span: [
-                    // @ts-ignore
-                    ...(defaultSchema.attributes.span || []),
-                    // List of all allowed tokens:
-                    ["className"],
-                  ],
-                  code: [["className"]],
-                },
+        <article className="py-3" data-color-mode="light">
+          <ReactMarkdown
+            components={{
+              code({ node, inline, className, children, ...props }) {
+                const match = /language-(\w+)/.exec(className || "");
+                return !inline && match ? (
+                  <SyntaxHighlightProvider props={props} match={match}>
+                    {String(children).replace(/\n$/, "")}
+                  </SyntaxHighlightProvider>
+                ) : (
+                  <code {...props} className={className}>
+                    {children}
+                  </code>
+                );
               },
-            ],
-            [
-              toc,
-              {
-                headings: ["h1", "h2", "h3"],
-                cssClasses: {
-                  toc: "page-outline",
-                  list: "page-list",
-                  listItem: "page-listItem",
-                  link: "page-link",
+            }}
+            rehypePlugins={[
+              [
+                rehypeSanitize,
+                {
+                  ...defaultSchema,
+                  attributes: {
+                    ...defaultSchema.attributes,
+                    span: [
+                      // @ts-ignore
+                      ...(defaultSchema.attributes.span || []),
+                      // List of all allowed tokens:
+                      ["className"],
+                    ],
+                    code: [["className"]],
+                  },
                 },
-              },
-            ],
-          ]}
-        >
-          {postData.postDetail}
-        </ReactMarkdown>
-      </article>
-      <section>
-        <div className="hstack mb-4">
-          <LikeButton />
-          <ShareButton />
-        </div>
-      </section>
-    </main>
+              ],
+              [
+                toc,
+                {
+                  headings: ["h1", "h2", "h3"],
+                  cssClasses: {
+                    toc: "page-outline",
+                    list: "page-list",
+                    listItem: "page-listItem",
+                    link: "page-link",
+                  },
+                },
+              ],
+            ]}
+          >
+            {postData.postDetail}
+          </ReactMarkdown>
+        </article>
+        <section>
+          <div className="hstack mb-4">
+            <LikeButton />
+            <ShareButton />
+          </div>
+        </section>
+      </main>
+    </>
   );
 }

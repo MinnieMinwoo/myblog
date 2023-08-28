@@ -8,7 +8,6 @@ export default async function imageUpload(image: File) {
       body: form,
     });
     const { imageURL } = await result.json();
-    console.log(imageURL);
     return imageURL;
   } catch (error) {
     throw error;
