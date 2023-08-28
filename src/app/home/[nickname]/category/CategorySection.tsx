@@ -11,6 +11,8 @@ interface Props {
 
 export default function CategorySection({ isEdit, categoryList }: Props) {
   const params = useParams();
+  const { nickname } = params;
+
   const { data: userData } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUserData,
@@ -23,21 +25,21 @@ export default function CategorySection({ isEdit, categoryList }: Props) {
       else return updateCategoryList(userData.id, userData.nickname, categoryData);
     },
     onMutate: async (newCategoryData: CategoryMainData[]) => {
-      await queryClient.cancelQueries({ queryKey: ["CategoryLists", params.id] });
-      const previousCategoryData = queryClient.getQueryData(["CategoryLists", params.id]);
-      queryClient.setQueryData(["CategoryLists", params.id], () => newCategoryData);
+      await queryClient.cancelQueries({ queryKey: ["CategoryLists", nickname] });
+      const previousCategoryData = queryClient.getQueryData(["CategoryLists", nickname]);
+      queryClient.setQueryData(["CategoryLists", nickname], () => newCategoryData);
       return { previousCategoryData };
     },
     onError: (err, newTodo, context) => {
-      queryClient.setQueryData(["CategoryLists", params.id], context?.previousCategoryData ?? {});
+      queryClient.setQueryData(["CategoryLists", nickname], context?.previousCategoryData ?? {});
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["CategoryLists", params.id] });
+      queryClient.invalidateQueries({ queryKey: ["CategoryLists", nickname] });
     },
   });
 
   const onAdd = async (index: number) => {
-    if (!userData?.id || params.id !== userData?.nickname) return; // invalid access
+    if (!userData?.id || nickname !== userData?.nickname) return; // invalid access
     const name = window.prompt("Add new sub category name");
     if (!name) return; // no name
     // duplicate name
@@ -52,7 +54,7 @@ export default function CategorySection({ isEdit, categoryList }: Props) {
   };
 
   const onEdit = (index: number) => {
-    if (!userData?.id || params.id !== userData?.nickname) return; // invalid access
+    if (!userData?.id || nickname !== userData?.nickname) return; // invalid access
     const name = window.prompt("Insert new main category name");
     if (!name) return; // no name
     // duplicate name
@@ -67,7 +69,7 @@ export default function CategorySection({ isEdit, categoryList }: Props) {
   };
 
   const onDelete = (index: number) => {
-    if (!userData?.id || params.id !== userData?.nickname) return; // invalid access
+    if (!userData?.id || nickname !== userData?.nickname) return; // invalid access
     if (!window.confirm("If you really want delete this category?")) return; //confirm
     const newCategoryList = categoryList.filter((_, i) => i !== index);
     updateCategory(newCategoryList);

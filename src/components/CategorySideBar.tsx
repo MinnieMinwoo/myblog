@@ -5,13 +5,13 @@ import CategorySideContent from "./CategorySideContent";
 
 export default function CategorySideBar() {
   const params = useParams();
-  const { id } = params;
+  const { nickname } = params;
   const { status, data: categoryList } = useQuery({
-    queryKey: ["CategoryLists", id],
+    queryKey: ["CategoryLists", nickname],
     queryFn: async (): Promise<CategoryMainData[]> => {
       try {
         const data = await (
-          await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/categories/${id}`, {
+          await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/categories/${nickname}`, {
             headers: {
               "Content-Type": "application/json",
             },

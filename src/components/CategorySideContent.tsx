@@ -6,7 +6,7 @@ interface Props {
 
 const CategorySideContent = ({ mainCategory }: Props) => {
   const params = useParams();
-  const { id: nickname } = params;
+  const { nickname } = params;
 
   return (
     <div className="CategorySideContent">

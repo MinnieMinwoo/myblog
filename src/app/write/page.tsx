@@ -63,7 +63,7 @@ export default function WritePage() {
         const postID = params["*"];
         router.push(`/home/${postContent.createdNickname}/${postID}`);
       } else {
-        const result = await fetch(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/posts/${postContent.createdNickname}`, {
+        const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${postContent.createdNickname}`, {
           method: "POST",
           mode: "cors",
           headers: {

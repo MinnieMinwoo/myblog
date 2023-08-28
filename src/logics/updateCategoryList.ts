@@ -4,7 +4,7 @@ export default async function updateCategoryList(
   categoryData: CategoryMainData[]
 ): Promise<CategoryMainData[]> {
   try {
-    const result = await fetch(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/categories/${nickname}`, {
+    const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/categories/${nickname}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

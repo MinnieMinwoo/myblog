@@ -10,7 +10,7 @@ import CategorySideBar from "../../../../components/CategorySideBar";
 
 export default function CategoryPage() {
   const params = useParams();
-  const { id } = params;
+  const { nickname } = params;
 
   const { data: userData } = useQuery({
     queryKey: ["currentUser"],
@@ -18,11 +18,11 @@ export default function CategoryPage() {
   });
 
   const { status, data: categoryList } = useQuery({
-    queryKey: ["CategoryLists", id],
+    queryKey: ["CategoryLists", nickname],
     queryFn: async (): Promise<CategoryMainData[]> => {
       try {
         const data = await (
-          await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/categories/${id}`, {
+          await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/categories/${nickname}`, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -96,7 +96,7 @@ export default function CategoryPage() {
                       Add
                     </button>
                   )}
-                  {id === userData?.nickname && (
+                  {nickname === userData?.nickname && (
                     <button className={`btn btn-primary ${isEdit ? null : "ms-auto"}`} onClick={onEdit}>
                       {isEdit ? "Complete" : "Edit"}
                     </button>

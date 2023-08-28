@@ -20,6 +20,7 @@ export default function PostCategoryCard({
   categoryList,
 }: Props) {
   const params = useParams();
+  const { nickname } = params;
   const { data: userData } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUserData,
@@ -32,16 +33,16 @@ export default function PostCategoryCard({
       else return updateCategoryList(userData.id, userData.nickname, categoryData);
     },
     onMutate: async (newCategoryData: CategoryMainData[]) => {
-      await queryClient.cancelQueries({ queryKey: ["CategoryLists", params.id] });
-      const previousCategoryData = queryClient.getQueryData(["CategoryLists", params.id]);
-      queryClient.setQueryData(["CategoryLists", params.id], () => newCategoryData);
+      await queryClient.cancelQueries({ queryKey: ["CategoryLists", nickname] });
+      const previousCategoryData = queryClient.getQueryData(["CategoryLists", nickname]);
+      queryClient.setQueryData(["CategoryLists", nickname], () => newCategoryData);
       return { previousCategoryData };
     },
     onError: (err, newTodo, context) => {
-      queryClient.setQueryData(["CategoryLists", params.id], context?.previousCategoryData ?? {});
+      queryClient.setQueryData(["CategoryLists", nickname], context?.previousCategoryData ?? {});
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["CategoryLists", params.id] });
+      queryClient.invalidateQueries({ queryKey: ["CategoryLists", nickname] });
     },
   });
 
@@ -54,7 +55,7 @@ export default function PostCategoryCard({
   };
 
   const onNameChange = () => {
-    if (!userData?.id || params.id !== userData?.nickname) return; // invalid access
+    if (!userData?.id || nickname !== userData?.nickname) return; // invalid access
     const newName = window.prompt("Write new category name");
     if (!newName) return; // no input
     const { mainIndex, subIndex } = getIndexNumber();
@@ -73,7 +74,7 @@ export default function PostCategoryCard({
   };
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!userData?.id || params.id !== userData?.nickname) return; // invalid access
+    if (!userData?.id || nickname !== userData?.nickname) return; // invalid access
     const {
       target: { files },
     } = event;
@@ -92,7 +93,7 @@ export default function PostCategoryCard({
   };
 
   const onDelete = () => {
-    if (!userData?.id || params.id !== userData?.nickname) return; // invalid access
+    if (!userData?.id || nickname !== userData?.nickname) return; // invalid access
     if (!window.confirm("If you really want delete this category?")) return; //confirm
     const { mainIndex, subIndex } = getIndexNumber();
     const newCategoryList = structuredClone(categoryList);

@@ -10,12 +10,12 @@ import EditSpan from "./EditSpan";
 import "./page.css";
 
 export default async function PostPage({
-  params: { id: userNickname, posts: postID },
+  params: { nickname, postid },
 }: {
-  params: { id: string; posts: string };
+  params: { nickname: string; postid: string };
 }) {
   const postData: PostDetail = await (
-    await fetch(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/posts/detail/${postID}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/detail/${postid}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -43,9 +43,9 @@ export default async function PostPage({
             ) : null}
           </div>
           {postData?.title ? <h2 className="fs-1 fw-normal mb-2">{postData?.title}</h2> : null}
-          <span>{`by ${userNickname}`}</span>
+          <span>{`by ${nickname}`}</span>
           <span>{` ∙  ${getDate(postData.createdAt)}`}</span>
-          <EditSpan postID={postData.createdBy} />
+          <EditSpan createdBy={postData.createdBy} />
         </div>
       </div>
       <article className="py-3" data-color-mode="light">

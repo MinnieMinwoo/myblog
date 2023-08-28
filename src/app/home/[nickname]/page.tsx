@@ -10,7 +10,7 @@ import CategorySideBar from "../../../components/CategorySideBar";
 
 export default function HomePage() {
   const params = useParams();
-  const { id } = params;
+  const { nickname } = params;
 
   const {
     data: postData,
@@ -20,7 +20,7 @@ export default function HomePage() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["postAllLists", id],
+    queryKey: ["postAllLists", nickname],
     queryFn: async ({ pageParam }): Promise<UserPostData> => {
       const queryString = pageParam
         ? `?${Object.entries(pageParam)
@@ -31,7 +31,7 @@ export default function HomePage() {
 
       try {
         return await (
-          await fetch(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/posts/${id}${queryString}`, {
+          await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${nickname}${queryString}`, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -57,7 +57,7 @@ export default function HomePage() {
             <section className=" mb-3 hstack gap-1">
               <h2 className="fw-bold d-inline-block">Posts</h2>
               <span className="text-primary fs-5">{postData ? `(${String(postData.pages[0].postCount)})` : ""}</span>
-              {userData && id === userData.nickname ? (
+              {userData && nickname === userData.nickname ? (
                 <Link href="/write" role="button" className="btn btn-outline-primary ms-auto">
                   Write
                 </Link>
