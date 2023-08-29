@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import getCurrentUserData from "logics/getCurrentUserData";
+import getCurrentUserToken from "logics/getCurrentUserToken";
 import { useParams, useRouter } from "next/navigation";
 
 export default function EditSpan({ createdBy }: { createdBy: string }) {
@@ -23,15 +24,13 @@ export default function EditSpan({ createdBy }: { createdBy: string }) {
   const onDelete = async () => {
     if (!window.confirm("If you want to delete this post?")) return;
     try {
+      const token = await getCurrentUserToken();
       await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/detail/${postid}`, {
         method: "DELETE",
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          id: userData?.id,
-          nickname: userData?.nickname,
-        }),
       });
       router.push(`/home/${userData?.nickname}`);
     } catch (error) {

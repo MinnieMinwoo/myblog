@@ -1,5 +1,6 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { storageClient } from "logics/aws";
+import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 import { v4 as uuid } from "uuid";
 
@@ -16,6 +17,8 @@ export async function POST(request: Request) {
   }
 
   try {
+    await verifyToken(request.headers.get("authorization"));
+
     const imageArrayBuffer = await image.arrayBuffer();
     const imageBuffer = Buffer.from(imageArrayBuffer);
     const fileNameList = image.name.split(".");
@@ -35,8 +38,16 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  } catch (error) {
+    console.log(error);
+    if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
+    switch (error.message) {
+      case "Invalid token type":
+        return NextResponse.json({ error: "Invalid token type." }, { status: 401 });
+      case "Get contaminated token":
+        return NextResponse.json({ error: "Get contaminated token." }, { status: 403 });
+      default:
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
   }
 }

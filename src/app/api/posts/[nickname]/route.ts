@@ -1,5 +1,6 @@
 import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { dbClient } from "logics/aws";
+import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 import { v4 as uuid } from "uuid";
 
@@ -80,6 +81,8 @@ export async function POST(request: Request, { params: { nickname } }: { params:
   const postData = await request.json();
 
   try {
+    const userID = await verifyToken(request.headers.get("authorization"));
+
     const userGetCommand = new QueryCommand({
       TableName: "myblogUser-myblog",
       IndexName: "NicknameSort",
@@ -104,7 +107,7 @@ export async function POST(request: Request, { params: { nickname } }: { params:
 
     const { id } = userIDList[0];
     // Throw error code when client id is not same
-    if (postData.createdBy !== id) {
+    if (userID !== id || postData.createdBy !== id) {
       console.log("invalid querystring");
       return NextResponse.json(
         {
@@ -129,6 +132,14 @@ export async function POST(request: Request, { params: { nickname } }: { params:
     return NextResponse.json({ postID: postID }, { status: 201 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
+    switch (error.message) {
+      case "Invalid token type":
+        return NextResponse.json({ error: "Invalid token type." }, { status: 401 });
+      case "Get contaminated token":
+        return NextResponse.json({ error: "Get contaminated token." }, { status: 403 });
+      default:
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
   }
 }

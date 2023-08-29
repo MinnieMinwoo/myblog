@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { DeleteCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { dbClient } from "logics/aws";
 import { revalidatePath } from "next/cache";
+import verifyToken from "logics/verifyToken";
 
 export async function GET(request: Request, { params: { postid } }: { params: { postid: string } }) {
   // logging
@@ -36,9 +37,10 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
   // logging
   console.log(request);
 
-  const postData = await request.json();
-
   try {
+    const userID = await verifyToken(request.headers.get("authorization"));
+    const postData = await request.json();
+
     const postGetCommand = new QueryCommand({
       TableName: "myblogPosts-myblog",
       KeyConditionExpression: "id = :id",
@@ -59,6 +61,16 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
       );
     }
 
+    // Throw error code when user does not same
+    if (userID !== Items[0].createdBy) {
+      return NextResponse.json(
+        {
+          message: "Attempting to modify other people's information.",
+        },
+        { status: 403 }
+      );
+    }
+
     const postCommand = new PutCommand({
       TableName: "myblogPosts-myblog",
       Item: {
@@ -71,7 +83,15 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
     return NextResponse.json({ postID: postData.id }, { status: 201 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
+    switch (error.message) {
+      case "Invalid token type":
+        return NextResponse.json({ error: "Invalid token type." }, { status: 401 });
+      case "Get contaminated token":
+        return NextResponse.json({ error: "Get contaminated token." }, { status: 403 });
+      default:
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
   }
 }
 
@@ -80,33 +100,30 @@ export async function DELETE(request: Request, { params: { postid } }: { params:
   console.log(request);
 
   try {
-    const { id: userID, nickname } = await request.json();
+    const userID = await verifyToken(request.headers.get("authorization"));
 
-    const userGetCommand = new QueryCommand({
-      TableName: "myblogUser-myblog",
-      IndexName: "NicknameSort",
-      KeyConditionExpression: "nickname = :nickname",
+    const postGetCommand = new QueryCommand({
+      TableName: "myblogPosts-myblog",
+      KeyConditionExpression: "id = :id",
       ExpressionAttributeValues: {
-        ":nickname": nickname,
+        ":id": postid,
       },
-      ProjectionExpression: "id",
     });
-    const { Count: userCount, Items: userIDList } = await dbClient.send(userGetCommand);
-    // Throw error code when user not exists
-    if (userCount === 0 || !userIDList) {
-      console.log("invalid querystring");
+
+    const { Count, Items } = await dbClient.send(postGetCommand);
+    console.log(Items);
+    // Throw error code when post not exists
+    if (Count === 0 || !Items) {
       return NextResponse.json(
         {
-          message: "User not exists in database.",
+          message: "Post not exists in database.",
         },
         { status: 400 }
       );
     }
 
-    const { id } = userIDList[0];
-    // Throw error code when client id is not same
-    if (userID !== id) {
-      console.log("invalid querystring");
+    // Throw error code when user does not same
+    if (userID !== Items[0].createdBy) {
       return NextResponse.json(
         {
           message: "Attempting to modify other people's information.",
@@ -124,6 +141,14 @@ export async function DELETE(request: Request, { params: { postid } }: { params:
     await dbClient.send(postDeleteCommand);
     return NextResponse.json({ id: postid }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
+    switch (error.message) {
+      case "Invalid token type":
+        return NextResponse.json({ error: "Invalid token type." }, { status: 401 });
+      case "Get contaminated token":
+        return NextResponse.json({ error: "Get contaminated token." }, { status: 403 });
+      default:
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
   }
 }

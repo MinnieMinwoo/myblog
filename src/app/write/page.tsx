@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import EditorLoading from "./loading";
+import getCurrentUserToken from "logics/getCurrentUserToken";
 
 const OnWrite = dynamic(() => import("./OnWrite"), { ssr: false, loading: () => <EditorLoading /> });
 const OnPreview = dynamic(() => import("./OnPreview"));
@@ -76,10 +77,12 @@ export default function WritePage() {
     const id = searchParams.get("id");
     setIsSubmit(true);
     try {
+      const token = await getCurrentUserToken();
       if (id) {
         await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/detail/${id}`, {
           method: "PUT",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(postContent),
@@ -92,6 +95,7 @@ export default function WritePage() {
         const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${postContent.createdNickname}`, {
           method: "POST",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(postContent),

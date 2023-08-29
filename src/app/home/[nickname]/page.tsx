@@ -7,6 +7,7 @@ import Link from "next/link";
 import PostPagination from "components/PostPagination";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import CategorySideBar from "../../../components/CategorySideBar";
+import getCurrentUserToken from "logics/getCurrentUserToken";
 
 export default function HomePage() {
   const params = useParams();
@@ -30,6 +31,7 @@ export default function HomePage() {
         : "";
 
       try {
+        const token = await getCurrentUserToken();
         return await (
           await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${nickname}${queryString}`, {
             headers: {

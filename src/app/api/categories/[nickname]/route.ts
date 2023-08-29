@@ -1,5 +1,6 @@
 import { QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { dbClient } from "logics/aws";
+import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, { params: { nickname } }: { params: { nickname: string } }) {
@@ -37,9 +38,11 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
 export async function PUT(request: Request, { params: { nickname } }: { params: { nickname: string } }) {
   //logging
   console.log(request);
-  const { id, category: categoryData } = await request.json();
+  const { category: categoryData } = await request.json();
 
   try {
+    const userID = await verifyToken(request.headers.get("authorization"));
+
     const userQueryCommand = new QueryCommand({
       TableName: "myblogUser-myblog",
       IndexName: "NicknameSort",
@@ -62,8 +65,7 @@ export async function PUT(request: Request, { params: { nickname } }: { params: 
       );
     }
 
-    const userID = Items[0].id;
-    if (id !== userID) {
+    if (userID !== Items[0].id) {
       return NextResponse.json(
         {
           message: "Attempting to modify other people's information.",
