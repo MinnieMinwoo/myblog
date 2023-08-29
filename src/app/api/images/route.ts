@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   if (!image || !("arrayBuffer" in image)) {
     return NextResponse.json(
       {
-        message: "No image data",
+        message: ErrorMessage.NO_IMAGE_DATA,
       },
       { status: 400 }
     );
@@ -42,12 +42,14 @@ export async function POST(request: Request) {
     console.log(error);
     if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
     switch (error.message) {
-      case "Invalid token type":
-        return NextResponse.json({ error: "Invalid token type." }, { status: 401 });
-      case "Get contaminated token":
-        return NextResponse.json({ error: "Get contaminated token." }, { status: 403 });
+      case ErrorMessage.INVALID_TOKEN_DATA:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+      case ErrorMessage.INVALID_TOKEN_TYPE:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+      case ErrorMessage.TOKEN_CONTAMINATED:
+        return NextResponse.json({ error: ErrorMessage.TOKEN_CONTAMINATED }, { status: 401 });
       default:
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
     }
   }
 }

@@ -50,10 +50,8 @@ Make my own blog project.
 - Typescript
 - React-Query
 - Bootstrap
-- react-md-editor
 - AWS
   - Amplify
-  - API Gateway
   - Cognito
   - DynamoDB
   - Lambda
@@ -62,5 +60,5 @@ Make my own blog project.
 
 ## demonstration
 
-[API](https://minnies-organization.gitbook.io/myblog-api/myblog-api/images)
+[API](https://minnies-organization.gitbook.io/myblog-api/)
 [Link](https://myblog-backend.firebaseapp.com//)

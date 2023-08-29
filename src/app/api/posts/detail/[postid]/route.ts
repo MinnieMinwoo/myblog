@@ -22,14 +22,14 @@ export async function GET(request: Request, { params: { postid } }: { params: { 
     if (Count === 0 || !Items) {
       return NextResponse.json(
         {
-          message: "Post not exists in database.",
+          error: ErrorMessage.POST_NOT_EXISTS,
         },
-        { status: 400 }
+        { status: 404 }
       );
     } else return NextResponse.json(Items[0]);
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -55,9 +55,9 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
     if (Count === 0 || !Items) {
       return NextResponse.json(
         {
-          message: "Post not exists in database.",
+          error: ErrorMessage.POST_NOT_EXISTS,
         },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
@@ -65,7 +65,7 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
     if (userID !== Items[0].createdBy) {
       return NextResponse.json(
         {
-          message: "Attempting to modify other people's information.",
+          error: ErrorMessage.MODIFY_OTHER_USER,
         },
         { status: 403 }
       );
@@ -85,12 +85,14 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
     console.log(error);
     if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
     switch (error.message) {
-      case "Invalid token type":
-        return NextResponse.json({ error: "Invalid token type." }, { status: 401 });
-      case "Get contaminated token":
-        return NextResponse.json({ error: "Get contaminated token." }, { status: 403 });
+      case ErrorMessage.INVALID_TOKEN_DATA:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+      case ErrorMessage.INVALID_TOKEN_TYPE:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+      case ErrorMessage.TOKEN_CONTAMINATED:
+        return NextResponse.json({ error: ErrorMessage.TOKEN_CONTAMINATED }, { status: 401 });
       default:
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
     }
   }
 }
@@ -116,9 +118,9 @@ export async function DELETE(request: Request, { params: { postid } }: { params:
     if (Count === 0 || !Items) {
       return NextResponse.json(
         {
-          message: "Post not exists in database.",
+          error: ErrorMessage.POST_NOT_EXISTS,
         },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
@@ -126,7 +128,7 @@ export async function DELETE(request: Request, { params: { postid } }: { params:
     if (userID !== Items[0].createdBy) {
       return NextResponse.json(
         {
-          message: "Attempting to modify other people's information.",
+          error: ErrorMessage.MODIFY_OTHER_USER,
         },
         { status: 403 }
       );
@@ -139,16 +141,18 @@ export async function DELETE(request: Request, { params: { postid } }: { params:
       },
     });
     await dbClient.send(postDeleteCommand);
-    return NextResponse.json({ id: postid }, { status: 201 });
+    return NextResponse.json({ id: postid }, { status: 200 });
   } catch (error) {
     if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
     switch (error.message) {
-      case "Invalid token type":
-        return NextResponse.json({ error: "Invalid token type." }, { status: 401 });
-      case "Get contaminated token":
-        return NextResponse.json({ error: "Get contaminated token." }, { status: 403 });
+      case ErrorMessage.INVALID_TOKEN_DATA:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+      case ErrorMessage.INVALID_TOKEN_TYPE:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+      case ErrorMessage.TOKEN_CONTAMINATED:
+        return NextResponse.json({ error: ErrorMessage.TOKEN_CONTAMINATED }, { status: 401 });
       default:
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
     }
   }
 }

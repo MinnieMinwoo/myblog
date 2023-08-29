@@ -30,9 +30,9 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
     if (userCount === 0 || !userIDList) {
       return NextResponse.json(
         {
-          message: "User not exists in database.",
+          message: ErrorMessage.USER_NOT_EXISTS,
         },
-        { status: 400 }
+        { status: 404 }
       );
     }
     const { id: idString } = userIDList[0];
@@ -99,9 +99,9 @@ export async function POST(request: Request, { params: { nickname } }: { params:
       console.log("invalid querystring");
       return NextResponse.json(
         {
-          message: "User not exists in database.",
+          message: ErrorMessage.USER_NOT_EXISTS,
         },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
@@ -111,7 +111,7 @@ export async function POST(request: Request, { params: { nickname } }: { params:
       console.log("invalid querystring");
       return NextResponse.json(
         {
-          message: "Attempting to modify other people's information.",
+          message: ErrorMessage.MODIFY_OTHER_USER,
         },
         { status: 403 }
       );
@@ -134,12 +134,14 @@ export async function POST(request: Request, { params: { nickname } }: { params:
     console.log(error);
     if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
     switch (error.message) {
-      case "Invalid token type":
-        return NextResponse.json({ error: "Invalid token type." }, { status: 401 });
-      case "Get contaminated token":
-        return NextResponse.json({ error: "Get contaminated token." }, { status: 403 });
+      case ErrorMessage.INVALID_TOKEN_DATA:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+      case ErrorMessage.INVALID_TOKEN_TYPE:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+      case ErrorMessage.TOKEN_CONTAMINATED:
+        return NextResponse.json({ error: ErrorMessage.TOKEN_CONTAMINATED }, { status: 401 });
       default:
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
     }
   }
 }

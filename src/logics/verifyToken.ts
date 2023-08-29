@@ -1,9 +1,11 @@
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 
 export default async function verifyToken(tokenString: string | null) {
-  const [tokenType, tokenText] = tokenString?.split(" ") ?? ["", ""];
+  if (!tokenString || tokenString.split(" ").length !== 2) throw new Error(ErrorMessage.INVALID_TOKEN_DATA);
+
+  const [tokenType, tokenText] = tokenString.split(" ");
   if (tokenType !== "Bearer") {
-    throw new Error("Invalid token type");
+    throw new Error(ErrorMessage.INVALID_TOKEN_TYPE);
   }
   const verifier = CognitoJwtVerifier.create({
     userPoolId: "ap-northeast-2_8KKDIr52H",
@@ -18,6 +20,6 @@ export default async function verifyToken(tokenString: string | null) {
     return userID;
   } catch (error) {
     console.log(error);
-    throw new Error("Get contaminated token");
+    throw new Error(ErrorMessage.TOKEN_CONTAMINATED);
   }
 }
