@@ -8,15 +8,13 @@ export default async function verifyToken(tokenString: string | null) {
     throw new Error(ErrorMessage.INVALID_TOKEN_TYPE);
   }
   const verifier = CognitoJwtVerifier.create({
-    userPoolId: "ap-northeast-2_8KKDIr52H",
+    userPoolId: process.env.COGNITO_USER_POOL_ID!,
     tokenUse: "access",
-    clientId: null,
+    clientId: [process.env.COGNITO_CLIENT_WEB_ID!, process.env.COGNITO_CLIENT_APP_ID!],
   });
 
   try {
-    const { username: userID } = await verifier.verify(
-      tokenText // the JWT as string
-    );
+    const { username: userID } = await verifier.verify(tokenText);
     return userID;
   } catch (error) {
     console.log(error);

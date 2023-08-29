@@ -3,6 +3,7 @@ import { DeleteCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk
 import { dbClient } from "logics/aws";
 import { revalidatePath } from "next/cache";
 import verifyToken from "logics/verifyToken";
+import { ErrorMessage } from "enum";
 
 export async function GET(request: Request, { params: { postid } }: { params: { postid: string } }) {
   // logging

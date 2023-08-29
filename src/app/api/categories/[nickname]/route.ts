@@ -1,4 +1,5 @@
 import { QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { ErrorMessage } from "enum";
 import { dbClient } from "logics/aws";
 import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";

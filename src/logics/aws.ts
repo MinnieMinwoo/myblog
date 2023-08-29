@@ -1,6 +1,12 @@
+import { CognitoUserPool } from "amazon-cognito-identity-js";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { S3Client } from "@aws-sdk/client-s3";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+
+export const userPool = new CognitoUserPool({
+  UserPoolId: process.env.COGNITO_USER_POOL_ID!,
+  ClientId: process.env.COGNITO_CLIENT_WEB_ID!,
+});
 
 const ddbClient = new DynamoDBClient({
   credentials: {
