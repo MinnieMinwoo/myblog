@@ -61,14 +61,6 @@
     "categories": {
       "function": {
         "myblogUser": {},
-        "myblogVerifyNickname": {
-          "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
-          "s3Key": "amplify-builds/myblogVerifyNickname-497a6e31346f545a5852-build.zip"
-        },
-        "amplifySaveUserData": {
-          "deploymentBucketName": "amplify-myblog-myblog-153228-deployment",
-          "s3Key": "amplify-builds/amplifySaveUserData-396f374873645a635759-build.zip"
-        },
         "myblogPostInfo": {},
         "myblogPostDetail": {}
       },

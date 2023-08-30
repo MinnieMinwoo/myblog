@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import signupEmail from "./signupEmail";
 import { useRouter } from "next/navigation";
 
 export default function AuthWithEmail() {
@@ -39,7 +38,13 @@ export default function AuthWithEmail() {
       picture: "",
     };
     try {
-      await signupEmail(userData);
+      await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/signup/email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
       router.push(`/auth/verification?email=${email}`);
     } catch (error) {
       console.log(error);

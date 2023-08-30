@@ -1,11 +1,15 @@
+import parseJwt from "./parseJwt";
+import revalidateToken from "./revalidateToken";
+
 export default async function getCurrentUserData() {
+  const date = new Date();
+
   try {
-    const { Auth } = await import("aws-amplify");
-    const {
-      attributes: { email, nickname },
-      username,
-    } = await Auth.currentUserInfo();
-    const userData: UserInfo = { email: email, nickname: nickname, id: username };
+    await revalidateToken();
+    let idToken = localStorage.getItem("idToken");
+    if (!idToken) return null;
+    const { email, nickname, sub: username } = parseJwt(idToken);
+    const userData: UserInfo = { email: email, nickname, id: username };
     return userData;
   } catch (error) {
     console.log(error);

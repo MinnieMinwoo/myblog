@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import signinEmail from "./signinEmail";
-import { errorCode } from "./emailErrorCode";
 import { useRouter } from "next/navigation";
 
-const AuthWithEmail = () => {
+export default function AuthWithEmail() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
@@ -26,18 +24,26 @@ const AuthWithEmail = () => {
       password: password,
     };
     try {
-      const user = await signinEmail(userData);
-      const {
-        attributes: { nickname },
-      } = user;
+      const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/signin/email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+      console.log(result.status);
+      if (result.status === 406) {
+        router.push(`/auth/verification?email=${email}`);
+        return;
+      } else if (!result.ok) throw new Error(result.statusText);
+      const { nickname, idToken, accessToken, refreshToken } = await result.json();
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("idToken", idToken);
       router.push(`/home/${nickname}`);
     } catch (error) {
       console.log(error);
-      console.log(error instanceof Error);
-      console.log((error as any).name === errorCode.notVerify);
-      if (error instanceof Error && error.name === errorCode.notVerify) {
-        router.push(`/auth/verification?email=${email}`);
-      } else window.alert("Login Error");
+      window.alert("Login Error");
     }
   };
 
@@ -80,6 +86,4 @@ const AuthWithEmail = () => {
       </form>
     </div>
   );
-};
-
-export default AuthWithEmail;
+}

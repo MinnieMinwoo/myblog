@@ -1,4 +1,5 @@
 import { CognitoJwtVerifier } from "aws-jwt-verify";
+import { ErrorMessage } from "enum";
 
 export default async function verifyToken(tokenString: string | null) {
   if (!tokenString || tokenString.split(" ").length !== 2) throw new Error(ErrorMessage.INVALID_TOKEN_DATA);
