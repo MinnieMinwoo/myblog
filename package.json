@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --silent --verbose",
+    "test": "jest --verbose --watch",
+    "silent_test": "jest --silent --verbose --watch",
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {

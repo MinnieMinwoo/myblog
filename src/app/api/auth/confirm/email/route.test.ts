@@ -24,7 +24,7 @@ describe("/confirm/email test", () => {
         case "testuser@test.com":
           return Promise.resolve();
         case "hacked@test.com":
-          return Promise.reject(new TooManyFailedAttemptsException(errorConstructorValue));
+          return Promise.reject(new TooManyRequestsException(errorConstructorValue));
         case "toomanyFails@test.com":
           return Promise.reject(new TooManyFailedAttemptsException(errorConstructorValue));
         default:
@@ -42,7 +42,7 @@ describe("/confirm/email test", () => {
             ? Promise.reject(new ExpiredCodeException(errorConstructorValue))
             : Promise.reject(new CodeMismatchException(errorConstructorValue));
         case "hacked@test.com":
-          return Promise.reject(new TooManyFailedAttemptsException(errorConstructorValue));
+          return Promise.reject(new TooManyRequestsException(errorConstructorValue));
         case "toomanyFails@test.com":
           return Promise.reject(new TooManyFailedAttemptsException(errorConstructorValue));
         default:
@@ -52,6 +52,10 @@ describe("/confirm/email test", () => {
   };
 
   authClient.send = jest.fn().mockImplementation(VerifyFunction);
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
 
   describe("GET method test", () => {
     it("204 response", async () => {
@@ -108,12 +112,21 @@ describe("/confirm/email test", () => {
 
       const requestTwo = new Request(`http://localhost:3000/api/auth/confirm/email`, {
         method: "POST",
-        body: JSON.stringify({
-          verificationCode: "123456",
-        }),
       });
       const { status: statusTwo } = await POST(requestTwo);
       expect(statusTwo).toBe(400);
+    });
+
+    it("401 response", async () => {
+      const request = new Request(`http://localhost:3000/api/auth/confirm/email`, {
+        method: "POST",
+        body: JSON.stringify({
+          email: "testuser@test.com",
+          verificationCode: "135790",
+        }),
+      });
+      const { status } = await POST(request);
+      expect(status).toBe(401);
     });
 
     it("403 response", async () => {
@@ -121,7 +134,7 @@ describe("/confirm/email test", () => {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
-          verificationCode: "135790",
+          verificationCode: "234567",
         }),
       });
       const { status } = await POST(request);
@@ -138,18 +151,6 @@ describe("/confirm/email test", () => {
       });
       const { status } = await POST(request);
       expect(status).toBe(404);
-    });
-
-    it("406 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/confirm/email`, {
-        method: "POST",
-        body: JSON.stringify({
-          email: "testuser@test.com",
-          verificationCode: "234567",
-        }),
-      });
-      const { status } = await POST(request);
-      expect(status).toBe(406);
     });
 
     it("429 response", async () => {

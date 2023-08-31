@@ -18,7 +18,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
+    if (!request.body) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     const { email, password } = await request.json();
+    if (!email || !password) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     const signInCommand = new InitiateAuthCommand({
       AuthFlow: "USER_PASSWORD_AUTH",
       AuthParameters: {
@@ -27,6 +29,7 @@ export async function POST(request: Request) {
       },
       ClientId: process.env.COGNITO_CLIENT_WEB_ID!,
     });
+
     const result = await authClient.send(signInCommand);
     if (!result || !result.AuthenticationResult)
       return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
@@ -50,14 +53,19 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.log(error);
-    if (error instanceof UserNotFoundException)
-      return NextResponse.json({ error: ErrorMessage.USER_NOT_EXISTS }, { status: 400 });
-    if (error instanceof NotAuthorizedException)
-      return NextResponse.json({ error: ErrorMessage.USER_NOT_VERIFIED }, { status: 403 });
-    if (error instanceof UserNotConfirmedException)
-      return NextResponse.json({ error: ErrorMessage.USER_VERIFICATION_REQUIRED }, { status: 406 });
-    else if (error instanceof TooManyRequestsException)
-      return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
-    else return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    if (!(error instanceof Error))
+      return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    switch (error.name) {
+      case "NotAuthorizedException":
+        return NextResponse.json({ error: ErrorMessage.USER_NOT_VERIFIED }, { status: 401 });
+      case "UserNotConfirmedException":
+        return NextResponse.json({ error: ErrorMessage.USER_VERIFICATION_REQUIRED }, { status: 403 });
+      case "UserNotFoundException":
+        return NextResponse.json({ error: ErrorMessage.USER_NOT_EXISTS }, { status: 404 });
+      case "TooManyRequestsException":
+        return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
+      default:
+        return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
+    }
   }
 }

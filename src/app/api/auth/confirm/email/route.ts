@@ -45,6 +45,7 @@ export async function GET(request: Request) {
  */
 export async function POST(request: Request) {
   try {
+    if (!request.body) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     const { email, verificationCode } = await request.json();
     if (!email || !verificationCode) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     const confirmCommand = new ConfirmSignUpCommand({
@@ -61,11 +62,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
     switch (error.name) {
       case "CodeMismatchException":
-        return NextResponse.json({ error: ErrorMessage.INVALID_VERIFICATION_CODE }, { status: 403 });
+        return NextResponse.json({ error: ErrorMessage.INVALID_VERIFICATION_CODE }, { status: 401 });
+      case "ExpiredCodeException":
+        return NextResponse.json({ error: ErrorMessage.VERIFICATION_CODE_EXPIRED }, { status: 403 });
       case "UserNotFoundException":
         return NextResponse.json({ error: ErrorMessage.USER_NOT_EXISTS }, { status: 404 });
-      case "ExpiredCodeException":
-        return NextResponse.json({ error: ErrorMessage.VERIFICATION_CODE_EXPIRED }, { status: 406 });
       case "TooManyFailedAttemptsException":
         return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
       case "TooManyRequestsException":
