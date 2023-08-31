@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 /**
  * resend verification email code.
  *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/ResendConfirmationCodeCommand/
  */
 export async function GET(request: Request) {
   try {
@@ -17,11 +18,14 @@ export async function GET(request: Request) {
       ClientId: process.env.COGNITO_CLIENT_WEB_ID!,
     });
     await authClient.send(confirmCommand);
-    return new NextResponse("", { status: 204 });
+    return new NextResponse(undefined, { status: 204 });
   } catch (error) {
+    console.log(error);
     if (!(error instanceof Error))
       return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
     switch (error.name) {
+      case "UserNotFoundException":
+        return NextResponse.json({ error: ErrorMessage.USER_NOT_EXISTS }, { status: 404 });
       case "TooManyFailedAttemptsException":
         return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
       case "TooManyRequestsException":
@@ -42,6 +46,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const { email, verificationCode } = await request.json();
+    if (!email || !verificationCode) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     const confirmCommand = new ConfirmSignUpCommand({
       Username: email,
       ConfirmationCode: verificationCode,

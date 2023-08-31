@@ -11,7 +11,7 @@ export enum ErrorMessage {
   INVALID_VERIFICATION_CODE = "Verification code does not correct",
   NICKNAME_DUPLICATED = "User nickname duplicated",
   POST_NOT_EXISTS = "Post not exists in database",
-  TOO_MANY_REQUEST = "Try too many requests",
+  TOO_MANY_REQUEST = "Try to send too many requests",
   INTERNAL_SERVER_ERROR = "Internal server error",
   DB_CONNECTION_ERROR = "Connection error to database",
   GATEWAY_ERROR = "Bad gateway",

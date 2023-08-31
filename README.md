@@ -46,8 +46,8 @@ Make my own blog project.
 
 ## project stack
 
+- TypeScript
 - Next.js
-- Typescript
 - React-Query
 - Bootstrap
 - AWS
@@ -57,6 +57,7 @@ Make my own blog project.
   - Lambda
   - S3
   - Hosting
+- Jest
 
 ## demonstration
 
