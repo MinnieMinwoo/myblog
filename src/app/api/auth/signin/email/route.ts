@@ -1,10 +1,4 @@
-import {
-  InitiateAuthCommand,
-  NotAuthorizedException,
-  TooManyRequestsException,
-  UserNotConfirmedException,
-  UserNotFoundException,
-} from "@aws-sdk/client-cognito-identity-provider";
+import { InitiateAuthCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { ErrorMessage } from "enum";
 import { authClient } from "logics/aws";
 import parseJwt from "logics/parseJwt";
@@ -20,7 +14,7 @@ export async function POST(request: Request) {
   try {
     if (!request.body) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     const { email, password } = await request.json();
-    if (!email || !password) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+    if (!email || !password) return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
     const signInCommand = new InitiateAuthCommand({
       AuthFlow: "USER_PASSWORD_AUTH",
       AuthParameters: {
@@ -62,6 +56,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: ErrorMessage.USER_VERIFICATION_REQUIRED }, { status: 403 });
       case "UserNotFoundException":
         return NextResponse.json({ error: ErrorMessage.USER_NOT_EXISTS }, { status: 404 });
+
       case "TooManyRequestsException":
         return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
       default:

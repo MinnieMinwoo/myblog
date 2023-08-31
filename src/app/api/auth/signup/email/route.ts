@@ -1,11 +1,7 @@
 import { SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { PutItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
 import { ErrorMessage } from "enum";
 import { authClient, dbClient } from "logics/aws";
-const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { DynamoDBDocumentClient, QueryCommand } = require("@aws-sdk/lib-dynamodb");
-const ddbClient = new DynamoDBClient({ region: "ap-northeast-2" });
-const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 import { NextResponse } from "next/server";
 
 /**
@@ -15,7 +11,10 @@ import { NextResponse } from "next/server";
  */
 export async function POST(request: Request) {
   try {
-    const { email, password, name, nickname, picture } = await request.json();
+    if (!request.body) return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
+    const { email, password, name, nickname } = await request.json();
+    if (!email || !password || !name || !nickname)
+      return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
 
     const userGetCommand = new QueryCommand({
       TableName: "myblogUser-myblog",
@@ -27,9 +26,8 @@ export async function POST(request: Request) {
       ProjectionExpression: "id",
     });
 
-    const { Count } = await ddbDocClient.send(userGetCommand);
-
-    if (Count > 0) return NextResponse.json({ error: ErrorMessage.NICKNAME_DUPLICATED }, { status: 406 });
+    const { Count } = await dbClient.send(userGetCommand);
+    if (Count !== 0) return NextResponse.json({ error: ErrorMessage.DUPLICATED_NICKNAME }, { status: 403 });
 
     const userSignupCommand = new SignUpCommand({
       Username: email,
@@ -40,12 +38,12 @@ export async function POST(request: Request) {
           Value: name,
         },
         {
-          Name: "name",
+          Name: "nickname",
           Value: nickname,
         },
         {
           Name: "picture",
-          Value: picture,
+          Value: "",
         },
       ],
       ClientId: process.env.COGNITO_CLIENT_WEB_ID!,
@@ -69,6 +67,21 @@ export async function POST(request: Request) {
     return new NextResponse(undefined, { status: 204 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    if (!(error instanceof Error))
+      return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    switch (error.name) {
+      /*
+       Username should be an email.
+       1 validation error detected: Value at 'password' failed to satisfy constraint: some message
+      */
+      case "InvalidParameterException":
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      case "UsernameExistsException":
+        return NextResponse.json({ error: ErrorMessage.DUPLICATED_EMAIL }, { status: 403 });
+      case "TooManyRequestsException":
+        return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
+      default:
+        return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
+    }
   }
 }

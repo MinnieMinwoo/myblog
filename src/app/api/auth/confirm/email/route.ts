@@ -64,7 +64,7 @@ export async function POST(request: Request) {
       case "CodeMismatchException":
         return NextResponse.json({ error: ErrorMessage.INVALID_VERIFICATION_CODE }, { status: 401 });
       case "ExpiredCodeException":
-        return NextResponse.json({ error: ErrorMessage.VERIFICATION_CODE_EXPIRED }, { status: 403 });
+        return NextResponse.json({ error: ErrorMessage.EXPIRED_VERIFICATION_CODE }, { status: 403 });
       case "UserNotFoundException":
         return NextResponse.json({ error: ErrorMessage.USER_NOT_EXISTS }, { status: 404 });
       case "TooManyFailedAttemptsException":

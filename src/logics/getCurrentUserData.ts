@@ -8,7 +8,7 @@ export default async function getCurrentUserData() {
     await revalidateToken();
     let idToken = localStorage.getItem("idToken");
     if (!idToken) return null;
-    const { email, nickname, sub: username } = parseJwt(idToken);
+    const { email, nickname, sub: username } = await parseJwt(idToken);
     const userData: UserInfo = { email: email, nickname, id: username };
     return userData;
   } catch (error) {

@@ -139,8 +139,8 @@ export async function POST(request: Request, { params: { nickname } }: { params:
         return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
       case ErrorMessage.INVALID_TOKEN_TYPE:
         return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
-      case ErrorMessage.TOKEN_CONTAMINATED:
-        return NextResponse.json({ error: ErrorMessage.TOKEN_CONTAMINATED }, { status: 401 });
+      case ErrorMessage.CONTAMINATED_TOKEN:
+        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
       default:
         return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
     }

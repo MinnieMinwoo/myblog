@@ -19,6 +19,6 @@ export default async function verifyToken(tokenString: string | null) {
     return userID;
   } catch (error) {
     console.log(error);
-    throw new Error(ErrorMessage.TOKEN_CONTAMINATED);
+    throw new Error(ErrorMessage.CONTAMINATED_TOKEN);
   }
 }

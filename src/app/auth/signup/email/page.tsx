@@ -35,7 +35,6 @@ export default function AuthWithEmail() {
       password: password,
       name: name,
       nickname: nickname,
-      picture: "",
     };
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/signup/email`, {

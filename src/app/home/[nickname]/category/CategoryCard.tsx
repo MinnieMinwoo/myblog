@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import getCurrentUserData from "logics/getCurrentUserData";
+import imageUpload from "logics/imageUpload";
 import updateCategoryList from "logics/updateCategoryList";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useRef } from "react";
 
@@ -73,14 +75,14 @@ export default function PostCategoryCard({
     if (imageRef.current) imageRef.current.click();
   };
 
-  const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!userData?.id || nickname !== userData?.nickname) return; // invalid access
     const {
       target: { files },
     } = event;
     if (!files) throw console.log("no image files");
     try {
-      const uploadURL = ""; //todo: upload img
+      const uploadURL = await imageUpload(files[0]); //todo: upload img
 
       const { mainIndex, subIndex } = getIndexNumber();
       const newCategoryList = structuredClone(categoryList);
@@ -107,7 +109,13 @@ export default function PostCategoryCard({
     <div className="PostCategoryCard p-2 col col-12 col-md-6 col-xl-4">
       <div className="card">
         <a className="ratio ratio-16x9" href={`${mainCategoryName}/${subCategoryName}`}>
-          <img className="card-img-top img-fluid object-fit-cover" src={thumbnailImageURL} alt="Thumbnail" />
+          <Image
+            className="card-img-top img-fluid object-fit-cover"
+            src={!!thumbnailImageURL ? thumbnailImageURL : "/altThumbnail.jpg"}
+            alt="Thumbnail"
+            width={500}
+            height={500}
+          />
         </a>
         <div className="card-body">
           <a
