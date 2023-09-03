@@ -52,20 +52,17 @@ export default function AuthWithEmail() {
       <form onSubmit={onSubmit}>
         <div className="vstack gap-3">
           <div>
-            <label className="form-label">Email address</label>
-            <input
-              className="form-control"
-              name="email"
-              type="text"
-              placeholder="email"
-              value={email}
-              required
-              onChange={onChange}
-            />
+            <label className="form-label" htmlFor="email">
+              Email address
+            </label>
+            <input id="email" className="form-control" name="email" type="text" placeholder="email" value={email} required onChange={onChange} />
           </div>
           <div>
-            <label className="form-label">Password</label>
+            <label className="form-label" htmlFor="password">
+              Password
+            </label>
             <input
+              id="password"
               className="form-control"
               name="password"
               type="password"

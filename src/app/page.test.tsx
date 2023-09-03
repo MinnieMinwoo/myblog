@@ -3,7 +3,7 @@
  */
 
 import "@testing-library/jest-dom";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import Home from "./page";
 
 jest.mock("./StartButton");
