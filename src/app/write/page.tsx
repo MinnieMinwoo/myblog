@@ -138,6 +138,7 @@ export default function WritePage() {
       <OnPreview
         isEdit={Boolean(params["*"])}
         isPreview={isPreview}
+        nickname={userData?.nickname ?? ""}
         postContent={postContent}
         setPostContent={setPostContent}
         onPreview={onPreview}

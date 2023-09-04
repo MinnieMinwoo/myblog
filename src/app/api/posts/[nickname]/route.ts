@@ -13,6 +13,8 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
   const queryString = {
     createdAt: Number(searchParams.get("createdAt")),
     createdBy: searchParams.get("createdBy"),
+    categoryMain: searchParams.get("categoryMain"),
+    categorySub: searchParams.get("categorySub"),
   };
 
   try {
@@ -42,9 +44,20 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
       TableName: "myblogPosts-myblog",
       IndexName: "NicknameAndTimeIndex",
       KeyConditionExpression: "createdBy = :createdBy",
-      ExpressionAttributeValues: {
-        ":createdBy": idString,
-      },
+      FilterExpression:
+        queryString.categoryMain && queryString.categorySub
+          ? "categoryMain = :categoryMain AND categorySub = :categorySub"
+          : undefined,
+      ExpressionAttributeValues:
+        queryString.categoryMain && queryString.categorySub
+          ? {
+              ":createdBy": idString,
+              ":categoryMain": queryString.categoryMain,
+              ":categorySub": queryString.categorySub,
+            }
+          : {
+              ":createdBy": idString,
+            },
       ProjectionExpression: "id",
       ScanIndexForward: false,
     });
@@ -54,14 +67,31 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
       TableName: "myblogPosts-myblog",
       IndexName: "NicknameAndTimeIndex",
       KeyConditionExpression: "createdBy = :createdBy",
-      ExpressionAttributeValues: {
-        ":createdBy": idString,
-      },
+      FilterExpression:
+        queryString.categoryMain && queryString.categorySub
+          ? "categoryMain = :categoryMain AND categorySub = :categorySub"
+          : undefined,
+      ExpressionAttributeValues:
+        queryString.categoryMain && queryString.categorySub
+          ? {
+              ":createdBy": idString,
+              ":categoryMain": queryString.categoryMain,
+              ":categorySub": queryString.categorySub,
+            }
+          : {
+              ":createdBy": idString,
+            },
       ProjectionExpression: "id, title, createdBy, createdNickname, createdAt, thumbnailImageURL, thumbnailData, tag",
       ScanIndexForward: false,
       Limit: 10,
       // ExclusiveStartKey = LastEvaluatedKey
-      ExclusiveStartKey: queryString.createdAt && queryString.createdBy ? queryString : undefined,
+      ExclusiveStartKey:
+        queryString.createdAt && queryString.createdBy
+          ? {
+              createdAt: queryString.createdAt,
+              createdBy: queryString.createdBy,
+            }
+          : undefined,
     });
 
     // LastEvaluatedKey : {id, createdBy, createdAt}

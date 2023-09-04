@@ -3,6 +3,7 @@ import getCurrentUserData from "logics/getCurrentUserData";
 import imageUpload from "logics/imageUpload";
 import updateCategoryList from "logics/updateCategoryList";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useRef } from "react";
 
@@ -108,7 +109,7 @@ export default function PostCategoryCard({
   return (
     <div className="PostCategoryCard p-2 col col-12 col-md-6 col-xl-4">
       <div className="card">
-        <a className="ratio ratio-16x9" href={`${mainCategoryName}/${subCategoryName}`}>
+        <Link className="ratio ratio-16x9" href={`category/${mainCategoryName}/${subCategoryName}`}>
           <Image
             className="card-img-top img-fluid object-fit-cover"
             src={!!thumbnailImageURL ? thumbnailImageURL : "/altThumbnail.jpg"}
@@ -116,14 +117,14 @@ export default function PostCategoryCard({
             width={500}
             height={500}
           />
-        </a>
+        </Link>
         <div className="card-body">
-          <a
+          <Link
             className="card-title fs-5 fw-semibold text-decoration-none text-111"
             href={`${mainCategoryName}/${subCategoryName}`}
           >
             {`${subCategoryName}`}
-          </a>
+          </Link>
           <div className="hstack" hidden={!isEdit}>
             <button className="btn btn-outline-primary" onClick={onNameChange}>
               ✎

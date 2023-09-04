@@ -2,9 +2,11 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import "./OnPreview.css";
 import imageUpload from "logics/imageUpload";
+import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   isEdit: boolean;
+  nickname: string;
   isPreview: boolean;
   postContent: PostDetail;
   setPostContent: React.Dispatch<React.SetStateAction<PostDetail>>;
@@ -13,26 +15,52 @@ interface Props {
   onSubmit: () => void;
 }
 
-const OnPreview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, isSubmit, onSubmit }: Props) => {
+const OnPreview = ({
+  isEdit,
+  nickname,
+  isPreview,
+  postContent,
+  setPostContent,
+  onPreview,
+  isSubmit,
+  onSubmit,
+}: Props) => {
   const imgRef = useRef<HTMLInputElement | null>(null);
   const [categoryData, setCategoryData] = useState<CategoryMainData[]>([]);
   const [categoryIndex, setCategoryIndex] = useState("");
   const [firstOpen, setFirstOpen] = useState(false);
 
+  const { status: categoryStatus, data: categoryList } = useQuery({
+    queryKey: ["CategoryLists", nickname],
+    queryFn: async (): Promise<CategoryMainData[]> => {
+      try {
+        const data = await (
+          await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/categories/${nickname}`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+        ).json();
+        if (!data.category) throw new Error("No category data.");
+        else return data.category;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+    enabled: !!nickname,
+  });
+
   useEffect(() => {
-    /* todo: set category data
-    userData.uid &&
-      getCategoryList(userData.uid).then((result) => {
-        setCategoryData(result);
-        if (!postContent.category.length) return;
-        const categoryArray = postContent.category;
-        const mainFieldList = result.map((element) => element.mainField);
-        const mainIndex = mainFieldList.indexOf(categoryArray[0]);
-        const subIndex = result[mainIndex].subField.indexOf(categoryArray[1]);
-        setCategoryIndex(String([mainIndex, subIndex]));
-      });
-      */
-  }, [postContent.categoryMain, postContent.categorySub]);
+    if (categoryStatus === "success") {
+      setCategoryData(categoryList);
+      if (!postContent.categoryMain || !postContent.categorySub) return;
+      const mainIndex = categoryList.findIndex((e) => e.name === postContent.categoryMain);
+      const subIndex = categoryList[mainIndex].subCategory.findIndex((e) => e.name === postContent.categorySub);
+      setCategoryIndex(String([mainIndex, subIndex]));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryList, categoryStatus]);
 
   useEffect(() => {
     isPreview && setFirstOpen(true);
@@ -82,18 +110,21 @@ const OnPreview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, 
     const {
       target: { value },
     } = event;
+    console.log(value);
     setCategoryIndex(value);
     if (value === "") {
       setPostContent((prev) => ({
         ...prev,
-        category: [],
+        categoryMain: "",
+        categorySub: "",
       }));
       return;
     }
-    const index = value.split(",").map(Number);
+    const [mainCategoryIndex, subCategoryIndex] = value.split(",").map(Number);
     setPostContent((prev) => ({
       ...prev,
-      category: [categoryData[index[0]].name, categoryData[index[0]].subCategory[index[1]]] ?? [],
+      categoryMain: categoryData[mainCategoryIndex].name,
+      categorySub: categoryData[mainCategoryIndex].subCategory[subCategoryIndex].name,
     }));
   };
 
@@ -198,10 +229,10 @@ const OnPreview = ({ isEdit, isPreview, postContent, setPostContent, onPreview, 
           <select className="form-select" value={categoryIndex} onChange={onCategoryChange}>
             <option value={""}>None</option>
             {categoryData &&
-              categoryData.map((category, id) => {
-                return category.subCategory.map((subCategory, index) => (
+              categoryData.map((mainCategory, id) => {
+                return mainCategory.subCategory.map((subCategory, index) => (
                   <option key={index} value={String([[id, index]])}>
-                    {`${category.name} - ${subCategory}`}
+                    {`${mainCategory.name} - ${subCategory.name}`}
                   </option>
                 ));
               })}
