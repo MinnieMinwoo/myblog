@@ -1,11 +1,32 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import getCurrentUserData from "logics/getCurrentUserData";
+import updateUserInfo from "logics/updateUserInfo";
 
-const ProfileInfoEdit = () => {
+export default function ProfileInfoEdit() {
   const { data: userData } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUserData,
+  });
+
+  const queryClient = useQueryClient();
+  const { mutate: updateProfile } = useMutation({
+    mutationFn: async (userInfo) => {
+      if (!userData) throw new Error("no user data");
+      else return updateUserInfo(userInfo);
+    },
+    onMutate: async (newUserData: UserInfo) => {
+      await queryClient.cancelQueries({ queryKey: ["currentUser"] });
+      const previousUserData = queryClient.getQueryData(["currentUser"]);
+      queryClient.setQueryData(["currentUser"], () => newUserData);
+      return { previousUserData };
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(["currentUser"], context?.previousUserData ?? {});
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
   });
 
   const [hidden, setHidden] = useState(true);
@@ -29,9 +50,11 @@ const ProfileInfoEdit = () => {
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
-    if (!userData?.id) return window.alert("no user uid data");
+    if (!userData?.id) return;
     try {
-      // todo: update user info
+      const newUserData = structuredClone(userData);
+      newUserData.nickname = nickname;
+      updateProfile(newUserData);
       setHidden(true);
     } catch (error) {
       console.log(error);
@@ -75,6 +98,4 @@ const ProfileInfoEdit = () => {
       </form>
     </div>
   );
-};
-
-export default ProfileInfoEdit;
+}
