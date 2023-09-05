@@ -33,6 +33,7 @@ interface UserInfo {
   id: string;
   email: string;
   nickname: string;
+  profileImage: string;
 }
 
 interface CategoryMainData {

@@ -1,8 +1,7 @@
 import Footer from "components/Footer";
 import HomeHeader from "./HomeHeader";
-import NicknameParamCheck from "app/home/[nickname]/[postid]/ParamCheck";
 
-export default function homeLayout({
+export default function HomeLayout({
   children,
   params: { nickname },
 }: {

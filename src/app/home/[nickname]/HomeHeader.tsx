@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import HeaderProfile from "./HeaderProfile";
 
 interface Props {
   userName?: string;
-  outlet?: JSX.Element;
   isWarningAlert?: boolean;
 }
 
-export default function HomeHeader({ userName, outlet }: Props) {
+export default function HomeHeader({ userName }: Props) {
   return (
     <header className="Header">
       <nav className="navbar bg-white">
@@ -20,7 +20,7 @@ export default function HomeHeader({ userName, outlet }: Props) {
             </Link>
             {userName ? `${userName}'s blog` : ""}
           </div>
-          {outlet ?? null}
+          <HeaderProfile />
         </div>
       </nav>
       {userName && (

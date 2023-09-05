@@ -1,0 +1,9 @@
+.header-profile-translate {
+  transform: translate(-75px, 50px);
+}
+
+@media (max-width: 575px) {
+  .header-profile-translate {
+    transform: translate(-96px, 50px);
+  }
+}

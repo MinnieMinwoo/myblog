@@ -5,6 +5,15 @@ import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 import { v4 as uuid } from "uuid";
 
+/**
+ * Put image in s3 server.
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-s3/Class/PutObjectCommand/
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-s3/Interface/PutObjectRequest/
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-s3/Interface/PutObjectCommandOutput/
+ */
 export async function POST(request: Request) {
   const formData = await request.formData();
   const image = formData.get("image") as File;
