@@ -7,7 +7,7 @@ frontend:
     build:
       commands:
         - env | grep -e AMPLIFY_ACCESS_KEY -e AMPLIFY_SECRET_ACCESS_KEY >> .env.production
-        - env | grep -e COGNITO_CLIENT_APP_ID -e COGNITO_CLIENT_WEB_ID -e COGNITO_USER_POOL_ID >> .env.production
+        - env | grep -e COGNITO_CLIENT_APP_ID -e COGNITO_CLIENT_ID -e COGNITO_CLIENT_WEB_ID -e COGNITO_USER_POOL_ID >> .env.production
         - env | grep -e NEXT_PUBLIC_API_DOMAIN -e NEXT_PUBLIC_S3_DOMAIN	 -e NEXT_PUBLIC_WEB_DOMAIN >> .env.production
         - npm run build
   artifacts:

@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 export default function AuthWithEmail() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");
   const router = useRouter();
 
@@ -16,15 +15,7 @@ export default function AuthWithEmail() {
       target: { name, value },
     } = event;
     const excuteFunction =
-      name === "email"
-        ? setEmail
-        : name === "password"
-        ? setPassword
-        : name === "name"
-        ? setName
-        : name === "nickname"
-        ? setNickname
-        : () => {};
+      name === "email" ? setEmail : name === "password" ? setPassword : name === "nickname" ? setNickname : () => {};
     excuteFunction(value);
   };
 
@@ -33,18 +24,20 @@ export default function AuthWithEmail() {
     const userData = {
       email: email,
       password: password,
-      name: name,
       nickname: nickname,
     };
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/signup/email`, {
+      const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/signup/email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(userData),
       });
-      router.push(`/auth/verification?email=${email}`);
+      if (!result.ok) {
+        const { error } = await result.json();
+        throw new Error(error);
+      } else router.push(`/auth/verification?email=${email}`);
     } catch (error) {
       console.log(error);
       window.alert("Sign up Error");
@@ -75,18 +68,6 @@ export default function AuthWithEmail() {
               type="password"
               placeholder="password"
               value={password}
-              autoComplete="off"
-              required
-              onChange={onChange}
-            />
-          </div>
-          <div>
-            <label className="form-label">Name</label>
-            <input
-              className="form-control"
-              name="name"
-              type="text"
-              value={name}
               autoComplete="off"
               required
               onChange={onChange}

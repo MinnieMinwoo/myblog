@@ -1,5 +1,4 @@
-import { SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { PutItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
+import { ListUsersCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { ErrorMessage } from "enum";
 import { authClient, dbClient } from "logics/aws";
 import { NextResponse } from "next/server";
@@ -7,36 +6,33 @@ import { NextResponse } from "next/server";
 /**
  * Sign up user using cognito.
  *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/ListUsersCommand/
+ *
  * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/SignUpCommand/
  */
 export async function POST(request: Request) {
   try {
     if (!request.body) return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
-    const { email, password, name, nickname } = await request.json();
-    if (!email || !password || !name || !nickname)
+    const { email, password, nickname } = await request.json();
+    if (!email || !password || !nickname)
       return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
 
-    const userGetCommand = new QueryCommand({
-      TableName: "myblogUser-myblog",
-      IndexName: "NicknameSort",
-      KeyConditionExpression: "nickname = :nickname",
-      ExpressionAttributeValues: {
-        ":nickname": nickname,
-      },
-      ProjectionExpression: "id",
+    const userGetCommand = new ListUsersCommand({
+      UserPoolId: process.env.COGNITO_USER_POOL_ID,
     });
 
-    const { Count } = await dbClient.send(userGetCommand);
-    if (Count !== 0) return NextResponse.json({ error: ErrorMessage.DUPLICATED_NICKNAME }, { status: 403 });
+    const { Users } = await authClient.send(userGetCommand);
+    if (
+      Users &&
+      Users?.length > 0 &&
+      Users.find(({ Attributes }) => Attributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname))
+    )
+      return NextResponse.json({ error: ErrorMessage.DUPLICATED_NICKNAME }, { status: 403 });
 
     const userSignupCommand = new SignUpCommand({
       Username: email,
       Password: password,
       UserAttributes: [
-        {
-          Name: "name",
-          Value: name,
-        },
         {
           Name: "nickname",
           Value: nickname,
@@ -48,21 +44,7 @@ export async function POST(request: Request) {
       ],
       ClientId: process.env.COGNITO_CLIENT_WEB_ID!,
     });
-    const { UserSub } = await authClient.send(userSignupCommand);
-
-    const userPutCommand = new PutItemCommand({
-      TableName: "myblogUser-myblog",
-      Item: {
-        id: { S: UserSub ?? "" },
-        name: { S: name ?? "" },
-        nickname: { S: nickname ?? "" },
-        email: { S: email },
-        profileImage: { S: "" },
-        description: { S: "Hello my blog Page!" },
-        category: { L: [] },
-      },
-    });
-    await dbClient.send(userPutCommand);
+    await authClient.send(userSignupCommand);
 
     return new NextResponse(undefined, { status: 204 });
   } catch (error) {

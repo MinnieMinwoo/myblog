@@ -77,7 +77,6 @@ describe("/auth/signup/email test", () => {
         body: JSON.stringify({
           email: "testuser@test.com",
           password: "12345678",
-          name: "test",
           nickname: "test",
         }),
       });
@@ -103,7 +102,6 @@ describe("/auth/signup/email test", () => {
         body: JSON.stringify({
           email: "mollu",
           password: "12345678",
-          name: "test",
           nickname: "test",
         }),
       });
@@ -117,7 +115,6 @@ describe("/auth/signup/email test", () => {
         body: JSON.stringify({
           email: "testuser@testmail.com",
           password: "123",
-          name: "test",
           nickname: "test",
         }),
       });
@@ -134,7 +131,6 @@ describe("/auth/signup/email test", () => {
         body: JSON.stringify({
           email: "existedUser@test.com",
           password: "12345678",
-          name: "test",
           nickname: "test",
         }),
       });
@@ -148,7 +144,6 @@ describe("/auth/signup/email test", () => {
         body: JSON.stringify({
           email: "testuser@test.com",
           password: "12345678",
-          name: "test",
           nickname: "existedUser",
         }),
       });
@@ -164,7 +159,6 @@ describe("/auth/signup/email test", () => {
         body: JSON.stringify({
           email: "toomanyFails@test.com",
           password: "12345678",
-          name: "test",
           nickname: "test",
         }),
       });
