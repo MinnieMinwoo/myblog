@@ -31,14 +31,19 @@ export default function HomePage() {
         : "";
 
       try {
-        const token = await getCurrentUserToken();
-        return await (
-          await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${nickname}${queryString}`, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-        ).json();
+        await getCurrentUserToken();
+        const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${nickname}${queryString}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!result.ok) {
+          const { error } = await result.json();
+          throw new Error(error);
+        } else {
+          const body = await result.json();
+          return body;
+        }
       } catch (error) {
         throw error;
       }

@@ -13,7 +13,7 @@ export default async function updateUserInfo(userData: UserInfo) {
         },
         body: JSON.stringify({
           nickname: userData.nickname,
-          profileImage: userData.profileImage,
+          profileImage: userData.picture,
         }),
       })
     ).json();

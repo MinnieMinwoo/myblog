@@ -1,33 +1,27 @@
-import { UpdateUserAttributesCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { AdminGetUserCommand, UpdateUserAttributesCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ErrorMessage } from "enum";
 import { authClient, dbClient } from "logics/aws";
 import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 
+/**
+ * get current user info
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-cognito-identity-provider/Class/AdminGetUserCommand/
+ */
 export async function GET(request: Request, { params: { id } }: { params: { id: string } }) {
-  const imageGetCommand = new QueryCommand({
-    TableName: "myblogUser-myblog",
-    KeyConditionExpression: "id = :id",
-    ExpressionAttributeValues: {
-      ":id": id,
-    },
-    ProjectionExpression: "id, email, nickname, profileImage",
+  const userGetCommand = new AdminGetUserCommand({
+    UserPoolId: process.env.COGNITO_USER_POOL_ID,
+    Username: id,
   });
 
   try {
-    const { Count: userCount, Items: userIDList } = await dbClient.send(imageGetCommand);
-    // Throw error code when user not exists
-    if (userCount === 0 || !userIDList) {
-      return NextResponse.json(
-        {
-          message: ErrorMessage.USER_NOT_EXISTS,
-        },
-        { status: 404 }
-      );
-    }
+    const { UserAttributes } = await authClient.send(userGetCommand);
+    const returnObject: { [key in string]: string } = {};
+    UserAttributes?.forEach(({ Name, Value }) => Name && Value && Object.defineProperty(returnObject, Name, Value));
 
-    return NextResponse.json(userIDList[0], { status: 200 });
+    return NextResponse.json(returnObject, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });

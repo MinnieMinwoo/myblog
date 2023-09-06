@@ -1,6 +1,6 @@
 import { ListUsersCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { ErrorMessage } from "enum";
-import { authClient, dbClient } from "logics/aws";
+import { authClient } from "logics/aws";
 import { NextResponse } from "next/server";
 
 /**
@@ -24,8 +24,7 @@ export async function POST(request: Request) {
     const { Users } = await authClient.send(userGetCommand);
     if (
       Users &&
-      Users?.length > 0 &&
-      Users.find(({ Attributes }) => Attributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname))
+      Users.some(({ Attributes }) => Attributes?.some(({ Name, Value }) => Name === "nickname" && Value === nickname))
     )
       return NextResponse.json({ error: ErrorMessage.DUPLICATED_NICKNAME }, { status: 403 });
 
