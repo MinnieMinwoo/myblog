@@ -6,6 +6,20 @@ import "@testing-library/jest-dom";
 import { cleanup, render, screen } from "@testing-library/react";
 import SignUpPage from "./page";
 
+jest.mock("next/image", () => ({
+  __esModule: true,
+  default: (props: any) => {
+    return <img {...props} />;
+  },
+}));
+
+jest.mock("next/link", () => ({
+  __esModule: true,
+  default: (props: any) => {
+    return <a {...props} />;
+  },
+}));
+
 describe("/auth/signin page test", () => {
   beforeEach(() => render(<SignUpPage />));
   afterAll(() => cleanup());

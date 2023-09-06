@@ -4,64 +4,55 @@
 
 import {
   InvalidParameterException,
+  ListUsersCommand,
   SignUpCommand,
   TooManyRequestsException,
   UsernameExistsException,
 } from "@aws-sdk/client-cognito-identity-provider";
-import { PutItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
-import { authClient, dbClient } from "logics/aws";
+import { authClient } from "logics/aws";
 import { POST } from "./route";
 
 describe("/auth/signup/email test", () => {
-  const dbQueryFunction = (input: QueryCommand | PutItemCommand) => {
-    if (input instanceof QueryCommand) {
-      if (!input.input.ExpressionAttributeValues) return Promise.reject();
-      else if (typeof input.input.ExpressionAttributeValues[":nickname"] !== "string") return Promise.reject();
-      const nickname = input.input.ExpressionAttributeValues[":nickname"];
+  const signUpFunction = (input: SignUpCommand | ListUsersCommand) => {
+    if (input instanceof SignUpCommand) {
+      const errorConstructorValue = {
+        $metadata: {},
+        message: "",
+      };
 
-      return Promise.resolve({ Count: nickname === "existedUser" ? 1 : 0 });
-    } else if (input instanceof PutItemCommand) return Promise.resolve();
-    else return Promise.reject();
-  };
-
-  dbClient.send = jest.fn(dbQueryFunction);
-
-  const signUpFunction = (input: SignUpCommand) => {
-    const errorConstructorValue = {
-      $metadata: {},
-      message: "",
-    };
-
-    const {
-      input: { Username, Password },
-    } = input;
-    if (!Username || !Password) return Promise.reject();
-    else if (Username.length < 8)
-      return Promise.reject(
-        new InvalidParameterException({
-          $metadata: {},
-          message: "Username should be an email.",
-        })
-      );
-    else if (Password.length < 8)
-      return Promise.reject(
-        new InvalidParameterException({
-          $metadata: {},
-          message:
-            "1 validation error detected: Value at 'password' failed to satisfy constraint: password must be at least 8 characters long.",
-        })
-      );
-    else
-      switch (Username) {
-        case "testuser@test.com":
-          return Promise.resolve({ UserSub: "" });
-        case "existedUser@test.com":
-          return Promise.reject(new UsernameExistsException(errorConstructorValue));
-        case "toomanyFails@test.com":
-          return Promise.reject(new TooManyRequestsException(errorConstructorValue));
-        default:
-          return Promise.reject();
-      }
+      const {
+        input: { Username, Password },
+      } = input;
+      if (!Username || !Password) return Promise.reject();
+      else if (Username.length < 8)
+        return Promise.reject(
+          new InvalidParameterException({
+            $metadata: {},
+            message: "Username should be an email.",
+          })
+        );
+      else if (Password.length < 8)
+        return Promise.reject(
+          new InvalidParameterException({
+            $metadata: {},
+            message:
+              "1 validation error detected: Value at 'password' failed to satisfy constraint: password must be at least 8 characters long.",
+          })
+        );
+      else
+        switch (Username) {
+          case "testuser@test.com":
+            return Promise.resolve({ UserSub: "" });
+          case "existedUser@test.com":
+            return Promise.reject(new UsernameExistsException(errorConstructorValue));
+          case "toomanyFails@test.com":
+            return Promise.reject(new TooManyRequestsException(errorConstructorValue));
+          default:
+            return Promise.reject();
+        }
+    } else if (input instanceof ListUsersCommand) {
+      return Promise.resolve({ Users: [{ Attributes: [{ Name: "nickname", Value: "existedUser" }] }] });
+    }
   };
 
   authClient.send = jest.fn().mockImplementation(signUpFunction);
