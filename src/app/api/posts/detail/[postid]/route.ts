@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { DeleteCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { dbClient } from "logics/aws";
 import { revalidatePath } from "next/cache";
 import verifyToken from "logics/verifyToken";
@@ -43,7 +43,7 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
     const postData = await request.json();
 
     const postGetCommand = new QueryCommand({
-      TableName: process.env.DYNAMODB_CATEGORIES_NAME,
+      TableName: process.env.DYNAMODB_POSTS_NAME,
       KeyConditionExpression: "id = :id",
       ExpressionAttributeValues: {
         ":id": postid,
@@ -73,7 +73,7 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
     }
 
     const postCommand = new PutCommand({
-      TableName: "myblogPosts-myblog",
+      TableName: process.env.DYNAMODB_POSTS_NAME,
       Item: {
         ...postData,
       },
@@ -106,7 +106,7 @@ export async function DELETE(request: Request, { params: { postid } }: { params:
     const userID = await verifyToken(request.headers.get("authorization"));
 
     const postGetCommand = new QueryCommand({
-      TableName: "myblogPosts-myblog",
+      TableName: process.env.DYNAMODB_POSTS_NAME,
       KeyConditionExpression: "id = :id",
       ExpressionAttributeValues: {
         ":id": postid,
@@ -136,7 +136,7 @@ export async function DELETE(request: Request, { params: { postid } }: { params:
     }
 
     const postDeleteCommand = new DeleteCommand({
-      TableName: "myblogPosts-myblog",
+      TableName: process.env.DYNAMODB_POSTS_NAME,
       Key: {
         id: postid,
       },
