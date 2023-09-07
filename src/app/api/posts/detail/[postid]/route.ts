@@ -11,7 +11,7 @@ export async function GET(request: Request, { params: { postid } }: { params: { 
 
   try {
     const postGetCommand = new QueryCommand({
-      TableName: "myblogPosts-myblog",
+      TableName: process.env.DYNAMODB_POSTS_NAME,
       KeyConditionExpression: "id = :id",
       ExpressionAttributeValues: {
         ":id": postid,
@@ -43,7 +43,7 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
     const postData = await request.json();
 
     const postGetCommand = new QueryCommand({
-      TableName: "myblogPosts-myblog",
+      TableName: process.env.DYNAMODB_CATEGORIES_NAME,
       KeyConditionExpression: "id = :id",
       ExpressionAttributeValues: {
         ":id": postid,

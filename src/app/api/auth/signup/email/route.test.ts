@@ -9,7 +9,7 @@ import {
   TooManyRequestsException,
   UsernameExistsException,
 } from "@aws-sdk/client-cognito-identity-provider";
-import { authClient } from "logics/aws";
+import { authClient, dbClient } from "logics/aws";
 import { POST } from "./route";
 
 describe("/auth/signup/email test", () => {
@@ -56,6 +56,7 @@ describe("/auth/signup/email test", () => {
   };
 
   authClient.send = jest.fn().mockImplementation(signUpFunction);
+  dbClient.send = jest.fn();
 
   afterAll(() => {
     jest.restoreAllMocks();

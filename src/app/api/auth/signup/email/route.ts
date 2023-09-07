@@ -1,6 +1,7 @@
 import { ListUsersCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ErrorMessage } from "enum";
-import { authClient } from "logics/aws";
+import { authClient, dbClient } from "logics/aws";
 import { NextResponse } from "next/server";
 
 /**
@@ -43,7 +44,16 @@ export async function POST(request: Request) {
       ],
       ClientId: process.env.COGNITO_CLIENT_WEB_ID!,
     });
-    await authClient.send(userSignupCommand);
+    const { UserSub } = await authClient.send(userSignupCommand);
+
+    const createCategoryCommand = new PutCommand({
+      TableName: process.env.DYNAMODB_CATEGORIES_NAME,
+      Item: {
+        userId: UserSub,
+        category: [],
+      },
+    });
+    await dbClient.send(createCategoryCommand);
 
     return new NextResponse(undefined, { status: 204 });
   } catch (error) {

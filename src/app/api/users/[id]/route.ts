@@ -19,7 +19,22 @@ export async function GET(request: Request, { params: { id } }: { params: { id: 
   try {
     const { UserAttributes } = await authClient.send(userGetCommand);
     const returnObject: { [key in string]: string } = {};
-    UserAttributes?.forEach(({ Name, Value }) => Name && Value && Object.defineProperty(returnObject, Name, Value));
+    UserAttributes?.forEach(({ Name, Value }) => {
+      if (Value)
+        switch (Name) {
+          case "sub":
+            returnObject["id"] = Value;
+            break;
+          case "email":
+            returnObject["email"] = Value;
+            break;
+          case "nickname":
+            returnObject["nickname"] = Value;
+            break;
+          case "picture":
+            returnObject["picture"] = Value;
+        }
+    });
 
     return NextResponse.json(returnObject, { status: 200 });
   } catch (error) {
