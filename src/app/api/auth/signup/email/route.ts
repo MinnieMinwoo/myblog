@@ -55,6 +55,15 @@ export async function POST(request: Request) {
     });
     await dbClient.send(createCategoryCommand);
 
+    const createAboutCommand = new PutCommand({
+      TableName: process.env.DYNAMODB_ABOUTS_NAME,
+      Item: {
+        userId: UserSub,
+        about: "",
+      },
+    });
+    await dbClient.send(createAboutCommand);
+
     return new NextResponse(undefined, { status: 204 });
   } catch (error) {
     console.log(error);
