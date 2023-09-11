@@ -22,7 +22,7 @@ const Search = () => {
     queryKey: ["postAllLists", query],
     queryFn: async ({ pageParam }): Promise<PostList> => {
       const queryString = pageParam
-        ? `?${Object.entries(pageParam)
+        ? `&${Object.entries(pageParam)
             .map(([key, value]) => value && key + "=" + value)
             .filter((v) => v)
             .join("&")}`
@@ -36,7 +36,7 @@ const Search = () => {
       try {
         await getCurrentUserToken();
         const result = await fetch(
-          `${process.env.NEXT_PUBLIC_API_DOMAIN}/search/?query=${query}${user ? `&user=${user}` : ""}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/search/?query=${query}${user ? `&user=${user}` : ""}${queryString}`,
           {
             headers: {
               "Content-Type": "application/json",

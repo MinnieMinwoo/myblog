@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 const HeaderSearch = () => {

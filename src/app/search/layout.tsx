@@ -1,6 +1,7 @@
 import Footer from "components/Footer";
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "myBlog - search",
@@ -14,7 +15,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <nav className="navbar bg-white">
           <div className="container">
             <div className="navbar-brand">
-              <Image className="me-2" src={"/logo.png"} width={40} height={40} alt="blog logo" />
+              <Link href={`/`}>
+                <Image className="me-2" src={"/logo.png"} width={40} height={40} alt="blog logo" />
+              </Link>
               <span>Search</span>
             </div>
           </div>
