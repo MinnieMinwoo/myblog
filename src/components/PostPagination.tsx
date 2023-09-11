@@ -6,7 +6,7 @@ interface Props {
   isFetching: boolean;
   isFetchingNextPage: boolean;
   isLastPost: boolean;
-  callBack: () => Promise<InfiniteQueryObserverResult<UserPostData, unknown>>;
+  callBack: () => Promise<InfiniteQueryObserverResult<UserPostList | PostList, unknown>>;
 }
 
 export default function PostPagination({ isFetching, isFetchingNextPage, isLastPost, callBack }: Props) {

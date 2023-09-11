@@ -1,9 +1,12 @@
-interface UserPostData {
-  id: string[];
-  postCount: number;
+interface PostList {
   postList: PostThumbnail[];
-  LastEvaluatedKey: LastPost;
+  LastEvaluatedKey?: LastPost;
 }
+
+type UserPostList = PostList & {
+  postCount: number;
+  id: string[];
+};
 
 interface PostThumbnail {
   id: string;

@@ -1,12 +1,61 @@
 "use client";
 
+import { useInfiniteQuery } from "@tanstack/react-query";
+import PostPagination from "components/PostPagination";
+import PostThumbnailBox from "components/PostThumbnailBox";
+import getCurrentUserToken from "logics/getCurrentUserToken";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const Search = () => {
   const [query, setQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
+
+  const {
+    data: postData,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ["postAllLists", query],
+    queryFn: async ({ pageParam }): Promise<PostList> => {
+      const queryString = pageParam
+        ? `?${Object.entries(pageParam)
+            .map(([key, value]) => value && key + "=" + value)
+            .filter((v) => v)
+            .join("&")}`
+        : "";
+      const query = searchParams.get("query");
+      const user = searchParams.get("user");
+      if (!query)
+        return {
+          postList: [],
+        };
+      try {
+        await getCurrentUserToken();
+        const result = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/search/?query=${query}${user ? `&user=${user}` : ""}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!result.ok) {
+          const { error } = await result.json();
+          throw new Error(error);
+        } else {
+          const body = await result.json();
+          return body;
+        }
+      } catch (error) {
+        throw error;
+      }
+    },
+    getNextPageParam: (postData) => postData.LastEvaluatedKey,
+  });
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -22,22 +71,13 @@ const Search = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("query", query);
     if (user) params.set("user", user);
-    getResults(query, user);
-  };
-
-  const getResults = async (query: string, user = "") => {
-    setIsLoading(true);
   };
 
   useEffect(() => {
     const query = searchParams.get("query");
     setQuery(query ?? "");
-    const user = searchParams.get("user") ?? "";
-    if (query) getResults(query, user);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const onPagination = async () => {};
 
   return (
     <div className="d-flex flex-column min-vh-100 overflow-hidden">
@@ -51,7 +91,7 @@ const Search = () => {
                 </label>
                 <input type="text" className="form-control" value={query} onChange={onChange} required />
               </div>
-              {isLoading ? (
+              {status === "loading" ? (
                 <button className="btn btn-outline-success w-80px h-40px" type="submit" disabled>
                   <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 </button>
@@ -61,12 +101,31 @@ const Search = () => {
                 </button>
               )}
             </form>
-            {/*
-                        {query && !postList.length && <h5>No posts.</h5>}
-            <PostThumbnailBox postList={postList} />
-            <Pagination isLastPost={isLastPost} postIndex={postIndex} callBack={onPagination} />
-
-            */}
+            {status === "loading" ? (
+              <div className="Pagination page-spinner-center mb-4">
+                <div className="spinner-border text-secondary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            ) : status === "error" ? (
+              <h5>Something wrong. Please try again.</h5>
+            ) : (
+              <>
+                {!postData.pages.length ? (
+                  <h5>No posts.</h5>
+                ) : (
+                  <>
+                    <PostThumbnailBox postList={postData.pages.map((e) => e.postList).flat()} />
+                    <PostPagination
+                      isFetching={isFetching}
+                      isFetchingNextPage={isFetchingNextPage}
+                      isLastPost={!hasNextPage}
+                      callBack={fetchNextPage}
+                    />
+                  </>
+                )}
+              </>
+            )}
           </div>
         </div>
       </section>

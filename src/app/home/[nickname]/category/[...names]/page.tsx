@@ -19,7 +19,7 @@ export default function HomePage({ params }: { params: { nickname: string; names
     status: postStatus,
   } = useInfiniteQuery({
     queryKey: ["postAllLists", nickname],
-    queryFn: async ({ pageParam }): Promise<UserPostData> => {
+    queryFn: async ({ pageParam }): Promise<UserPostList> => {
       const queryString = pageParam
         ? `?${Object.entries(pageParam)
             .map(([key, value]) => value && key + "=" + value)
