@@ -6,16 +6,10 @@ type Props = {
 
 export function generateMetadata({ params }: Props, parent: ResolvingMetadata): Metadata {
   return {
-    title: `${params.nickname}`,
+    title: `${params.nickname}'s blog - about`,
   };
 }
 
-export default function AboutLayout({
-  children,
-  params: { nickname },
-}: {
-  children: React.ReactNode;
-  params: { nickname: string };
-}) {
+export default function AboutLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

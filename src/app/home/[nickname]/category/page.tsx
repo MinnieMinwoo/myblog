@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { useParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import getCurrentUserData from "logics/getCurrentUserData";
@@ -9,8 +8,6 @@ import updateCategoryList from "logics/updateCategoryList";
 import CategorySideBar from "../../../../components/CategorySideBar";
 
 export default function CategoryPage({ params: { nickname } }: { params: { nickname: string } }) {
-  const params = useParams();
-
   const { data: userData } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUserData,
