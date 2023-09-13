@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     const createCategoryCommand = new PutCommand({
       TableName: process.env.DYNAMODB_CATEGORIES_NAME,
       Item: {
-        userId: UserSub,
+        id: UserSub,
         category: [],
       },
     });
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     const createAboutCommand = new PutCommand({
       TableName: process.env.DYNAMODB_ABOUTS_NAME,
       Item: {
-        userId: UserSub,
+        id: UserSub,
         about: "",
       },
     });
