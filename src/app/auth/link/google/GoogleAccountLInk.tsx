@@ -8,16 +8,20 @@ export default function GoogleAccountLink(this: any) {
   const parsedHash = new URLSearchParams(window.location.hash.substring(1));
   parsedHash.forEach((value, key) => console.log(value, key));
   const idToken = parsedHash.get("id_token");
-  const nonce = parsedHash.get("state");
   const tokenType = parsedHash.get("token_type");
 
   useEffect(() => {
-    linkAccountToGoogle();
+    const nonce = window.localStorage.getItem("nonce");
+    if (!nonce) {
+      console.log("no nonce value");
+      return;
+    }
+    linkAccountToGoogle(nonce);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const linkAccountToGoogle = async () => {
+  const linkAccountToGoogle = async (nonce: string) => {
     try {
       const currentUserToken = await getCurrentUserToken();
       const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/link/google`, {

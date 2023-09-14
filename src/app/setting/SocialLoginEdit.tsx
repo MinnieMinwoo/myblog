@@ -1,14 +1,7 @@
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
-import getCurrentUserData from "logics/getCurrentUserData";
 import { v4 as uuid } from "uuid";
 
 const SocialLoginEdit = () => {
-  const { data: userData, status } = useQuery({
-    queryKey: ["currentUser"],
-    queryFn: getCurrentUserData,
-  });
-
   const onClick = async (event: React.MouseEvent<HTMLImageElement>) => {
     if (!(event.target instanceof HTMLImageElement)) return;
     const {
@@ -19,6 +12,7 @@ const SocialLoginEdit = () => {
       switch (alt) {
         case "google":
           const randomString = uuid();
+          window.localStorage.setItem("nonce", randomString);
           window.open(
             `https://accounts.google.com/o/oauth2/v2/auth?` +
               `identity_provider=Google&` +
@@ -26,8 +20,7 @@ const SocialLoginEdit = () => {
               "response_type=id_token token&" +
               `client_id=${process.env.NEXT_PUBLIC_GOOGLE_AUTH_ID}&` +
               "scope=email openid profile&" +
-              `nonce=${randomString}&` +
-              `state=${randomString}`,
+              `nonce=${randomString}`,
             "Google account link",
             "width = 500, height = 500"
           );
