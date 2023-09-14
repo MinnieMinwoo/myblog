@@ -14,6 +14,10 @@ const config = {
         protocol: "https",
         hostname: "mybloguserpostimage153228-myblog.s3.ap-northeast-2.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
     ],
   },
   webpack: (config, { isServer, nextRuntime }) => {
