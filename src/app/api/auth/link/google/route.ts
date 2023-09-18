@@ -1,6 +1,7 @@
 import {
   AdminDisableProviderForUserCommand,
   AdminLinkProviderForUserCommand,
+  GetUserCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { ErrorMessage } from "enum";
 import { authClient } from "logics/aws";
@@ -53,13 +54,24 @@ export async function PATCH(request: Request) {
  */
 export async function DELETE(request: Request) {
   try {
-    const userID = await verifyToken(request.headers.get("authorization"));
-    const { googleId } = await request.json();
-
-    // Body value error
-    if (!googleId) {
+    const accessToken = request.headers.get("authorization")?.split(" ")[1];
+    if (!accessToken) {
       return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 403 });
     }
+
+    const userGetCommand = new GetUserCommand({
+      AccessToken: accessToken,
+    });
+    const { UserAttributes } = await authClient.send(userGetCommand);
+
+    const googleId = JSON.parse(
+      UserAttributes?.find((attribute) => attribute.Name === "identities")?.Value ?? ""
+    )?.find(
+      (identity: { userId: string; providerName: string; providerType: string; issuer?: string; primary: boolean }) =>
+        identity.providerName === "Google"
+    ).userId;
+
+    console.log(googleId);
 
     const googleLinkDeleteCommand = new AdminDisableProviderForUserCommand({
       User: {

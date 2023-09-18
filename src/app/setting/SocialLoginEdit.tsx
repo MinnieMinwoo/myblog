@@ -1,13 +1,46 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import getCurrentUserData from "logics/getCurrentUserData";
 import getCurrentUserToken from "logics/getCurrentUserToken";
 import Image from "next/image";
 import { v4 as uuid } from "uuid";
 
 const SocialLoginEdit = () => {
-  const { data: userData, status } = useQuery({
+  const { data: userData } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUserData,
+  });
+
+  const queryClient = useQueryClient();
+  const { mutate: socialLoginDelete } = useMutation({
+    mutationFn: async (socialName: "Google" | "Facebook") => {
+      if (!userData) throw new Error("no user data");
+      else {
+        const token = await getCurrentUserToken();
+        await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/link/${socialName.toLowerCase()}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return socialName;
+      }
+    },
+    onMutate: async (socialName) => {
+      if (!userData) return;
+      await queryClient.cancelQueries({ queryKey: ["currentUser"] });
+      const previousUserData = queryClient.getQueryData(["currentUser"]);
+      const copyUserData = structuredClone(userData);
+      copyUserData.identities = userData.identities.filter((data) => data.providerName !== socialName);
+      queryClient.setQueryData(["currentUser"], () => copyUserData);
+      return { previousUserData };
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(["currentUser"], context?.previousUserData ?? {});
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
   });
 
   const onClick = async (event: React.MouseEvent<HTMLImageElement>) => {
@@ -19,8 +52,8 @@ const SocialLoginEdit = () => {
     try {
       switch (alt) {
         case "google":
-          const googleID = userData?.identities.find((value) => value.providerType === "Google")?.userId;
-          if (!googleID) {
+          const isGoogleLink = userData?.identities.some((value) => value.providerType === "Google");
+          if (!isGoogleLink) {
             const randomString = uuid();
             window.localStorage.setItem("nonce", randomString);
             window.open(
@@ -36,22 +69,7 @@ const SocialLoginEdit = () => {
             );
           } else {
             if (!window.confirm("If you really want to unlink google account?")) return;
-            try {
-              const token = await getCurrentUserToken();
-              await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/link/google`, {
-                method: "DELETE",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                  googleId: googleID,
-                }),
-              });
-            } catch (error) {
-              console.log(error);
-              window.alert("Google account unlink failed.");
-            }
+            socialLoginDelete("Google");
           }
           break;
         default:

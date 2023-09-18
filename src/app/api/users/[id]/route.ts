@@ -30,7 +30,6 @@ export async function GET(request: Request, { params: { id } }: { params: { id: 
         [key in string]: any;
       }[];
     } = {};
-    console.log(UserAttributes);
     UserAttributes?.forEach(({ Name, Value }) => {
       if (Value)
         switch (Name) {
