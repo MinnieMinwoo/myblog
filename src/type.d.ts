@@ -37,6 +37,14 @@ interface UserInfo {
   email: string;
   nickname: string;
   picture: string;
+  identities: {
+    userId: string;
+    providerName: string;
+    providerType: string;
+    issuer?: string;
+    primary: boolean;
+    dateCreated: number;
+  }[];
 }
 
 interface CategoryMainData {

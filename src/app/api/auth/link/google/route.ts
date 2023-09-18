@@ -45,3 +45,34 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
   }
 }
+
+/**
+ * unlink google account to exist user
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/AdminDisableProviderForUserCommand/
+ */
+export async function DELETE(request: Request) {
+  try {
+    const userID = await verifyToken(request.headers.get("authorization"));
+    const { googleId } = await request.json();
+
+    // Body value error
+    if (!googleId) {
+      return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 403 });
+    }
+
+    const googleLinkDeleteCommand = new AdminDisableProviderForUserCommand({
+      User: {
+        ProviderAttributeName: "Cognito_Subject",
+        ProviderAttributeValue: googleId,
+        ProviderName: "Google",
+      },
+      UserPoolId: process.env.COGNITO_USER_POOL_ID,
+    });
+    await authClient.send(googleLinkDeleteCommand);
+    return new NextResponse(undefined, { status: 204 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+  }
+}

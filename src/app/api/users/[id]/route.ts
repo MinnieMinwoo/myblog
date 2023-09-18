@@ -21,7 +21,16 @@ export async function GET(request: Request, { params: { id } }: { params: { id: 
 
   try {
     const { UserAttributes } = await authClient.send(userGetCommand);
-    const returnObject: { [key in string]: string } = {};
+    const returnObject: {
+      id?: string;
+      email?: string;
+      nickname?: string;
+      picture?: string;
+      identities?: {
+        [key in string]: any;
+      }[];
+    } = {};
+    console.log(UserAttributes);
     UserAttributes?.forEach(({ Name, Value }) => {
       if (Value)
         switch (Name) {
@@ -36,6 +45,12 @@ export async function GET(request: Request, { params: { id } }: { params: { id: 
             break;
           case "picture":
             returnObject["picture"] = Value;
+            break;
+          case "identities":
+            returnObject["identities"] = JSON.parse(Value);
+            break;
+          default:
+            break;
         }
     });
 
