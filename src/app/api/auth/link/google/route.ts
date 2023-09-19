@@ -71,8 +71,6 @@ export async function DELETE(request: Request) {
         identity.providerName === "Google"
     ).userId;
 
-    console.log(googleId);
-
     const googleLinkDeleteCommand = new AdminDisableProviderForUserCommand({
       User: {
         ProviderAttributeName: "Cognito_Subject",

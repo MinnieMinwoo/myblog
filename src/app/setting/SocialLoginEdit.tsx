@@ -56,7 +56,7 @@ const SocialLoginEdit = () => {
           if (!isGoogleLink) {
             const randomString = uuid();
             window.localStorage.setItem("nonce", randomString);
-            window.open(
+            const popup = window.open(
               `https://accounts.google.com/o/oauth2/v2/auth?` +
                 `identity_provider=Google&` +
                 `redirect_uri=${process.env.NEXT_PUBLIC_WEB_DOMAIN}/auth/link/google&` +
@@ -67,6 +67,11 @@ const SocialLoginEdit = () => {
               "Google account link",
               "width = 500, height = 500"
             );
+            if (popup)
+              popup.onbeforeunload = async () => {
+                await queryClient.cancelQueries({ queryKey: ["currentUser"] });
+                queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+              };
           } else {
             if (!window.confirm("If you really want to unlink google account?")) return;
             socialLoginDelete("Google");

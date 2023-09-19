@@ -6,7 +6,6 @@ import { useEffect } from "react";
 
 export default function GoogleAccountLink(this: any) {
   const parsedHash = new URLSearchParams(window.location.hash.substring(1));
-  parsedHash.forEach((value, key) => console.log(value, key));
   const idToken = parsedHash.get("id_token");
   const tokenType = parsedHash.get("token_type");
 
@@ -35,12 +34,14 @@ export default function GoogleAccountLink(this: any) {
         }),
       });
       const tokenData = await parseJwt(idToken!);
-      console.log(tokenData);
       console.log(result);
     } catch (error) {
       console.log(error);
+      window.alert("Google account link error");
+    } finally {
+      window.close();
     }
   };
 
-  return <></>;
+  return <>Please wait..</>;
 }

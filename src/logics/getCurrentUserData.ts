@@ -10,7 +10,6 @@ export default async function getCurrentUserData() {
     if (!idToken) return null;
     const { sub } = await parseJwt(idToken);
     const userData: UserInfo = await (await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/users/${sub}`)).json();
-    console.log(userData);
     return userData;
   } catch (error) {
     console.log(error);
