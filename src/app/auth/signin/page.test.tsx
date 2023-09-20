@@ -3,51 +3,105 @@
  */
 
 import "@testing-library/jest-dom";
-import { cleanup, render, screen } from "@testing-library/react";
-import SignInPage from "./page";
-jest.mock("next/image", () => ({
-  __esModule: true,
-  default: (props: any) => {
-    return <img {...props} />;
-  },
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import AuthWithEmail from "./page";
+import React from "react";
+const routerMockFunction = jest.fn(() => {});
+jest.mock("next/navigation", () => ({
+  ...jest.requireActual("next/navigation"),
+  useRouter: () => ({
+    push: routerMockFunction,
+  }),
 }));
 
-jest.mock("next/link", () => ({
-  __esModule: true,
-  default: (props: any) => {
-    return <a {...props} />;
-  },
+const setStateMockFunction = jest.fn(() => {});
+jest.mock("react", () => ({
+  ...jest.requireActual("react"),
+  onsubmit: jest.fn(() => ({ status: 406 })),
+  useState: () => ["123", setStateMockFunction],
 }));
 
 describe("/auth/signin page test", () => {
-  beforeEach(() => render(<SignInPage />));
-  afterAll(() => cleanup());
-
-  it("google login render", () => {
-    const image = screen.getByAltText("Google");
-    expect(image).toBeInTheDocument();
+  beforeEach(() => render(<AuthWithEmail />));
+  afterAll(() => {
+    cleanup();
+    jest.restoreAllMocks();
   });
 
-  it("facebook login render", () => {
-    const image = screen.getByAltText("Facebook");
-    expect(image).toBeInTheDocument();
+  it("email render", () => {
+    const emailLabel = screen.getByLabelText("Email address");
+    expect(emailLabel).toBeInTheDocument();
+    const emailInput = screen.getByPlaceholderText("email");
+    expect(emailInput).toBeInTheDocument();
   });
 
-  it("email login render", () => {
-    const image = screen.getByAltText("Email");
-    expect(image).toBeInTheDocument();
+  it("password render", () => {
+    const passwordLabel = screen.getByLabelText("Password");
+    expect(passwordLabel).toBeInTheDocument();
+    const passwordInput = screen.getByPlaceholderText("password");
+    expect(passwordInput).toBeInTheDocument();
   });
 
-  it("sign up method href check", () => {
-    const [googleLink, facebookLink, emailLink]: HTMLAnchorElement[] = screen.getAllByRole("link");
-    expect(googleLink.href.includes("/auth/signin/google")).toBe(true);
-    expect(facebookLink.href.includes("/auth/signin/facebook")).toBe(true);
-    expect(emailLink.href.includes("/auth/signin/email")).toBe(true);
-  });
-
-  it("create account button render", () => {
-    const button: HTMLAnchorElement = screen.getByText("Create Account");
+  it("sign in button render", () => {
+    const button = screen.getByText("Sign in");
     expect(button).toBeInTheDocument();
-    expect(button.href.includes("/auth/signup")).toBe(true);
+  });
+
+  it("back button render", () => {
+    const button = screen.getByText("Back");
+    expect(button).toBeInTheDocument();
+  });
+
+  it("onchange logic", async () => {
+    const emailLabel = screen.getByLabelText("Email address");
+    userEvent.type(emailLabel, "1");
+    await waitFor(() => expect(setStateMockFunction).toBeCalledTimes(1));
+
+    const passwordLabel = screen.getByLabelText("Password");
+    userEvent.type(passwordLabel, "1");
+    await waitFor(() => expect(setStateMockFunction).toBeCalledTimes(2));
+  });
+
+  it("submit success logic", async () => {
+    const fetchMockFunction = jest.fn(() => ({
+      status: 200,
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          nickname: "test",
+          idToken: "test",
+          accessToken: "test",
+          refreshToken: "test",
+        }),
+    }));
+    (global as any).fetch = fetchMockFunction;
+
+    const button = screen.getByText("Sign in");
+    userEvent.click(button);
+    await waitFor(() => expect(routerMockFunction).toBeCalled());
+  });
+
+  it("submit 406 logic", async () => {
+    const fetchMockFunction = jest.fn(() => ({
+      status: 406,
+    }));
+    (global as any).fetch = fetchMockFunction;
+
+    const button = screen.getByText("Sign in");
+    userEvent.click(button);
+    await waitFor(() => expect(routerMockFunction).toBeCalled());
+  });
+
+  it("submit error logic", async () => {
+    const errorMockFunction = jest.fn();
+    jest.spyOn(window, "alert").mockImplementationOnce(errorMockFunction);
+    const fetchMockFunction = jest.fn(() => ({
+      status: 400,
+    }));
+    (global as any).fetch = fetchMockFunction;
+    const button = screen.getByText("Sign in");
+    userEvent.click(button);
+    await waitFor(() => expect(errorMockFunction).toBeCalled());
   });
 });

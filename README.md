@@ -7,7 +7,6 @@ Make my own blog project.
 - Auth
 
   - Sign in / up email with verification
-  - Social login with google, facebook, twitter
   - Reset password when using email
 
 - Blog home

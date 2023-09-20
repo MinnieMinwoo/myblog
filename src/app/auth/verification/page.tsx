@@ -35,7 +35,7 @@ export default function VerificationPage() {
   const onResend = async (event: React.MouseEvent) => {
     event.preventDefault();
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/confirm/email?email=${email}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/confirm?email=${email}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -50,7 +50,7 @@ export default function VerificationPage() {
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/confirm/email`, {
+      const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/confirm`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

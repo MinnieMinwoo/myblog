@@ -12,7 +12,7 @@ import {
 import { authClient, dbClient } from "logics/aws";
 import { POST } from "./route";
 
-describe("/auth/signup/email test", () => {
+describe("/auth/signup test", () => {
   const signUpFunction = (input: SignUpCommand | ListUsersCommand) => {
     if (input instanceof SignUpCommand) {
       const errorConstructorValue = {
@@ -64,7 +64,7 @@ describe("/auth/signup/email test", () => {
 
   describe("POST method test", () => {
     it("204 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/sigup/email`, {
+      const request = new Request(`http://localhost:3000/api/auth/signup`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
@@ -77,7 +77,7 @@ describe("/auth/signup/email test", () => {
     });
 
     it("400 response", async () => {
-      const requestOne = new Request(`http://localhost:3000/api/auth/sigup/email`, {
+      const requestOne = new Request(`http://localhost:3000/api/auth/signup`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
@@ -89,7 +89,7 @@ describe("/auth/signup/email test", () => {
       const { error: textOne } = await resultOne.json();
       expect(textOne).toBe("Invalid fetch data");
 
-      const requestTwo = new Request(`http://localhost:3000/api/auth/sigup/email`, {
+      const requestTwo = new Request(`http://localhost:3000/api/auth/signup`, {
         method: "POST",
         body: JSON.stringify({
           email: "mollu",
@@ -102,7 +102,7 @@ describe("/auth/signup/email test", () => {
       const { error: textTwo } = await resultTwo.json();
       expect(textTwo).toBe("Username should be an email.");
 
-      const requestThree = new Request(`http://localhost:3000/api/auth/sigup/email`, {
+      const requestThree = new Request(`http://localhost:3000/api/auth/signup`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@testmail.com",
@@ -118,7 +118,7 @@ describe("/auth/signup/email test", () => {
     });
 
     it("403 response", async () => {
-      const requestOne = new Request(`http://localhost:3000/api/auth/sigup/email`, {
+      const requestOne = new Request(`http://localhost:3000/api/auth/signup`, {
         method: "POST",
         body: JSON.stringify({
           email: "existedUser@test.com",
@@ -131,7 +131,7 @@ describe("/auth/signup/email test", () => {
       const { error: textOne } = await resultOne.json();
       expect(textOne).toBe("User already exists in database");
 
-      const requestTwo = new Request(`http://localhost:3000/api/auth/sigup/email`, {
+      const requestTwo = new Request(`http://localhost:3000/api/auth/signup`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
@@ -146,7 +146,7 @@ describe("/auth/signup/email test", () => {
     });
 
     it("429 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/signup/email`, {
+      const request = new Request(`http://localhost:3000/api/auth/signup`, {
         method: "POST",
         body: JSON.stringify({
           email: "toomanyFails@test.com",

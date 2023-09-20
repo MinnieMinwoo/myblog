@@ -14,7 +14,7 @@ import {
 import { GET, POST } from "./route";
 import { authClient } from "logics/aws";
 
-describe("/confirm/email test", () => {
+describe("/confirm test", () => {
   const VerifyFunction = (input: ResendConfirmationCodeCommand | ConfirmSignUpCommand): Promise<void> => {
     const errorConstructorValue = {
       $metadata: {},
@@ -63,29 +63,29 @@ describe("/confirm/email test", () => {
 
   describe("GET method test", () => {
     it("204 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/confirm/email?${"email=testuser@test.com"}`);
+      const request = new Request(`http://localhost:3000/api/auth/confirm?${"email=testuser@test.com"}`);
       const { status } = await GET(request);
       expect(status).toBe(204);
     });
 
     it("400 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/confirm/email?${"몰루"}`);
+      const request = new Request(`http://localhost:3000/api/auth/confirm?${"몰루"}`);
       const { status } = await GET(request);
       expect(status).toBe(400);
     });
 
     it("404 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/confirm/email?${"email=asdf"}`);
+      const request = new Request(`http://localhost:3000/api/auth/confirm?${"email=asdf"}`);
       const { status } = await GET(request);
       expect(status).toBe(404);
     });
 
     it("429 response", async () => {
-      const requestOne = new Request(`http://localhost:3000/api/auth/confirm/email?${"email=hacked@test.com"}`);
+      const requestOne = new Request(`http://localhost:3000/api/auth/confirm?${"email=hacked@test.com"}`);
       const { status: statusOne } = await GET(requestOne);
       expect(statusOne).toBe(429);
 
-      const requestTwo = new Request(`http://localhost:3000/api/auth/confirm/email?${"email=toomanyFails@test.com"}`);
+      const requestTwo = new Request(`http://localhost:3000/api/auth/confirm?${"email=toomanyFails@test.com"}`);
       const { status: statusTwo } = await GET(requestTwo);
       expect(statusTwo).toBe(429);
     });
@@ -93,7 +93,7 @@ describe("/confirm/email test", () => {
 
   describe("POST method test", () => {
     it("204 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/confirm/email`, {
+      const request = new Request(`http://localhost:3000/api/auth/confirm`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
@@ -105,7 +105,7 @@ describe("/confirm/email test", () => {
     });
 
     it("400 response", async () => {
-      const requestOne = new Request(`http://localhost:3000/api/auth/confirm/email`, {
+      const requestOne = new Request(`http://localhost:3000/api/auth/confirm`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
@@ -114,7 +114,7 @@ describe("/confirm/email test", () => {
       const { status: statusOne } = await POST(requestOne);
       expect(statusOne).toBe(400);
 
-      const requestTwo = new Request(`http://localhost:3000/api/auth/confirm/email`, {
+      const requestTwo = new Request(`http://localhost:3000/api/auth/confirm`, {
         method: "POST",
       });
       const { status: statusTwo } = await POST(requestTwo);
@@ -122,7 +122,7 @@ describe("/confirm/email test", () => {
     });
 
     it("401 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/confirm/email`, {
+      const request = new Request(`http://localhost:3000/api/auth/confirm`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
@@ -134,7 +134,7 @@ describe("/confirm/email test", () => {
     });
 
     it("403 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/confirm/email`, {
+      const request = new Request(`http://localhost:3000/api/auth/confirm`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
@@ -146,7 +146,7 @@ describe("/confirm/email test", () => {
     });
 
     it("404 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/confirm/email`, {
+      const request = new Request(`http://localhost:3000/api/auth/confirm`, {
         method: "POST",
         body: JSON.stringify({
           email: "몰루",
@@ -158,7 +158,7 @@ describe("/confirm/email test", () => {
     });
 
     it("429 response", async () => {
-      const requestOne = new Request(`http://localhost:3000/api/auth/confirm/email`, {
+      const requestOne = new Request(`http://localhost:3000/api/auth/confirm`, {
         method: "POST",
         body: JSON.stringify({
           email: "hacked@test.com",
@@ -168,7 +168,7 @@ describe("/confirm/email test", () => {
       const { status: statusOne } = await POST(requestOne);
       expect(statusOne).toBe(429);
 
-      const requestTwo = new Request(`http://localhost:3000/api/auth/confirm/email`, {
+      const requestTwo = new Request(`http://localhost:3000/api/auth/confirm`, {
         method: "POST",
         body: JSON.stringify({
           email: "toomanyFails@test.com",

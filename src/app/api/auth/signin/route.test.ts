@@ -12,7 +12,7 @@ import {
 import { authClient } from "logics/aws";
 import { POST } from "./route";
 
-describe("/signin/email test", () => {
+describe("/signin test", () => {
   const signInFunction = (input: InitiateAuthCommand) => {
     const errorConstructorValue = {
       $metadata: {},
@@ -61,7 +61,7 @@ describe("/signin/email test", () => {
 
   describe("POST method test", () => {
     it("200 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/signin/email`, {
+      const request = new Request(`http://localhost:3000/api/auth`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
@@ -84,7 +84,7 @@ describe("/signin/email test", () => {
     });
 
     it("400 response", async () => {
-      const requestOne = new Request(`http://localhost:3000/api/auth/signin/email`, {
+      const requestOne = new Request(`http://localhost:3000/api/auth/signin`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
@@ -93,7 +93,7 @@ describe("/signin/email test", () => {
       const { status: statusOne } = await POST(requestOne);
       expect(statusOne).toBe(400);
 
-      const requestTwo = new Request(`http://localhost:3000/api/auth/signin/email`, {
+      const requestTwo = new Request(`http://localhost:3000/api/auth/signin`, {
         method: "POST",
       });
       const { status: statusTwo } = await POST(requestTwo);
@@ -101,7 +101,7 @@ describe("/signin/email test", () => {
     });
 
     it("401 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/signin/email`, {
+      const request = new Request(`http://localhost:3000/api/auth/signin`, {
         method: "POST",
         body: JSON.stringify({
           email: "testuser@test.com",
@@ -113,7 +113,7 @@ describe("/signin/email test", () => {
     });
 
     it("403 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/signin/email`, {
+      const request = new Request(`http://localhost:3000/api/auth/signin`, {
         method: "POST",
         body: JSON.stringify({
           email: "notVerified@test.com",
@@ -125,7 +125,7 @@ describe("/signin/email test", () => {
     });
 
     it("404 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/signin/email`, {
+      const request = new Request(`http://localhost:3000/api/auth/signin`, {
         method: "POST",
         body: JSON.stringify({
           email: "mollu@test.com",
@@ -137,7 +137,7 @@ describe("/signin/email test", () => {
     });
 
     it("429 response", async () => {
-      const request = new Request(`http://localhost:3000/api/auth/signin/email`, {
+      const request = new Request(`http://localhost:3000/api/auth/signin`, {
         method: "POST",
         body: JSON.stringify({
           email: "toomanyFails@test.com",
