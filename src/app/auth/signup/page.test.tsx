@@ -43,13 +43,20 @@ describe("/auth/signin page test", () => {
     expect(passwordInput).toBeInTheDocument();
   });
 
-  it("sign in button render", () => {
-    const button = screen.getByText("Sign in");
+  it("nickname render", () => {
+    const nicknameLabel = screen.getByLabelText("Nickname");
+    expect(nicknameLabel).toBeInTheDocument();
+    const nicknameInput = screen.getByPlaceholderText("password");
+    expect(nicknameInput).toBeInTheDocument();
+  });
+
+  it("sign up button render", () => {
+    const button = screen.getByText("Create Account");
     expect(button).toBeInTheDocument();
   });
 
-  it("sign up  button render", () => {
-    const button = screen.getByText("Don't you have an account?");
+  it("sign in button render", () => {
+    const button = screen.getByText("Do you have an account?");
     expect(button).toBeInTheDocument();
   });
 
@@ -65,6 +72,10 @@ describe("/auth/signin page test", () => {
 
     const passwordLabel = screen.getByLabelText("Password");
     userEvent.type(passwordLabel, "1");
+    await waitFor(() => expect(setStateMockFunction).toBeCalledTimes(2));
+
+    const nicknameLabel = screen.getByLabelText("Nickname");
+    userEvent.type(nicknameLabel, "1");
     await waitFor(() => expect(setStateMockFunction).toBeCalledTimes(2));
   });
 
@@ -82,18 +93,7 @@ describe("/auth/signin page test", () => {
     }));
     (global as any).fetch = fetchMockFunction;
 
-    const button = screen.getByText("Sign in");
-    userEvent.click(button);
-    await waitFor(() => expect(routerMockFunction).toBeCalled());
-  });
-
-  it("submit 406 logic", async () => {
-    const fetchMockFunction = jest.fn(() => ({
-      status: 406,
-    }));
-    (global as any).fetch = fetchMockFunction;
-
-    const button = screen.getByText("Sign in");
+    const button = screen.getByText("Create Account");
     userEvent.click(button);
     await waitFor(() => expect(routerMockFunction).toBeCalled());
   });
@@ -102,10 +102,10 @@ describe("/auth/signin page test", () => {
     const errorMockFunction = jest.fn();
     jest.spyOn(window, "alert").mockImplementationOnce(errorMockFunction);
     const fetchMockFunction = jest.fn(() => ({
-      status: 400,
+      status: 403,
     }));
     (global as any).fetch = fetchMockFunction;
-    const button = screen.getByText("Sign in");
+    const button = screen.getByText("Create Account");
     userEvent.click(button);
     await waitFor(() => expect(errorMockFunction).toBeCalled());
   });

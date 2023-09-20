@@ -49,8 +49,11 @@ export default function AuthWithEmail() {
       <form onSubmit={onSubmit}>
         <div className="vstack gap-3">
           <div>
-            <label className="form-label">Email address</label>
+            <label className="form-label" htmlFor="email">
+              Email address
+            </label>
             <input
+              id="email"
               className="form-control"
               name="email"
               type="text"
@@ -61,8 +64,11 @@ export default function AuthWithEmail() {
             />
           </div>
           <div>
-            <label className="form-label">Password</label>
+            <label className="form-label" htmlFor="password">
+              Password
+            </label>
             <input
+              id="password"
               className="form-control"
               name="password"
               type="password"
@@ -74,8 +80,11 @@ export default function AuthWithEmail() {
             />
           </div>
           <div>
-            <label className="form-label">Nickname</label>
+            <label className="form-label" htmlFor="nickname">
+              Nickname
+            </label>
             <input
+              id="nickname"
               className="form-control"
               name="nickname"
               type="text"
