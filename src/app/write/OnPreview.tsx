@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import "./OnPreview.css";
 import imageUpload from "logics/imageUpload";
 import { useQuery } from "@tanstack/react-query";
+import getUserCategoryData from "logics/getUserCategoryData";
 
 interface Props {
   isEdit: boolean;
@@ -32,22 +33,7 @@ const OnPreview = ({
 
   const { status: categoryStatus, data: categoryList } = useQuery({
     queryKey: ["CategoryLists", nickname],
-    queryFn: async (): Promise<CategoryMainData[]> => {
-      try {
-        const data = await (
-          await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/categories/${nickname}`, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-        ).json();
-        if (!data.category) throw new Error("No category data.");
-        else return data.category;
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
-    },
+    queryFn: () => getUserCategoryData(nickname),
     enabled: !!nickname,
   });
 
