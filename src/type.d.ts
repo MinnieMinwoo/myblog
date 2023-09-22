@@ -1,9 +1,12 @@
-interface UserPostData {
-  id: string[];
-  postCount: number;
+interface PostList {
   postList: PostThumbnail[];
-  LastEvaluatedKey: LastPost;
+  LastEvaluatedKey?: LastPost;
 }
+
+type UserPostList = PostList & {
+  postCount: number;
+  id: string[];
+};
 
 interface PostThumbnail {
   id: string;
@@ -33,7 +36,15 @@ interface UserInfo {
   id: string;
   email: string;
   nickname: string;
-  profileImage: string;
+  picture: string;
+  identities: {
+    userId: string;
+    providerName: string;
+    providerType: string;
+    issuer?: string;
+    primary: boolean;
+    dateCreated: number;
+  }[];
 }
 
 interface CategoryMainData {

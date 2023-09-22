@@ -1,6 +1,7 @@
+import { AdminGetUserCommand, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { ErrorMessage } from "enum";
-import { dbClient } from "logics/aws";
+import { authClient, dbClient } from "logics/aws";
 import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 import { v4 as uuid } from "uuid";
@@ -18,31 +19,38 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
   };
 
   try {
-    const userGetCommand = new QueryCommand({
-      TableName: "myblogUser-myblog",
-      IndexName: "NicknameSort",
-      KeyConditionExpression: "nickname = :nickname",
-      ExpressionAttributeValues: {
-        ":nickname": nickname,
-      },
-      ProjectionExpression: "id",
+    const userGetCommand = new ListUsersCommand({
+      UserPoolId: process.env.COGNITO_USER_POOL_ID,
     });
-    const { Count: userCount, Items: userIDList } = await dbClient.send(userGetCommand);
 
+    const { Users } = await authClient.send(userGetCommand);
     // Throw error code when user not exists
-    if (userCount === 0 || !userIDList) {
+    if (!Users)
       return NextResponse.json(
         {
           message: ErrorMessage.USER_NOT_EXISTS,
         },
         { status: 404 }
       );
-    }
-    const { id: idString } = userIDList[0];
+
+    const user = Users.find(({ Attributes }) =>
+      Attributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname)
+    );
+
+    // Throw error code when user not exists
+    if (!user)
+      return NextResponse.json(
+        {
+          message: ErrorMessage.USER_NOT_EXISTS,
+        },
+        { status: 404 }
+      );
+
+    const idString = user.Attributes?.find(({ Name }) => Name === "sub")?.Value;
 
     const countCommand = new QueryCommand({
-      TableName: "myblogPosts-myblog",
-      IndexName: "NicknameAndTimeIndex",
+      TableName: process.env.DYNAMODB_POSTS_NAME,
+      IndexName: "userid-time-index",
       KeyConditionExpression: "createdBy = :createdBy",
       FilterExpression:
         queryString.categoryMain && queryString.categorySub
@@ -61,11 +69,12 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
       ProjectionExpression: "id",
       ScanIndexForward: false,
     });
+    console.log(countCommand);
     const { Count: postCount } = await dbClient.send(countCommand);
 
     const userPostCommand = new QueryCommand({
-      TableName: "myblogPosts-myblog",
-      IndexName: "NicknameAndTimeIndex",
+      TableName: process.env.DYNAMODB_POSTS_NAME,
+      IndexName: "userid-time-index",
       KeyConditionExpression: "createdBy = :createdBy",
       FilterExpression:
         queryString.categoryMain && queryString.categorySub
@@ -114,32 +123,25 @@ export async function POST(request: Request, { params: { nickname } }: { params:
   try {
     const userID = await verifyToken(request.headers.get("authorization"));
 
-    const userGetCommand = new QueryCommand({
-      TableName: "myblogUser-myblog",
-      IndexName: "NicknameSort",
-      KeyConditionExpression: "nickname = :nickname",
-      ExpressionAttributeValues: {
-        ":nickname": nickname,
-      },
-      ProjectionExpression: "id",
+    const userGetCommand = new AdminGetUserCommand({
+      UserPoolId: process.env.COGNITO_USER_POOL_ID,
+      Username: userID,
     });
-    const { Count: userCount, Items: userIDList } = await dbClient.send(userGetCommand);
+
+    const { UserAttributes } = await authClient.send(userGetCommand);
+    const serverNickname = UserAttributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname)?.Value;
 
     // Throw error code when user not exists
-    if (userCount === 0 || !userIDList) {
-      console.log("invalid querystring");
+    if (!serverNickname)
       return NextResponse.json(
         {
           message: ErrorMessage.USER_NOT_EXISTS,
         },
         { status: 404 }
       );
-    }
 
-    const { id } = userIDList[0];
-    // Throw error code when client id is not same
-    if (userID !== id || postData.createdBy !== id) {
-      console.log("invalid querystring");
+    // Throw error code when try to modify other user
+    if (nickname !== serverNickname) {
       return NextResponse.json(
         {
           message: ErrorMessage.MODIFY_OTHER_USER,
@@ -151,7 +153,7 @@ export async function POST(request: Request, { params: { nickname } }: { params:
     const date = new Date();
     const postID = uuid();
     const postCommand = new PutCommand({
-      TableName: "myblogPosts-myblog",
+      TableName: process.env.DYNAMODB_POSTS_NAME,
       Item: {
         ...postData,
         id: postID,

@@ -1,17 +1,98 @@
-import SocialButton from "components/SocialButton";
-import Link from "next/link";
+"use client";
 
-export default function SignInPage() {
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+export default function AuthWithEmail() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { name, value },
+    } = event;
+    const excuteFunction = name === "email" ? setEmail : setPassword;
+    excuteFunction(value);
+  };
+
+  const onSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const userData = {
+      email: email,
+      password: password,
+    };
+    try {
+      const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+      console.log(result.status);
+      if (result.status === 406) {
+        router.push(`/auth/verification?email=${email}`);
+        return;
+      } else if (!result.ok) throw new Error(result.statusText);
+      const { nickname, idToken, accessToken, refreshToken } = await result.json();
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("idToken", idToken);
+      router.push(`/home/${nickname}`);
+    } catch (error) {
+      console.log(error);
+      window.alert("Login Error");
+    }
+  };
+
   return (
-    <>
-      <div className="AuthWithSocialAccount vstack gap-3">
-        <SocialButton name="Google" img={"/google.png"} href={"/auth/signin/google"} />
-        <SocialButton name="Facebook" img={"/facebook.png"} href={"/auth/signin/facebook"} />
-        <SocialButton name="Email" img={"/email.png"} href={"/auth/signin/email"} />
-      </div>
-      <Link className="btn btn-primary col-8 offset-2 h-36px" href={"/auth/signup"} role="button">
-        {"Create Account"}
-      </Link>
-    </>
+    <div className="AuthWithEmail vstack gap-3">
+      <form onSubmit={onSubmit}>
+        <div className="vstack gap-3">
+          <div>
+            <label className="form-label" htmlFor="email">
+              Email address
+            </label>
+            <input
+              id="email"
+              className="form-control"
+              name="email"
+              type="text"
+              placeholder="email"
+              value={email}
+              required
+              onChange={onChange}
+            />
+          </div>
+          <div>
+            <label className="form-label" htmlFor="password">
+              Password
+            </label>
+            <input
+              id="password"
+              className="form-control"
+              name="password"
+              type="password"
+              placeholder="password"
+              value={password}
+              autoComplete="off"
+              required
+              onChange={onChange}
+            />
+          </div>
+          <button type="submit" className="btn btn-primary col-8 offset-2 h-36px">
+            {"Sign in"}
+          </button>
+          <Link className="btn btn-info col-8 offset-2 h-36px" href="/auth/signup" role="button">
+            {"Don't you have an account?"}
+          </Link>
+          <Link className="btn btn-secondary col-8 offset-2 h-36px" href="/" role="button">
+            {"Back"}
+          </Link>
+        </div>
+      </form>
+    </div>
   );
 }

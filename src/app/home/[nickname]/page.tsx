@@ -22,7 +22,7 @@ export default function HomePage() {
     status,
   } = useInfiniteQuery({
     queryKey: ["postAllLists", nickname],
-    queryFn: async ({ pageParam }): Promise<UserPostData> => {
+    queryFn: async ({ pageParam }): Promise<UserPostList> => {
       const queryString = pageParam
         ? `?${Object.entries(pageParam)
             .map(([key, value]) => value && key + "=" + value)
@@ -31,14 +31,19 @@ export default function HomePage() {
         : "";
 
       try {
-        const token = await getCurrentUserToken();
-        return await (
-          await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${nickname}${queryString}`, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-        ).json();
+        await getCurrentUserToken();
+        const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${nickname}${queryString}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!result.ok) {
+          const { error } = await result.json();
+          throw new Error(error);
+        } else {
+          const body = await result.json();
+          return body;
+        }
       } catch (error) {
         throw error;
       }

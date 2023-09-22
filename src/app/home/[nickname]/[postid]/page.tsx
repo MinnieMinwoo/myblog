@@ -26,7 +26,7 @@ export default async function PostPage({
   return (
     <>
       <ParamCheck userName={postData.createdNickname} postID={postData.id} />
-      <main className="col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
+      <main className="flex-grow-1 col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
         <div className="w-100 h-340px">
           <div
             className="w-100 h-100 px-4 py-0 position-relative"

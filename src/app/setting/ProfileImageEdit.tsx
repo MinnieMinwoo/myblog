@@ -41,7 +41,7 @@ const ProfileImageEdit = () => {
     } = event;
     const imageURL = await imageUpload(files[0]);
     const newUserData = structuredClone(userData);
-    newUserData.profileImage = imageURL;
+    newUserData.picture = imageURL;
     updateProfile(newUserData);
   };
 
@@ -53,7 +53,7 @@ const ProfileImageEdit = () => {
     if (!userData) return;
     if (inputRef.current?.value) inputRef.current.value = "";
     const newUserData = structuredClone(userData);
-    newUserData.profileImage = "";
+    newUserData.picture = "";
     updateProfile(newUserData);
   };
 
@@ -61,12 +61,12 @@ const ProfileImageEdit = () => {
     <div className="ProfileImageEdit px-4 vstack gap-3 flex-basis-210px">
       <Image
         className="img-thumbnail rounded-circle w-128px h-128px-i"
-        src={userData?.profileImage ? userData?.profileImage : "/altThumbnail.jpg"}
+        src={userData?.picture ? userData?.picture : "/altThumbnail.jpg"}
         alt="Profile"
         width={128}
         height={128}
       />
-      <input hidden type="file" accept="image/*" ref={inputRef} src={userData?.profileImage} onChange={onChange} />
+      <input hidden type="file" accept="image/*" ref={inputRef} src={userData?.picture} onChange={onChange} />
       <button type="button" className="btn btn-primary w-128px" onClick={onUpload}>
         Upload Image
       </button>

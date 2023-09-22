@@ -2,6 +2,7 @@ import Image from "next/image";
 import Footer from "components/Footer";
 import "./main.css";
 import StartButton from "./StartButton";
+import HeaderSearch from "components/HeaderSearch";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
             <div className="navbar-brand">
               <Image className="me-2" src={"/logo.png"} width={40} height={40} alt="blog logo" />
             </div>
+            <HeaderSearch />
           </div>
         </nav>
       </header>

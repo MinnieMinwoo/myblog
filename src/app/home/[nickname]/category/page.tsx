@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { useParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import getCurrentUserData from "logics/getCurrentUserData";
@@ -8,10 +7,7 @@ import CategorySection from "./CategorySection";
 import updateCategoryList from "logics/updateCategoryList";
 import CategorySideBar from "../../../../components/CategorySideBar";
 
-export default function CategoryPage() {
-  const params = useParams();
-  const { nickname } = params;
-
+export default function CategoryPage({ params: { nickname } }: { params: { nickname: string } }) {
   const { data: userData } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUserData,
@@ -44,21 +40,22 @@ export default function CategoryPage() {
       else return updateCategoryList(userData.id, userData.nickname, categoryData);
     },
     onMutate: async (newCategoryData: CategoryMainData[]) => {
-      await queryClient.cancelQueries({ queryKey: ["CategoryLists", params.id] });
-      const previousCategoryData = queryClient.getQueryData(["CategoryLists", params.id]);
-      queryClient.setQueryData(["CategoryLists", params.id], () => newCategoryData);
+      await queryClient.cancelQueries({ queryKey: ["CategoryLists", nickname] });
+      const previousCategoryData = queryClient.getQueryData(["CategoryLists", nickname]);
+      queryClient.setQueryData(["CategoryLists", nickname], () => newCategoryData);
       return { previousCategoryData };
     },
     onError: (err, newTodo, context) => {
-      queryClient.setQueryData(["CategoryLists", params.id], context?.previousCategoryData ?? {});
+      queryClient.setQueryData(["CategoryLists", nickname], context?.previousCategoryData ?? {});
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["CategoryLists", params.id] });
+      queryClient.invalidateQueries({ queryKey: ["CategoryLists", nickname] });
     },
   });
 
   const onAdd = () => {
-    if (!categoryList || !userData?.id || params.id !== userData?.nickname) return; // invalid access
+    if (!categoryList || !userData?.id || nickname !== userData?.nickname) return; // invalid access
+    console.log("test");
     const name = window.prompt("Add new main category name");
     if (!name) return; // no name
     // duplicate name

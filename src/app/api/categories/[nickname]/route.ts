@@ -1,6 +1,7 @@
+import { AdminGetUserCommand, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ErrorMessage } from "enum";
-import { dbClient } from "logics/aws";
+import { authClient, dbClient } from "logics/aws";
 import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 
@@ -9,14 +10,42 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
   console.log(request);
 
   try {
+    const userGetCommand = new ListUsersCommand({
+      UserPoolId: process.env.COGNITO_USER_POOL_ID,
+    });
+
+    const { Users } = await authClient.send(userGetCommand);
+    // Throw error code when user not exists
+    if (!Users)
+      return NextResponse.json(
+        {
+          message: ErrorMessage.USER_NOT_EXISTS,
+        },
+        { status: 404 }
+      );
+
+    const user = Users.find(({ Attributes }) =>
+      Attributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname)
+    );
+
+    // Throw error code when user not exists
+    if (!user)
+      return NextResponse.json(
+        {
+          message: ErrorMessage.USER_NOT_EXISTS,
+        },
+        { status: 404 }
+      );
+
+    const id = user.Attributes?.find(({ Name }) => Name === "sub")?.Value;
+
     const categoryQueryCommand = new QueryCommand({
-      TableName: "myblogUser-myblog",
-      IndexName: "NicknameSort",
-      KeyConditionExpression: "nickname = :nickname",
+      TableName: process.env.DYNAMODB_CATEGORIES_NAME,
+      KeyConditionExpression: "id = :id",
       ExpressionAttributeValues: {
-        ":nickname": nickname,
+        ":id": id,
       },
-      ProjectionExpression: "id, nickname, category",
+      ProjectionExpression: "userId, category",
     });
 
     const { Count, Items } = await dbClient.send(categoryQueryCommand);
@@ -49,29 +78,25 @@ export async function PUT(request: Request, { params: { nickname } }: { params: 
   try {
     const userID = await verifyToken(request.headers.get("authorization"));
 
-    const userQueryCommand = new QueryCommand({
-      TableName: "myblogUser-myblog",
-      IndexName: "NicknameSort",
-      KeyConditionExpression: "nickname = :nickname",
-      ExpressionAttributeValues: {
-        ":nickname": nickname,
-      },
-      ProjectionExpression: "id, nickname",
+    const userGetCommand = new AdminGetUserCommand({
+      UserPoolId: process.env.COGNITO_USER_POOL_ID,
+      Username: userID,
     });
 
-    const { Count, Items } = await dbClient.send(userQueryCommand);
+    const { UserAttributes } = await authClient.send(userGetCommand);
+    const serverNickname = UserAttributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname)?.Value;
 
     // Throw error code when user not exists
-    if (Count === 0 || !Items) {
+    if (!serverNickname)
       return NextResponse.json(
         {
           message: ErrorMessage.USER_NOT_EXISTS,
         },
         { status: 404 }
       );
-    }
 
-    if (userID !== Items[0].id) {
+    // Throw error code when try to modify other user
+    if (nickname !== serverNickname) {
       return NextResponse.json(
         {
           message: ErrorMessage.MODIFY_OTHER_USER,
@@ -81,7 +106,7 @@ export async function PUT(request: Request, { params: { nickname } }: { params: 
     }
 
     const categoryPutCommand = new UpdateCommand({
-      TableName: "myblogUser-myblog",
+      TableName: process.env.DYNAMODB_CATEGORIES_NAME,
       Key: {
         id: userID,
       },

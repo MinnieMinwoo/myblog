@@ -4,6 +4,7 @@ import getCurrentUserData from "logics/getCurrentUserData";
 import SettingData from "./SettingData";
 import ProfileInfoEdit from "./ProfileInfoEdit";
 import ProfileImageEdit from "./ProfileImageEdit";
+import CategoryOrderEdit from "./CategoryOrderEdit";
 
 export default function SettingPage() {
   const { data: userData, status } = useQuery({
@@ -43,12 +44,7 @@ export default function SettingPage() {
             currentData={userData?.email}
             onClick={onEmailChange}
           />
-          {
-            // <SocialLoginEdit />
-          }
-          {
-            // <CategoryOrderEdit />
-          }
+          <CategoryOrderEdit />
           <SettingData
             title="Withdrawal"
             description="All posts and comments you created upon withdrawal will be deleted and will not be

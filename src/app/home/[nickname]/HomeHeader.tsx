@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import HeaderProfile from "./HeaderProfile";
+import HeaderSearch from "components/HeaderSearch";
 
 interface Props {
   userName?: string;
@@ -20,7 +21,10 @@ export default function HomeHeader({ userName }: Props) {
             </Link>
             {userName ? `${userName}'s blog` : ""}
           </div>
-          <HeaderProfile />
+          <div>
+            <HeaderSearch />
+            <HeaderProfile />
+          </div>
         </div>
       </nav>
       {userName && (

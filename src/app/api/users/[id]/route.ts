@@ -1,33 +1,59 @@
-import { UpdateUserAttributesCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  AdminGetUserCommand,
+  ListUsersCommand,
+  UpdateUserAttributesCommand,
+} from "@aws-sdk/client-cognito-identity-provider";
 import { ErrorMessage } from "enum";
-import { authClient, dbClient } from "logics/aws";
+import { authClient } from "logics/aws";
 import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 
+/**
+ * get current user info
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-cognito-identity-provider/Class/AdminGetUserCommand/
+ */
 export async function GET(request: Request, { params: { id } }: { params: { id: string } }) {
-  const imageGetCommand = new QueryCommand({
-    TableName: "myblogUser-myblog",
-    KeyConditionExpression: "id = :id",
-    ExpressionAttributeValues: {
-      ":id": id,
-    },
-    ProjectionExpression: "id, email, nickname, profileImage",
+  const userGetCommand = new AdminGetUserCommand({
+    UserPoolId: process.env.COGNITO_USER_POOL_ID,
+    Username: id,
   });
 
   try {
-    const { Count: userCount, Items: userIDList } = await dbClient.send(imageGetCommand);
-    // Throw error code when user not exists
-    if (userCount === 0 || !userIDList) {
-      return NextResponse.json(
-        {
-          message: ErrorMessage.USER_NOT_EXISTS,
-        },
-        { status: 404 }
-      );
-    }
+    const { UserAttributes } = await authClient.send(userGetCommand);
+    const returnObject: {
+      id?: string;
+      email?: string;
+      nickname?: string;
+      picture?: string;
+      identities?: {
+        [key in string]: any;
+      }[];
+    } = {};
+    UserAttributes?.forEach(({ Name, Value }) => {
+      if (Value)
+        switch (Name) {
+          case "sub":
+            returnObject["id"] = Value;
+            break;
+          case "email":
+            returnObject["email"] = Value;
+            break;
+          case "nickname":
+            returnObject["nickname"] = Value;
+            break;
+          case "picture":
+            returnObject["picture"] = Value;
+            break;
+          case "identities":
+            returnObject["identities"] = JSON.parse(Value);
+            break;
+          default:
+            break;
+        }
+    });
 
-    return NextResponse.json(userIDList[0], { status: 200 });
+    return NextResponse.json(returnObject, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
@@ -50,41 +76,22 @@ export async function PUT(request: Request, { params: { id } }: { params: { id: 
   try {
     const userID = await verifyToken(request.headers.get("authorization"));
 
-    const userQueryCommand = new QueryCommand({
-      TableName: "myblogUser-myblog",
-      KeyConditionExpression: "id = :id",
-      ExpressionAttributeValues: {
-        ":id": id,
-      },
-      ProjectionExpression: "id",
-    });
-
-    const { Count, Items } = await dbClient.send(userQueryCommand);
-    // Throw error code when user not exists
-    if (Count === 0 || !Items) {
-      return NextResponse.json(
-        {
-          message: ErrorMessage.USER_NOT_EXISTS,
-        },
-        { status: 404 }
-      );
-    }
-
     if (nickname) {
-      const nicknameQueryCommand = new QueryCommand({
-        TableName: "myblogUser-myblog",
-        IndexName: "NicknameSort",
-        KeyConditionExpression: "nickname = :nickname",
-        ExpressionAttributeValues: {
-          ":nickname": nickname,
-        },
-        ProjectionExpression: "id, nickname",
+      const userGetCommand = new ListUsersCommand({
+        UserPoolId: process.env.COGNITO_USER_POOL_ID,
       });
 
-      const { Count: nicknameCheckCount, Items: nicknameCheckItems } = await dbClient.send(nicknameQueryCommand);
+      const { Users } = await authClient.send(userGetCommand);
+      // Throw error code when user not exists
+
+      const findUser = Users?.find(({ Attributes }) =>
+        Attributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname)
+      );
+
+      const findUserID = findUser?.Attributes?.find(({ Name }) => Name === "sub")?.Value;
 
       // Throw error code when user not exists
-      if (nicknameCheckCount !== 0 && nicknameCheckItems && nicknameCheckItems[0].id !== id) {
+      if (findUserID && findUserID !== userID) {
         return NextResponse.json(
           {
             message: ErrorMessage.DUPLICATED_NICKNAME,
@@ -94,48 +101,28 @@ export async function PUT(request: Request, { params: { id } }: { params: { id: 
       }
     }
 
-    if (userID !== Items[0].id) {
-      return NextResponse.json(
-        {
-          message: ErrorMessage.MODIFY_OTHER_USER,
-        },
-        { status: 403 }
-      );
-    }
-
-    const categoryPutCommand = new UpdateCommand({
-      TableName: "myblogUser-myblog",
-      Key: {
-        id: userID,
-      },
-      UpdateExpression: `set${" nickname = :nickname, profileImage = :profileImage"}`,
-      ExpressionAttributeValues: {
-        ":nickname": nickname,
-        ":profileImage": profileImage,
-      },
-      ReturnValues: "ALL_NEW",
-    });
-
-    const { Attributes } = await dbClient.send(categoryPutCommand);
-    if (!Attributes) return NextResponse.json({ error: ErrorMessage.DB_CONNECTION_ERROR }, { status: 502 });
-
+    const attributes = [];
+    if (nickname)
+      attributes.push({
+        Name: "nickname",
+        Value: nickname,
+      });
+    if (profileImage)
+      attributes.push({
+        Name: "picture",
+        Value: profileImage,
+      });
     const userUpdateCommand = new UpdateUserAttributesCommand({
       AccessToken: request.headers.get("authorization")!.split(" ")[1],
-      UserAttributes: [
-        {
-          Name: "nickname",
-          Value: nickname,
-        },
-      ],
+      UserAttributes: attributes,
     });
     await authClient.send(userUpdateCommand);
 
     return NextResponse.json(
       {
-        id: Attributes.id,
-        email: Attributes.email,
-        nickname: Attributes.nickname,
-        profileImage: Attributes.profileImage,
+        id: userID,
+        nickname: nickname,
+        profileImage: profileImage,
       },
       { status: 201 }
     );
