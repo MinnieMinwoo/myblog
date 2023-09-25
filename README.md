@@ -1,47 +1,38 @@
-# myBlog_Frontend
+# myBlog
 
-Make my own blog project.
+- Make my on blog project up [Optimizing existing projects](https://github.com/MinnieMinwoo/myBlog_Frontend)
 
-## features
+## Why make same web project?
+
+- This project was re-produced to improve web performance.
+- Existing projects have performed all renders on the client.
+- As a result, user experience during loading and patching of data was disappointing.
+- In this project, Server Side Rendering was used to improve performance by separating server logic from clients.
+
+## Functional differences
 
 - Auth
 
-  - Sign in / up email with verification
-  - Reset password when using email
+  - Delete social login
+    - Due to problem with user data (including "email") being contaminated when implementing social login using cognito.
 
 - Blog home
 
-  - Get blog posts list by user nickname
-  - View post thumbnail With images
-  - Get post data using infinite scroll
-  - Sort posts by category
-  - View post tags
-  - About page for introduce
-  - Search posts by title and tag (Search by starting point only)
+  - Full post search capability
+    - Search all posts whose search keywords are included in the title, content, or username of the post, as well as the starting point.
 
 - Post read
 
-  - Read post written by markdown
-  - View table on contents in sidebar
-  - Like posts
-  - Share post link on facebook, twitter
-  - Copy post link on read
+  - Change to Server Side Rendering
 
 - Post edit & write
 
-  - Set title and thumbnail data
-  - Write blog posts using markdown
-  - Drag & Drop image to fit the cursor during post edit
-  - Set category group
-  - Set tags group by comma
+  - Introducing Lazy loading to improve initial loading speed
 
 - Setting
 
-  - Edit profile images
-  - Edit user description
-  - Edit user email address
-  - Link and unlink social account
-  - Withdrawal
+  - Delete User Description Modification
+    - Integration into About tab
 
 ## project stack
 
@@ -50,15 +41,13 @@ Make my own blog project.
 - React-Query
 - Bootstrap
 - AWS
-  - Amplify
   - Cognito
   - DynamoDB
-  - Lambda
   - S3
-  - Hosting
+  - Amplify Hosting
 - Jest
 
 ## demonstration
 
 [API](https://minnies-organization.gitbook.io/myblog-api/)
-[Link](https://myblog-backend.firebaseapp.com//)
+[demonstration Link](https://build.duiyf02ne0kez.amplifyapp.com)
