@@ -5,8 +5,12 @@ import SettingData from "./SettingData";
 import ProfileInfoEdit from "./ProfileInfoEdit";
 import ProfileImageEdit from "./ProfileImageEdit";
 import CategoryOrderEdit from "./CategoryOrderEdit";
+import getCurrentUserToken from "logics/getCurrentUserToken";
+import { useRouter } from "next/navigation";
 
 export default function SettingPage() {
+  const router = useRouter();
+
   const { data: userData, status } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUserData,
@@ -19,7 +23,24 @@ export default function SettingPage() {
 
   const onQuit = async () => {
     if (!window.confirm("If you want quit myBlog?")) return;
-    const password = window.prompt("Enter your password.");
+    const keyword = window.prompt("Enter this text: Quit Myblog");
+    if (keyword !== "Quit Myblog") return;
+    try {
+      const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/users/${userData?.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${await getCurrentUserToken()}`,
+        },
+      });
+      if (result.ok) {
+        localStorage.clear();
+        window.alert("The withdrawal is complete.");
+        router.push("/");
+      } else throw new Error("Withdrawal failed");
+    } catch (error) {
+      console.log(error);
+      window.alert("Something Wrong.");
+    }
   };
 
   return (
