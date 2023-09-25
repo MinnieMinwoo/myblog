@@ -7,8 +7,10 @@ frontend:
     build:
       commands:
         - env | grep -e AMPLIFY_ACCESS_KEY -e AMPLIFY_SECRET_ACCESS_KEY >> .env.production
-        - env | grep -e COGNITO_CLIENT_APP_ID -e COGNITO_CLIENT_ID -e COGNITO_CLIENT_WEB_ID -e COGNITO_USER_POOL_ID >> .env.production
-        - env | grep -e NEXT_PUBLIC_API_DOMAIN -e NEXT_PUBLIC_S3_DOMAIN	 -e NEXT_PUBLIC_WEB_DOMAIN >> .env.production
+        - env | grep -e COGNITO_ >> .env.production
+        - env | grep -e DYNAMODB_ >> .env.production
+        - env | grep -e NEXT_PUBLIC_ >> .env.production
+        - env | grep -e S3_IMAGES_NAME >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
