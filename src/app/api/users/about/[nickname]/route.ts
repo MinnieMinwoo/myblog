@@ -1,7 +1,9 @@
-import { ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { AdminGetUserCommand, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ErrorMessage } from "enum";
 import { authClient, dbClient } from "logics/aws";
+import verifyToken from "logics/verifyToken";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 /**
@@ -50,6 +52,81 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
     const { Item } = await dbClient.send(aboutGetCommand);
     if (Item) return NextResponse.json(Item, { status: 200 });
     else return NextResponse.json({ error: ErrorMessage.USER_NOT_EXISTS }, { status: 404 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+  }
+}
+
+/**
+ * Update user about page data
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/dynamodb/command/UpdateItemCommand/
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-lib-dynamodb/Class/UpdateCommand/
+ */
+export async function PUT(request: Request, { params: { nickname } }: { params: { nickname: string } }) {
+  try {
+    const { about } = await request.json();
+    if (!about)
+      return NextResponse.json(
+        {
+          message: ErrorMessage.INVALID_FETCH_DATA,
+        },
+        { status: 400 }
+      );
+
+    const userID = await verifyToken(request.headers.get("authorization"));
+
+    const userGetCommand = new AdminGetUserCommand({
+      UserPoolId: process.env.COGNITO_USER_POOL_ID,
+      Username: userID,
+    });
+
+    const { UserAttributes } = await authClient.send(userGetCommand);
+    const serverNickname = UserAttributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname)?.Value;
+
+    // Throw error code when user not exists
+    if (!serverNickname)
+      return NextResponse.json(
+        {
+          message: ErrorMessage.USER_NOT_EXISTS,
+        },
+        { status: 404 }
+      );
+
+    // Throw error code when try to modify other user
+    if (nickname !== serverNickname) {
+      return NextResponse.json(
+        {
+          message: ErrorMessage.MODIFY_OTHER_USER,
+        },
+        { status: 403 }
+      );
+    }
+
+    const aboutUpdateCommand = new UpdateCommand({
+      TableName: process.env.DYNAMODB_ABOUTS_NAME,
+      Key: {
+        id: userID,
+      },
+      UpdateExpression: "set about = :about",
+      ExpressionAttributeValues: {
+        ":about": about,
+      },
+      ReturnValues: "ALL_NEW",
+    });
+
+    const { Attributes } = await dbClient.send(aboutUpdateCommand);
+    if (!Attributes) return NextResponse.json({ error: ErrorMessage.DB_CONNECTION_ERROR }, { status: 502 });
+    revalidatePath(`/home/${nickname}/about`);
+    return NextResponse.json(
+      {
+        id: Attributes.id,
+        about: Attributes.about,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });

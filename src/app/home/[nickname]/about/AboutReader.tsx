@@ -2,8 +2,7 @@ import ReactMarkdown from "react-markdown";
 import SyntaxHighlightProvider from "../[postid]/SyntaxHIghlightProvider";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 
-export default async function AboutReader({ nickname }: { nickname: string }) {
-  const { about } = await (await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/users/about/${nickname}`)).json();
+export default function AboutReader({ about }: { about: string }) {
   return (
     <article className="mt-3" data-color-mode="light">
       <ReactMarkdown

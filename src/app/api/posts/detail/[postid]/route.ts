@@ -80,7 +80,7 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
     });
 
     await dbClient.send(postCommand);
-    revalidatePath(`/home/[nickname]/[postid]`);
+    revalidatePath(`/home/${Items[0].createdNickname}/${postid}`);
     return NextResponse.json({ postID: postData.id }, { status: 201 });
   } catch (error) {
     console.log(error);
