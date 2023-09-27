@@ -52,6 +52,29 @@ export default function SettingPage() {
     } else window.alert("Email update failed.");
   };
 
+  const onPasswordChange = async () => {
+    const currentPassword = window.prompt("Enter current password.");
+    if (!currentPassword) return;
+    const newPassword = window.prompt("Enter new password");
+    if (!newPassword) return;
+    if (newPassword !== window.prompt("Enter new password again")) {
+      window.alert("The password you entered is not the same.");
+      return;
+    }
+    const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getCurrentUserToken()}`,
+      },
+      body: JSON.stringify({
+        beforePassword: currentPassword,
+        newPassword: newPassword,
+      }),
+    });
+    result.ok ? window.alert("Password update complete.") : window.alert("Password update failed");
+  };
+
   const onQuit = async () => {
     if (!window.confirm("If you want quit myBlog?")) return;
     const keyword = window.prompt("Enter this text: Quit Myblog");
@@ -95,6 +118,12 @@ export default function SettingPage() {
             buttonMessage="Change"
             currentData={userData?.email}
             onClick={onEmailChange}
+          />
+          <SettingData
+            title="Password change"
+            description="You can change your password."
+            buttonMessage="Change"
+            onClick={onPasswordChange}
           />
           <CategoryOrderEdit />
           <SettingData
