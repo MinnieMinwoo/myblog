@@ -18,7 +18,38 @@ export default function SettingPage() {
 
   const onEmailChange = async () => {
     const email = window.prompt("Enter new email address.");
-    const password = window.prompt("Enter your password.");
+    if (!email) return;
+    const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/email`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getCurrentUserToken()}`,
+      },
+      body: JSON.stringify({
+        email: email,
+      }),
+    });
+    if (result.ok) {
+      while (true) {
+        const verificationCode = window.prompt("Enter verification code.");
+        if (verificationCode === null) break;
+        const verificationResult = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/auth/email`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${await getCurrentUserToken()}`,
+          },
+          body: JSON.stringify({
+            code: verificationCode,
+          }),
+        });
+        if (verificationResult.ok) {
+          window.alert("Email update complete");
+          window.location.reload();
+          break;
+        } else continue;
+      }
+    } else window.alert("Email update failed.");
   };
 
   const onQuit = async () => {
