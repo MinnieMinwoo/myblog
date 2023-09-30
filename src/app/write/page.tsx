@@ -90,7 +90,6 @@ export default function WritePage() {
         const postID = postContent.id;
         router.push(`/home/${postContent.createdNickname}/${postID}`);
         router.refresh();
-        router.refresh(); // state reset
       } else {
         const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${postContent.createdNickname}`, {
           method: "POST",

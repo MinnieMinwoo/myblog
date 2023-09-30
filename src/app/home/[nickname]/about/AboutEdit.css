@@ -1,0 +1,19 @@
+.post-editor {
+  min-height: 200px;
+  height: calc(100vh - 260px) !important;
+}
+
+.on-write-layout {
+  position: inherit;
+}
+
+@media (max-width: 767px) {
+  .on-write-layout {
+    position: absolute;
+    width: 100%;
+  }
+}
+
+.w-md-editor-bar {
+  display: none;
+}

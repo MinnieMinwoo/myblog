@@ -1,10 +1,12 @@
 import {
   AdminGetUserCommand,
+  DeleteUserCommand,
   ListUsersCommand,
   UpdateUserAttributesCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
+import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { ErrorMessage } from "enum";
-import { authClient } from "logics/aws";
+import { authClient, dbClient } from "logics/aws";
 import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 
@@ -139,5 +141,55 @@ export async function PUT(request: Request, { params: { id } }: { params: { id: 
       default:
         return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
     }
+  }
+}
+
+/**
+ * delete user data
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/dynamodb/command/TransactWriteItemsCommand/
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/DeleteUserCommand/
+ */
+export async function DELETE(request: Request, { params: { id } }: { params: { id: string } }) {
+  try {
+    const userID = await verifyToken(request.headers.get("authorization"));
+
+    // Throw error code when user does not same
+    if (id !== userID) {
+      return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+    }
+
+    const userDeleteTransactionCommand = new TransactWriteCommand({
+      TransactItems: [
+        {
+          Delete: {
+            Key: {
+              id: id,
+            },
+            TableName: process.env.DYNAMODB_CATEGORIES_NAME,
+          },
+        },
+        {
+          Delete: {
+            Key: {
+              id: id,
+            },
+            TableName: process.env.DYNAMODB_ABOUTS_NAME,
+          },
+        },
+      ],
+    });
+    await dbClient.send(userDeleteTransactionCommand);
+
+    const userDeleteCommand = new DeleteUserCommand({
+      AccessToken: request.headers.get("authorization")?.split(" ")[1],
+    });
+    await authClient.send(userDeleteCommand);
+
+    return new NextResponse(undefined, { status: 204 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
   }
 }
