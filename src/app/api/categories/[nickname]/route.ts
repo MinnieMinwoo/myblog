@@ -1,10 +1,19 @@
-import { AdminGetUserCommand, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
+import {
+  AdminGetUserCommand,
+  ListUsersCommand,
+  ResourceNotFoundException,
+} from "@aws-sdk/client-cognito-identity-provider";
 import { QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ErrorMessage } from "enum";
 import { authClient, dbClient } from "logics/aws";
 import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 
+/**
+ * Return user category list.
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/ListUsersCommand/
+ */
 export async function GET(request: Request, { params: { nickname } }: { params: { nickname: string } }) {
   //logging
   console.log(request);
@@ -19,9 +28,9 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
     if (!Users)
       return NextResponse.json(
         {
-          message: ErrorMessage.USER_NOT_EXISTS,
+          message: ErrorMessage.DB_CONNECTION_ERROR,
         },
-        { status: 404 }
+        { status: 502 }
       );
 
     const user = Users.find(({ Attributes }) =>
@@ -54,9 +63,9 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
     if (Count === 0 || !Items) {
       return NextResponse.json(
         {
-          message: ErrorMessage.USER_NOT_EXISTS,
+          message: ErrorMessage.INTERNAL_SERVER_ERROR,
         },
-        { status: 404 }
+        { status: 500 }
       );
     } else return NextResponse.json(Items[0], { status: 200 });
   } catch (error) {
@@ -67,6 +76,8 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
 
 /**
  * Update user category data
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/AdminGetUserCommand/
  *
  * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-lib-dynamodb/Class/UpdateCommand/
  */
@@ -86,17 +97,8 @@ export async function PUT(request: Request, { params: { nickname } }: { params: 
     const { UserAttributes } = await authClient.send(userGetCommand);
     const serverNickname = UserAttributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname)?.Value;
 
-    // Throw error code when user not exists
-    if (!serverNickname)
-      return NextResponse.json(
-        {
-          message: ErrorMessage.USER_NOT_EXISTS,
-        },
-        { status: 404 }
-      );
-
     // Throw error code when try to modify other user
-    if (nickname !== serverNickname) {
+    if (!serverNickname || nickname !== serverNickname) {
       return NextResponse.json(
         {
           message: ErrorMessage.MODIFY_OTHER_USER,
@@ -130,15 +132,18 @@ export async function PUT(request: Request, { params: { nickname } }: { params: 
   } catch (error) {
     console.log(error);
     if (!(error instanceof Error)) return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
-    switch (error.message) {
-      case ErrorMessage.INVALID_TOKEN_DATA:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
-      case ErrorMessage.INVALID_TOKEN_TYPE:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
-      case ErrorMessage.CONTAMINATED_TOKEN:
-        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
-      default:
-        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
-    }
+    else if (error.name === "ResourceNotFoundException")
+      return NextResponse.json({ error: ErrorMessage.USER_NOT_EXISTS }, { status: 404 });
+    else
+      switch (error.message) {
+        case ErrorMessage.INVALID_TOKEN_DATA:
+          return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+        case ErrorMessage.INVALID_TOKEN_TYPE:
+          return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+        case ErrorMessage.CONTAMINATED_TOKEN:
+          return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+        default:
+          return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+      }
   }
 }
