@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { ResourceNotFoundException } from "@aws-sdk/client-cognito-identity-provider";
 import { ErrorMessage } from "enum";
 import { storageClient } from "logics/aws";
