@@ -29,10 +29,6 @@ jest.mock("logics/verifyToken", () => (token: string) => {
 
 describe("/categories/[nickname] test", () => {
   const userGetFunction = (input: AdminGetUserCommand | GetUserCommand) => {
-    const errorConstructorValue = {
-      $metadata: {},
-      message: "",
-    };
     if (input instanceof AdminGetUserCommand) {
       return Promise.resolve({
         Username: "testuser",
