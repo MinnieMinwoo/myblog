@@ -1,36 +1,34 @@
 import { NextResponse } from "next/server";
-import { DeleteCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { dbClient } from "logics/aws";
 import { revalidatePath } from "next/cache";
 import verifyToken from "logics/verifyToken";
 import { ErrorMessage } from "enum";
 
+/**
+ * Get certain posts.
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/dynamodb/command/GetItemCommand/
+ */
 export async function GET(request: Request, { params: { postid } }: { params: { postid: string } }) {
   // logging
   console.log(request);
 
   try {
-    const postGetCommand = new QueryCommand({
+    const postGetCommand = new GetCommand({
       TableName: process.env.DYNAMODB_POSTS_NAME,
-      KeyConditionExpression: "id = :id",
-      ExpressionAttributeValues: {
-        ":id": postid,
+      Key: {
+        id: postid,
       },
     });
 
-    const { Count, Items } = await dbClient.send(postGetCommand);
-    // Throw error code when post not exists
-    if (Count === 0 || !Items) {
-      return NextResponse.json(
-        {
-          error: ErrorMessage.POST_NOT_EXISTS,
-        },
-        { status: 404 }
-      );
-    } else return NextResponse.json(Items[0]);
+    const { Item } = await dbClient.send(postGetCommand);
+    return NextResponse.json(Item);
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    if (error instanceof Error && error.name === "ResourceNotFoundException")
+      return NextResponse.json({ error: ErrorMessage.POST_NOT_EXISTS }, { status: 404 });
+    else return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -42,28 +40,17 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
     const userID = await verifyToken(request.headers.get("authorization"));
     const postData = await request.json();
 
-    const postGetCommand = new QueryCommand({
+    const postGetCommand = new GetCommand({
       TableName: process.env.DYNAMODB_POSTS_NAME,
-      KeyConditionExpression: "id = :id",
-      ExpressionAttributeValues: {
-        ":id": postid,
+      Key: {
+        id: postid,
       },
     });
 
-    const { Count, Items } = await dbClient.send(postGetCommand);
-    console.log(Items);
-    // Throw error code when post not exists
-    if (Count === 0 || !Items) {
-      return NextResponse.json(
-        {
-          error: ErrorMessage.POST_NOT_EXISTS,
-        },
-        { status: 404 }
-      );
-    }
+    const { Item } = await dbClient.send(postGetCommand);
 
     // Throw error code when user does not same
-    if (userID !== Items[0].createdBy) {
+    if (userID !== Item?.createdBy) {
       return NextResponse.json(
         {
           error: ErrorMessage.MODIFY_OTHER_USER,
@@ -80,21 +67,25 @@ export async function PUT(request: Request, { params: { postid } }: { params: { 
     });
 
     await dbClient.send(postCommand);
-    revalidatePath(`/home/${Items[0].createdNickname}/${postid}`);
-    return NextResponse.json({ postID: postData.id }, { status: 201 });
+    revalidatePath(`/home/${Item?.createdNickname}/${postid}`);
+    console.log(postData);
+    return NextResponse.json({ id: postid }, { status: 201 });
   } catch (error) {
     console.log(error);
     if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
-    switch (error.message) {
-      case ErrorMessage.INVALID_TOKEN_DATA:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
-      case ErrorMessage.INVALID_TOKEN_TYPE:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
-      case ErrorMessage.CONTAMINATED_TOKEN:
-        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
-      default:
-        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
-    }
+    else if (error.name === "ResourceNotFoundException")
+      return NextResponse.json({ error: ErrorMessage.POST_NOT_EXISTS }, { status: 404 });
+    else
+      switch (error.message) {
+        case ErrorMessage.INVALID_TOKEN_DATA:
+          return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+        case ErrorMessage.INVALID_TOKEN_TYPE:
+          return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+        case ErrorMessage.CONTAMINATED_TOKEN:
+          return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+        default:
+          return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+      }
   }
 }
 
@@ -105,28 +96,17 @@ export async function DELETE(request: Request, { params: { postid } }: { params:
   try {
     const userID = await verifyToken(request.headers.get("authorization"));
 
-    const postGetCommand = new QueryCommand({
+    const postGetCommand = new GetCommand({
       TableName: process.env.DYNAMODB_POSTS_NAME,
-      KeyConditionExpression: "id = :id",
-      ExpressionAttributeValues: {
-        ":id": postid,
+      Key: {
+        id: postid,
       },
     });
 
-    const { Count, Items } = await dbClient.send(postGetCommand);
-    console.log(Items);
-    // Throw error code when post not exists
-    if (Count === 0 || !Items) {
-      return NextResponse.json(
-        {
-          error: ErrorMessage.POST_NOT_EXISTS,
-        },
-        { status: 404 }
-      );
-    }
+    const { Item } = await dbClient.send(postGetCommand);
 
     // Throw error code when user does not same
-    if (userID !== Items[0].createdBy) {
+    if (userID !== Item?.createdBy) {
       return NextResponse.json(
         {
           error: ErrorMessage.MODIFY_OTHER_USER,
@@ -144,16 +124,20 @@ export async function DELETE(request: Request, { params: { postid } }: { params:
     await dbClient.send(postDeleteCommand);
     return NextResponse.json({ id: postid }, { status: 200 });
   } catch (error) {
+    console.log(error);
     if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
-    switch (error.message) {
-      case ErrorMessage.INVALID_TOKEN_DATA:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
-      case ErrorMessage.INVALID_TOKEN_TYPE:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
-      case ErrorMessage.CONTAMINATED_TOKEN:
-        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
-      default:
-        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
-    }
+    else if (error.name === "ResourceNotFoundException")
+      return NextResponse.json({ error: ErrorMessage.POST_NOT_EXISTS }, { status: 404 });
+    else
+      switch (error.message) {
+        case ErrorMessage.INVALID_TOKEN_DATA:
+          return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+        case ErrorMessage.INVALID_TOKEN_TYPE:
+          return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+        case ErrorMessage.CONTAMINATED_TOKEN:
+          return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+        default:
+          return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+      }
   }
 }
