@@ -37,15 +37,24 @@ export async function POST(request: Request) {
   } catch (error) {
     console.log(error);
     if (!(error instanceof Error)) return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
-    switch (error.message) {
-      case ErrorMessage.INVALID_TOKEN_DATA:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
-      case ErrorMessage.INVALID_TOKEN_TYPE:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
-      case ErrorMessage.CONTAMINATED_TOKEN:
-        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+    switch (error.name) {
+      case "CodeMismatchException":
+        return NextResponse.json({ error: ErrorMessage.INVALID_VERIFICATION_CODE }, { status: 401 });
+      case "ExpiredCodeException":
+        return NextResponse.json({ error: ErrorMessage.EXPIRED_VERIFICATION_CODE }, { status: 403 });
+      case "TooManyRequestsException":
+        return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
       default:
-        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+        switch (error.message) {
+          case ErrorMessage.INVALID_TOKEN_DATA:
+            return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+          case ErrorMessage.INVALID_TOKEN_TYPE:
+            return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+          case ErrorMessage.CONTAMINATED_TOKEN:
+            return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+          default:
+            return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+        }
     }
   }
 }
@@ -53,7 +62,7 @@ export async function POST(request: Request) {
 /**
  * Update user email.
  *
- * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-lib-dynamodb/Class/UpdateCommand/
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/UpdateUserAttributesCommand/
  */
 export async function PUT(request: Request) {
   //logging
@@ -87,15 +96,24 @@ export async function PUT(request: Request) {
   } catch (error) {
     console.log(error);
     if (!(error instanceof Error)) return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
-    switch (error.message) {
-      case ErrorMessage.INVALID_TOKEN_DATA:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
-      case ErrorMessage.INVALID_TOKEN_TYPE:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
-      case ErrorMessage.CONTAMINATED_TOKEN:
-        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+    switch (error.name) {
+      case "AliasExistsException":
+        return NextResponse.json({ error: ErrorMessage.DUPLICATED_EMAIL }, { status: 403 });
+      case "TooManyRequestsException":
+        return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
+      case "CodeDeliveryFailureException":
+        return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
       default:
-        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+        switch (error.message) {
+          case ErrorMessage.INVALID_TOKEN_DATA:
+            return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+          case ErrorMessage.INVALID_TOKEN_TYPE:
+            return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+          case ErrorMessage.CONTAMINATED_TOKEN:
+            return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+          default:
+            return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+        }
     }
   }
 }
