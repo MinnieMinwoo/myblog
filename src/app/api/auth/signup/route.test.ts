@@ -59,7 +59,7 @@ describe("/auth/signup test", () => {
   dbClient.send = jest.fn();
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   describe("POST method test", () => {

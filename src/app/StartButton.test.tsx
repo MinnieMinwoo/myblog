@@ -24,7 +24,7 @@ describe("/ start button test", () => {
 
   afterAll(() => {
     cleanup();
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   it("button render", () => {

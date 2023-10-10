@@ -58,7 +58,7 @@ describe("/confirm test", () => {
   authClient.send = jest.fn().mockImplementation(VerifyFunction);
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   describe("GET method test", () => {

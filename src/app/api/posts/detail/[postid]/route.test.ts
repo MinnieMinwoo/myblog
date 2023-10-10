@@ -29,7 +29,7 @@ jest.mock("logics/verifyToken", () => (token: string) => {
 });
 
 afterAll(() => {
-  jest.restoreAllMocks();
+  jest.resetAllMocks();
 });
 
 describe("/posts/[nickname] test", () => {

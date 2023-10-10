@@ -56,7 +56,7 @@ describe("/signin test", () => {
   authClient.send = jest.fn().mockImplementation(signInFunction);
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   describe("POST method test", () => {

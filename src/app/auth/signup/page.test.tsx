@@ -26,7 +26,7 @@ describe("/auth/signin page test", () => {
   beforeEach(() => render(<AuthWithEmail />));
   afterAll(() => {
     cleanup();
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   it("email render", () => {

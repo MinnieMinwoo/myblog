@@ -23,7 +23,7 @@ describe("/ page test", () => {
 
   afterAll(() => {
     cleanup();
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   it("icon render", async () => {

@@ -110,7 +110,7 @@ describe("/posts/[nickname] test", () => {
   dbClient.send = jest.fn().mockImplementation(postFunction);
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   describe("GET method test", () => {

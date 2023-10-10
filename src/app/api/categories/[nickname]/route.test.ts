@@ -95,7 +95,7 @@ describe("/categories/[nickname] test", () => {
   dbClient.send = jest.fn().mockImplementation(categoryGetFunction);
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   describe("GET method test", () => {
