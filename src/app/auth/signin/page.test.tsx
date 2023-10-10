@@ -10,9 +10,9 @@ import React from "react";
 const routerMockFunction = jest.fn(() => {});
 jest.mock("next/navigation", () => ({
   ...jest.requireActual("next/navigation"),
-  useRouter: () => ({
+  useRouter: jest.fn().mockImplementation(() => ({
     push: routerMockFunction,
-  }),
+  })),
 }));
 
 const setStateMockFunction = jest.fn(() => {});

@@ -7,24 +7,27 @@ import { ErrorMessage } from "enum";
 import { storageClient } from "logics/aws";
 import { POST } from "./route";
 
-jest.mock("logics/verifyToken", () => (token: string) => {
-  const errorConstructorValue = {
-    $metadata: {},
-    message: "",
-  };
-  switch (token) {
-    case "Bearer testuser":
-      return Promise.resolve("testuser");
-    case "Bearer mollu":
-      return Promise.reject(new ResourceNotFoundException(errorConstructorValue));
-    case "Invalid":
-      return Promise.reject(new Error(ErrorMessage.INVALID_TOKEN_TYPE));
-    case "Contaminated":
-      return Promise.reject(new Error(ErrorMessage.CONTAMINATED_TOKEN));
-    default:
-      return Promise.reject(new Error(ErrorMessage.INVALID_TOKEN_DATA));
-  }
-});
+jest.mock(
+  "logics/verifyToken",
+  jest.fn().mockImplementation(() => (token: string) => {
+    const errorConstructorValue = {
+      $metadata: {},
+      message: "",
+    };
+    switch (token) {
+      case "Bearer testuser":
+        return Promise.resolve("testuser");
+      case "Bearer mollu":
+        return Promise.reject(new ResourceNotFoundException(errorConstructorValue));
+      case "Invalid":
+        return Promise.reject(new Error(ErrorMessage.INVALID_TOKEN_TYPE));
+      case "Contaminated":
+        return Promise.reject(new Error(ErrorMessage.CONTAMINATED_TOKEN));
+      default:
+        return Promise.reject(new Error(ErrorMessage.INVALID_TOKEN_DATA));
+    }
+  })
+);
 
 describe("/images test", () => {
   storageClient.send = jest.fn();

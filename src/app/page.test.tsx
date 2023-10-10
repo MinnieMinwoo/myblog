@@ -9,12 +9,15 @@ import Home from "./page";
 jest.mock("./StartButton");
 jest.mock("components/HeaderSearch");
 jest.mock("components/Footer");
-jest.mock("next/image", () => ({
-  __esModule: true,
-  default: (props: any) => {
-    return <img {...props} />;
-  },
-}));
+jest.mock(
+  "next/image",
+  jest.fn().mockImplementation(() => ({
+    __esModule: true,
+    default: (props: any) => {
+      return <img {...props} />;
+    },
+  }))
+);
 
 describe("/ page test", () => {
   beforeEach(() => {

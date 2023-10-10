@@ -9,24 +9,27 @@ import { dbClient } from "logics/aws";
 import { DELETE, GET, PUT } from "./route";
 
 jest.mock("next/cache");
-jest.mock("logics/verifyToken", () => (token: string) => {
-  const errorConstructorValue = {
-    $metadata: {},
-    message: "",
-  };
-  switch (token) {
-    case "Bearer testuser":
-      return Promise.resolve("testuser");
-    case "Bearer mollu":
-      return Promise.resolve("mollu");
-    case "Invalid":
-      return Promise.reject(new Error(ErrorMessage.INVALID_TOKEN_TYPE));
-    case "Contaminated":
-      return Promise.reject(new Error(ErrorMessage.CONTAMINATED_TOKEN));
-    default:
-      return Promise.reject(new Error(ErrorMessage.INVALID_TOKEN_DATA));
-  }
-});
+jest.mock(
+  "logics/verifyToken",
+  jest.fn().mockImplementation(() => (token: string) => {
+    const errorConstructorValue = {
+      $metadata: {},
+      message: "",
+    };
+    switch (token) {
+      case "Bearer testuser":
+        return Promise.resolve("testuser");
+      case "Bearer mollu":
+        return Promise.resolve("mollu");
+      case "Invalid":
+        return Promise.reject(new Error(ErrorMessage.INVALID_TOKEN_TYPE));
+      case "Contaminated":
+        return Promise.reject(new Error(ErrorMessage.CONTAMINATED_TOKEN));
+      default:
+        return Promise.reject(new Error(ErrorMessage.INVALID_TOKEN_DATA));
+    }
+  })
+);
 
 afterAll(() => {
   jest.resetAllMocks();
