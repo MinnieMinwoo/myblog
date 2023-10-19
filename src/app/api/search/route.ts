@@ -13,6 +13,7 @@ export async function GET(request: Request) {
   console.log(request);
 
   const { searchParams } = new URL(request.url);
+  console.log(searchParams);
   const query = searchParams.get("query");
   const user = searchParams.get("user");
   const createdAt = searchParams.get("createdAt");
@@ -47,9 +48,8 @@ export async function GET(request: Request) {
 
   try {
     // LastEvaluatedKey : {id, createdBy, createdAt}
-    const data = await dbClient.send(userPostCommand);
-    const { Items: postItems, LastEvaluatedKey } = await dbClient.send(userPostCommand);
-    return NextResponse.json({ postList: postItems, LastEvaluatedKey }, { status: 200 });
+    const { Items, LastEvaluatedKey } = await dbClient.send(userPostCommand);
+    return NextResponse.json({ postList: Items, LastEvaluatedKey }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
