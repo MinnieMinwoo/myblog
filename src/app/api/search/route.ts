@@ -15,6 +15,9 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("query");
   const user = searchParams.get("user");
+  const createdAt = searchParams.get("createdAt");
+  const createdBy = searchParams.get("createdBy");
+
   if (!query) return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
 
   const userPostCommand = new ScanCommand({
@@ -33,10 +36,18 @@ export async function GET(request: Request) {
         },
     ProjectionExpression: "id, title, createdBy, createdNickname, createdAt, thumbnailImageURL, thumbnailData, tag",
     Limit: 10,
-    ExclusiveStartKey: undefined,
+    ExclusiveStartKey:
+      createdAt && createdBy
+        ? {
+            createdAt: createdAt,
+            createdBy: createdBy,
+          }
+        : undefined,
   });
+
   try {
     // LastEvaluatedKey : {id, createdBy, createdAt}
+    const data = await dbClient.send(userPostCommand);
     const { Items: postItems, LastEvaluatedKey } = await dbClient.send(userPostCommand);
     return NextResponse.json({ postList: postItems, LastEvaluatedKey }, { status: 200 });
   } catch (error) {
