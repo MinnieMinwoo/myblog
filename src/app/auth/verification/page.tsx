@@ -75,8 +75,11 @@ export default function VerificationPage() {
         <form onSubmit={onSubmit}>
           <div className="vstack gap-3">
             <div>
-              <label className="form-label">Enter verification code</label>
+              <label className="form-label" htmlFor="verify-code">
+                Enter verification code
+              </label>
               <input
+                id="verify-code"
                 className="form-control"
                 type="text"
                 placeholder="verification code"

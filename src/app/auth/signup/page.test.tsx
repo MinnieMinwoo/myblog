@@ -19,7 +19,7 @@ const setStateMockFunction = jest.fn(() => {});
 jest.mock("react", () => ({
   ...jest.requireActual("react"),
   onsubmit: jest.fn(() => ({ status: 406 })),
-  useState: () => ["123", setStateMockFunction],
+  useState: jest.fn(() => ["123", setStateMockFunction]),
 }));
 
 describe("/auth/signin page test", () => {
