@@ -76,7 +76,7 @@ describe("/auth/signin page test", () => {
 
     const nicknameLabel = screen.getByLabelText("Nickname");
     userEvent.type(nicknameLabel, "1");
-    await waitFor(() => expect(setStateMockFunction).toBeCalledTimes(2));
+    await waitFor(() => expect(setStateMockFunction).toBeCalledTimes(3));
   });
 
   it("submit success logic", async () => {

@@ -25,14 +25,16 @@ export default function EditSpan({ createdBy }: { createdBy: string }) {
     if (!window.confirm("If you want to delete this post?")) return;
     try {
       const token = await getCurrentUserToken();
-      await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/detail/${postid}`, {
+      const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/detail/${postid}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      router.push(`/home/${userData?.nickname}`);
+      if (result.ok) router.push(`/home/${userData?.nickname}`);
+      const { error } = await result.json();
+      throw new Error(error);
     } catch (error) {
       console.log(error);
       window.alert("Post delete failed.");
