@@ -18,8 +18,8 @@ jest.mock("next/navigation", () => ({
 }));
 
 describe("/home/[nickname]/[postid] ParamCheck test", () => {
-  afterEach(() => cleanup());
   afterAll(() => {
+    cleanup();
     jest.resetAllMocks();
   });
 
