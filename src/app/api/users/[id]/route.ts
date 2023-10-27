@@ -16,6 +16,9 @@ import { NextResponse } from "next/server";
  * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-cognito-identity-provider/Class/AdminGetUserCommand/
  */
 export async function GET(request: Request, { params: { id } }: { params: { id: string } }) {
+  //logging
+  console.log(request);
+
   const userGetCommand = new AdminGetUserCommand({
     UserPoolId: process.env.COGNITO_USER_POOL_ID,
     Username: id,

@@ -12,22 +12,17 @@ import { NextResponse } from "next/server";
  * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-lib-dynamodb/Class/GetCommand/
  */
 export async function GET(request: Request, { params: { nickname } }: { params: { nickname: string } }) {
+  //logging
+  console.log(request);
+
   try {
     const userGetCommand = new ListUsersCommand({
       UserPoolId: process.env.COGNITO_USER_POOL_ID,
     });
 
     const { Users } = await authClient.send(userGetCommand);
-    // Throw error code when user not exists
-    if (!Users)
-      return NextResponse.json(
-        {
-          message: ErrorMessage.USER_NOT_EXISTS,
-        },
-        { status: 404 }
-      );
 
-    const user = Users.find(({ Attributes }) =>
+    const user = Users?.find(({ Attributes }) =>
       Attributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname)
     );
 
@@ -51,7 +46,7 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
 
     const { Item } = await dbClient.send(aboutGetCommand);
     if (Item) return NextResponse.json(Item, { status: 200 });
-    else return NextResponse.json({ error: ErrorMessage.USER_NOT_EXISTS }, { status: 404 });
+    else return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
@@ -66,12 +61,15 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
  * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-lib-dynamodb/Class/UpdateCommand/
  */
 export async function PUT(request: Request, { params: { nickname } }: { params: { nickname: string } }) {
+  //logging
+  console.log(request);
+
   try {
     const { about } = await request.json();
     if (!about)
       return NextResponse.json(
         {
-          message: ErrorMessage.INVALID_FETCH_DATA,
+          error: ErrorMessage.INVALID_FETCH_DATA,
         },
         { status: 400 }
       );
@@ -86,20 +84,11 @@ export async function PUT(request: Request, { params: { nickname } }: { params: 
     const { UserAttributes } = await authClient.send(userGetCommand);
     const serverNickname = UserAttributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname)?.Value;
 
-    // Throw error code when user not exists
-    if (!serverNickname)
-      return NextResponse.json(
-        {
-          message: ErrorMessage.USER_NOT_EXISTS,
-        },
-        { status: 404 }
-      );
-
     // Throw error code when try to modify other user
     if (nickname !== serverNickname) {
       return NextResponse.json(
         {
-          message: ErrorMessage.MODIFY_OTHER_USER,
+          error: ErrorMessage.MODIFY_OTHER_USER,
         },
         { status: 403 }
       );
@@ -120,6 +109,7 @@ export async function PUT(request: Request, { params: { nickname } }: { params: 
     const { Attributes } = await dbClient.send(aboutUpdateCommand);
     if (!Attributes) return NextResponse.json({ error: ErrorMessage.DB_CONNECTION_ERROR }, { status: 502 });
     revalidatePath(`/home/${nickname}/about`);
+
     return NextResponse.json(
       {
         id: Attributes.id,
@@ -129,6 +119,18 @@ export async function PUT(request: Request, { params: { nickname } }: { params: 
     );
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    if (!(error instanceof Error))
+      return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+
+    switch (error.message) {
+      case ErrorMessage.INVALID_TOKEN_DATA:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+      case ErrorMessage.INVALID_TOKEN_TYPE:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+      case ErrorMessage.CONTAMINATED_TOKEN:
+        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+      default:
+        return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
+    }
   }
 }

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { dbClient } from "logics/aws";
 import { GET } from "./route";
