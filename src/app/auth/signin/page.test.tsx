@@ -10,23 +10,23 @@ import React from "react";
 const routerMockFunction = jest.fn(() => {});
 jest.mock("next/navigation", () => ({
   ...jest.requireActual("next/navigation"),
-  useRouter: () => ({
+  useRouter: jest.fn().mockImplementation(() => ({
     push: routerMockFunction,
-  }),
+  })),
 }));
 
 const setStateMockFunction = jest.fn(() => {});
 jest.mock("react", () => ({
   ...jest.requireActual("react"),
   onsubmit: jest.fn(() => ({ status: 406 })),
-  useState: () => ["123", setStateMockFunction],
+  useState: jest.fn(() => ["123", setStateMockFunction]),
 }));
 
 describe("/auth/signin page test", () => {
   beforeEach(() => render(<AuthWithEmail />));
   afterAll(() => {
     cleanup();
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   it("email render", () => {

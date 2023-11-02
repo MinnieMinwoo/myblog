@@ -16,6 +16,9 @@ import { NextResponse } from "next/server";
  * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-cognito-identity-provider/Class/AdminGetUserCommand/
  */
 export async function GET(request: Request, { params: { id } }: { params: { id: string } }) {
+  //logging
+  console.log(request);
+
   const userGetCommand = new AdminGetUserCommand({
     UserPoolId: process.env.COGNITO_USER_POOL_ID,
     Username: id,
@@ -28,10 +31,8 @@ export async function GET(request: Request, { params: { id } }: { params: { id: 
       email?: string;
       nickname?: string;
       picture?: string;
-      identities?: {
-        [key in string]: any;
-      }[];
     } = {};
+
     UserAttributes?.forEach(({ Name, Value }) => {
       if (Value)
         switch (Name) {
@@ -47,9 +48,6 @@ export async function GET(request: Request, { params: { id } }: { params: { id: 
           case "picture":
             returnObject["picture"] = Value;
             break;
-          case "identities":
-            returnObject["identities"] = JSON.parse(Value);
-            break;
           default:
             break;
         }
@@ -58,25 +56,31 @@ export async function GET(request: Request, { params: { id } }: { params: { id: 
     return NextResponse.json(returnObject, { status: 200 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    if (error instanceof Error && error.name === "UserNotFoundException")
+      return NextResponse.json({ error: ErrorMessage.USER_NOT_EXISTS }, { status: 404 });
+    else return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
   }
 }
 
 /**
  * Update user data. (nickname, profileImage)
  *
- * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-lib-dynamodb/Class/UpdateCommand/
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/UpdateUserAttributesCommand/
  */
 export async function PUT(request: Request, { params: { id } }: { params: { id: string } }) {
   //logging
   console.log(request);
-  const { nickname, profileImage = "" } = await request.json();
-  if (!nickname) {
-    return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
-  }
 
   try {
     const userID = await verifyToken(request.headers.get("authorization"));
+
+    // Throw error code when user does not same
+    if (id !== userID) return NextResponse.json({ error: ErrorMessage.MODIFY_OTHER_USER }, { status: 403 });
+
+    const { nickname, profileImage = "" } = await request.json();
+    if (!nickname) {
+      return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
+    }
 
     if (nickname) {
       const userGetCommand = new ListUsersCommand({
@@ -130,16 +134,22 @@ export async function PUT(request: Request, { params: { id } }: { params: { id: 
     );
   } catch (error) {
     console.log(error);
-    if (!(error instanceof Error)) return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
-    switch (error.message) {
-      case ErrorMessage.INVALID_TOKEN_DATA:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
-      case ErrorMessage.INVALID_TOKEN_TYPE:
-        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
-      case ErrorMessage.CONTAMINATED_TOKEN:
-        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+    if (!(error instanceof Error))
+      return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    switch (error.name) {
+      case "InvalidParameterException":
+        return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
       default:
-        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+        switch (error.message) {
+          case ErrorMessage.INVALID_TOKEN_DATA:
+            return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+          case ErrorMessage.INVALID_TOKEN_TYPE:
+            return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+          case ErrorMessage.CONTAMINATED_TOKEN:
+            return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+          default:
+            return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
+        }
     }
   }
 }
@@ -157,7 +167,7 @@ export async function DELETE(request: Request, { params: { id } }: { params: { i
 
     // Throw error code when user does not same
     if (id !== userID) {
-      return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+      return NextResponse.json({ error: ErrorMessage.MODIFY_OTHER_USER }, { status: 403 });
     }
 
     const userDeleteTransactionCommand = new TransactWriteCommand({
@@ -190,6 +200,17 @@ export async function DELETE(request: Request, { params: { id } }: { params: { i
     return new NextResponse(undefined, { status: 204 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    if (!(error instanceof Error))
+      return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    switch (error.message) {
+      case ErrorMessage.INVALID_TOKEN_DATA:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+      case ErrorMessage.INVALID_TOKEN_TYPE:
+        return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+      case ErrorMessage.CONTAMINATED_TOKEN:
+        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+      default:
+        return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
+    }
   }
 }

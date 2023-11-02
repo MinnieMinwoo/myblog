@@ -39,8 +39,7 @@ export async function POST(request: Request) {
       Body: imageBuffer,
     });
 
-    const response = await storageClient.send(command);
-    console.log(response);
+    await storageClient.send(command);
 
     return NextResponse.json(
       {

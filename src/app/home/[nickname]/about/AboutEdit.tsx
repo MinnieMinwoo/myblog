@@ -2,7 +2,6 @@
 
 import MDEditor, { commands } from "@uiw/react-md-editor";
 import "./AboutEdit.css";
-import { useState } from "react";
 
 export default function AboutEdit({
   aboutData,

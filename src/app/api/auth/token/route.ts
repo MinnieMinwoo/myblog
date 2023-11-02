@@ -40,6 +40,16 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    if (!(error instanceof Error)) return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
+    switch (error.name) {
+      case "UserNotFoundException":
+        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+      case "NotAuthorizedException":
+        return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+      case "TooManyRequestsException":
+        return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
+      default:
+        return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    }
   }
 }

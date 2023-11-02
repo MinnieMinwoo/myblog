@@ -6,6 +6,11 @@ import verifyToken from "logics/verifyToken";
 import { NextResponse } from "next/server";
 import { v4 as uuid } from "uuid";
 
+/**
+ * Get user post lists.
+ *
+ * https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/dynamodb/command/QueryCommand/
+ */
 export async function GET(request: Request, { params: { nickname } }: { params: { nickname: string } }) {
   //logging
   console.log(request);
@@ -129,26 +134,11 @@ export async function POST(request: Request, { params: { nickname } }: { params:
     });
 
     const { UserAttributes } = await authClient.send(userGetCommand);
-    const serverNickname = UserAttributes?.find(({ Name, Value }) => Name === "nickname" && Value === nickname)?.Value;
-
-    // Throw error code when user not exists
-    if (!serverNickname)
-      return NextResponse.json(
-        {
-          message: ErrorMessage.USER_NOT_EXISTS,
-        },
-        { status: 404 }
-      );
+    const serverNickname = UserAttributes?.find(({ Name }) => Name === "nickname")?.Value;
 
     // Throw error code when try to modify other user
-    if (nickname !== serverNickname) {
-      return NextResponse.json(
-        {
-          message: ErrorMessage.MODIFY_OTHER_USER,
-        },
-        { status: 403 }
-      );
-    }
+    if (nickname !== serverNickname)
+      return NextResponse.json({ error: ErrorMessage.MODIFY_OTHER_USER }, { status: 403 });
 
     const date = new Date();
     const postID = uuid();

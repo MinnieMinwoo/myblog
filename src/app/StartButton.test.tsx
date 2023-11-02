@@ -9,9 +9,9 @@ import StartButton from "./StartButton";
 const mockFunction = jest.fn(() => {});
 jest.mock("next/navigation", () => ({
   ...jest.requireActual("next/navigation"),
-  useRouter: () => ({
+  useRouter: jest.fn().mockImplementation(() => ({
     push: mockFunction,
-  }),
+  })),
 }));
 
 jest.mock("logics/revalidateToken");
@@ -24,7 +24,7 @@ describe("/ start button test", () => {
 
   afterAll(() => {
     cleanup();
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   it("button render", () => {

@@ -25,6 +25,26 @@ export async function POST(request: Request) {
     await authClient.send(newPasswordCommand);
     return NextResponse.json({ id: userID }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    console.log(error);
+    if (!(error instanceof Error)) return NextResponse.json({ error: ErrorMessage.GATEWAY_ERROR }, { status: 502 });
+    switch (error.name) {
+      case "InvalidPasswordException":
+        return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
+      case "LimitExceededException":
+        return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
+      case "TooManyRequestsException":
+        return NextResponse.json({ error: ErrorMessage.TOO_MANY_REQUEST }, { status: 429 });
+      default:
+        switch (error.message) {
+          case ErrorMessage.INVALID_TOKEN_DATA:
+            return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+          case ErrorMessage.INVALID_TOKEN_TYPE:
+            return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+          case ErrorMessage.CONTAMINATED_TOKEN:
+            return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+          default:
+            return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+        }
+    }
   }
 }
