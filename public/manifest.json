@@ -1,0 +1,29 @@
+{
+  "background_color": "#ffffff",
+  "description": "Make your own blog",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "myBlog",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "myBlog",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "categories": ["social"],
+  "screenshots": [],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "myBlog",
+      "url": "https://build.duiyf02ne0kez.amplifyapp.com",
+      "description": "Make your own blog"
+    }
+  ],
+  "lang": "en"
+}
