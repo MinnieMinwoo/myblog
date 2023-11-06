@@ -15,4 +15,18 @@ const config = {
   },
 };
 
-module.exports = createJestConfig(config);
+const jestConfigWithOverrides = async (...args) => {
+  const fn = createJestConfig(config);
+  const res = await fn(...args);
+
+  res.transformIgnorePatterns = res.transformIgnorePatterns.map((pattern) => {
+    if (pattern === "/node_modules/") {
+      return "/node_modules(?!/rehype-sanitize|hast-util-sanitize|react-syntax-highlighter|react-markdown)/";
+    }
+    return pattern;
+  });
+
+  return res;
+};
+
+module.exports = jestConfigWithOverrides;
