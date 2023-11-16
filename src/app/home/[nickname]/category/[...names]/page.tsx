@@ -4,9 +4,8 @@ import PostThumbnailBox from "components/PostThumbnailBox";
 import PostPagination from "components/PostPagination";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import CategorySideBar from "components/CategorySideBar";
-import getCurrentUserToken from "logics/getCurrentUserToken";
 
-export default function HomePage({ params }: { params: { nickname: string; names: string[] } }) {
+export default function CategoryDetailPage({ params }: { params: { nickname: string; names: string[] } }) {
   const { nickname, names } = params;
   const [categoryMain, categorySub] = names;
 
@@ -28,7 +27,6 @@ export default function HomePage({ params }: { params: { nickname: string; names
         : `?categoryMain=${categoryMain}&categorySub=${categorySub}`;
 
       try {
-        const token = await getCurrentUserToken();
         return await (
           await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${nickname}${queryString}`, {
             headers: {
