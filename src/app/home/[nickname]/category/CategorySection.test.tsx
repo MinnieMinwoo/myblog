@@ -110,7 +110,6 @@ describe("/home/[nickname]/category/ CategorySection test", () => {
   });
 
   it("render test when edit state", () => {
-    screen.debug();
     const sectionOne = screen.getByText("testMainCategoryOne");
     const numberOne = screen.getByText("(1)");
     expect(sectionOne.parentNode).toEqual(numberOne.parentNode);
