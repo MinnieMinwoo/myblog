@@ -96,6 +96,7 @@ describe("/home/[nickname]/category/ CategoryCard test", () => {
     expect(title).toBeInTheDocument();
     const thumbnailImage = screen.getByAltText("Thumbnail");
     expect(thumbnailImage).toBeInTheDocument();
+
     const editButton = screen.queryByText("✎");
     expect(editButton).not.toBeInTheDocument();
     const thumbnailButton = screen.queryByText("🖼️");
@@ -109,6 +110,7 @@ describe("/home/[nickname]/category/ CategoryCard test", () => {
     expect(title).toBeInTheDocument();
     const thumbnailImage = screen.getByAltText("Thumbnail");
     expect(thumbnailImage).toBeInTheDocument();
+
     const editButton = screen.getByText("✎");
     expect(editButton).toBeInTheDocument();
     const thumbnailButton = screen.getByText("🖼️");
