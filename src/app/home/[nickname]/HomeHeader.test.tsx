@@ -3,7 +3,7 @@
  */
 
 import "@testing-library/jest-dom";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import HomeHeader from "./HomeHeader";
 
 jest.mock(
@@ -30,7 +30,6 @@ describe("/home/[nickname] HomeHeader test", () => {
   });
 
   it("render test", () => {
-    screen.debug();
     const blogLogo = screen.getByAltText("blog logo");
     expect(blogLogo).toBeInTheDocument();
 
