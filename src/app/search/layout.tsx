@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Search user post data",
 };
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default function SearchLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <header>
