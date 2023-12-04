@@ -86,10 +86,10 @@ const Search = () => {
           <div className="col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
             <form className="d-flex align-items-end mb-4" onSubmit={onSubmit}>
               <div className="flex-grow-1 me-3">
-                <label className="form-label">
+                <label className="form-label" htmlFor="query">
                   {searchParams.get("user") ? `Search ${searchParams.get("user")}'s posts` : "Search all posts"}
                 </label>
-                <input type="text" className="form-control" value={query} onChange={onChange} required />
+                <input id="query" type="text" className="form-control" value={query} onChange={onChange} required />
               </div>
               {status === "loading" ? (
                 <button className="btn btn-outline-success w-80px h-40px" type="submit" disabled>

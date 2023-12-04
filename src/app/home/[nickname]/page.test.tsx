@@ -47,8 +47,6 @@ jest.mock("components/PostThumbnailBox");
 jest.mock("logics/getCurrentUserToken");
 
 describe("/home/[nickname] page test", () => {
-  beforeEach(() => {});
-
   afterAll(() => {
     cleanup();
     jest.resetAllMocks();
