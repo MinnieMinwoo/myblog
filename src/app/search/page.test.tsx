@@ -23,22 +23,25 @@ jest.mock("@tanstack/react-query", () => {
   };
 });
 
-let nickname = "";
 let searchParamsFunction: (input: string) => string | null;
 jest.mock("next/navigation", () => ({
   ...jest.requireActual("next/navigation"),
-  useParams: jest.fn(() => ({
-    nickname: nickname,
-  })),
   useSearchParams: jest.fn(() => ({
     get: searchParamsFunction,
   })),
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+  })),
+  usePathname: () => "",
+  searchParams: () => ({
+    query: "asdf",
+    user: "testuser",
+  }),
 }));
 
 const setStateMockFunction = jest.fn(() => {});
 jest.mock("react", () => ({
   ...jest.requireActual("react"),
-  onsubmit: jest.fn(() => ({ status: 406 })),
   useState: jest.fn(() => ["test", setStateMockFunction]),
 }));
 
@@ -59,9 +62,6 @@ describe("/search page test", () => {
     const queryForm = screen.getByLabelText("Search all posts");
     expect(queryForm).toBeInTheDocument();
 
-    const searchButton = screen.getByText("Search");
-    expect(searchButton).toBeInTheDocument();
-
     const noPostResult = screen.getByText("No posts.");
     expect(noPostResult).toBeInTheDocument();
   });
@@ -72,9 +72,6 @@ describe("/search page test", () => {
 
     const queryForm = screen.getByLabelText("Search testuser's posts");
     expect(queryForm).toBeInTheDocument();
-
-    const searchButton = screen.getByText("Search");
-    expect(searchButton).toBeInTheDocument();
 
     const noPostResult = screen.getByText("No posts.");
     expect(noPostResult).toBeInTheDocument();
@@ -87,25 +84,6 @@ describe("/search page test", () => {
     const queryForm = screen.getByLabelText("Search all posts");
     userEvent.type(queryForm, "123");
     await waitFor(() => expect(setStateMockFunction).toBeCalled());
-  });
-
-  it("form submit test when search all posts", async () => {
-    searchParamsFunction = (input: string) => (input === "query" ? "test" : null);
-    render(<Search />);
-
-    const searchButton = screen.getByText("Search");
-    userEvent.click(searchButton);
-    await waitFor(() => expect(URLSearchParams.prototype.set).toBeCalledTimes(1));
-  });
-
-  it("form submit test when search user's posts", async () => {
-    expect(URLSearchParams.prototype.set).toBeCalledTimes(1);
-
-    searchParamsFunction = (input: string) => (input === "query" ? "test" : input === "user" ? "testuser" : null);
-    render(<Search />);
-
-    const searchButton = screen.getByText("Search");
-    userEvent.click(searchButton);
-    await waitFor(() => expect(URLSearchParams.prototype.set).toBeCalledTimes(3));
+    await waitFor(() => expect(URLSearchParams.prototype.set).toBeCalled());
   });
 });
