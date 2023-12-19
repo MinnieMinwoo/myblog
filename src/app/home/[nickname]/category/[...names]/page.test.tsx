@@ -127,7 +127,6 @@ describe("/home/[nickname]/category/[...names] page test", () => {
     expect(title).toBeInTheDocument();
     const count = screen.getByText("0 post");
     expect(count).toBeInTheDocument();
-    screen.debug();
   });
 
   it("render test when user have one post", () => {
@@ -138,6 +137,7 @@ describe("/home/[nickname]/category/[...names] page test", () => {
     expect(title).toBeInTheDocument();
     const count = screen.getByText("1 post");
     expect(count).toBeInTheDocument();
+
     const postTitle = screen.getByText("testPost1");
     expect(postTitle).toBeInTheDocument();
   });
@@ -150,10 +150,10 @@ describe("/home/[nickname]/category/[...names] page test", () => {
     expect(title).toBeInTheDocument();
     const count = screen.getByText("2 posts");
     expect(count).toBeInTheDocument();
+
     const postTitleOne = screen.getByText("testPost1");
     expect(postTitleOne).toBeInTheDocument();
     const postTitleTwo = screen.getByText("testPost1");
     expect(postTitleTwo).toBeInTheDocument();
-    screen.debug();
   });
 });
