@@ -32,14 +32,19 @@ export default function EditSpan({ createdBy }: { createdBy: string }) {
           "Content-Type": "application/json",
         },
       });
-      if (result.ok) router.push(`/home/${userData?.nickname}`);
-      const { error } = await result.json();
-      throw new Error(error);
+
+      if (!result.ok) {
+        const { error } = await result.json();
+        throw new Error(error);
+      }
+
+      router.push(`/home/${userData?.nickname}`);
     } catch (error) {
       console.log(error);
       window.alert("Post delete failed.");
     }
   };
+
   return (
     <>
       <span className="pe-on" hidden={hidden} onClick={onEdit}>
