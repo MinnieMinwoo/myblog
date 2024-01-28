@@ -5,7 +5,7 @@ interface PostList {
 
 type UserPostList = PostList & {
   postCount: number;
-  id: string[];
+  id: string;
 };
 
 interface PostThumbnail {

@@ -55,7 +55,6 @@ export default function CategoryPage({ params: { nickname } }: { params: { nickn
 
   const onAdd = () => {
     if (!categoryList || !userData?.id || nickname !== userData?.nickname) return; // invalid access
-    console.log("test");
     const name = window.prompt("Add new main category name");
     if (!name) return; // no name
     // duplicate name

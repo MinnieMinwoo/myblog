@@ -30,6 +30,7 @@ export default function PostCategoryCard({
   });
 
   const queryClient = useQueryClient();
+
   const { mutate: updateCategory } = useMutation({
     mutationFn: (categoryData) => {
       if (!userData) throw new Error("no user data");
@@ -83,7 +84,7 @@ export default function PostCategoryCard({
     } = event;
     if (!files) throw console.log("no image files");
     try {
-      const uploadURL = await imageUpload(files[0]); //todo: upload img
+      const uploadURL = await imageUpload(files[0]);
 
       const { mainIndex, subIndex } = getIndexNumber();
       const newCategoryList = structuredClone(categoryList);
@@ -125,18 +126,20 @@ export default function PostCategoryCard({
           >
             {`${subCategoryName}`}
           </Link>
-          <div className="hstack" hidden={!isEdit}>
-            <button className="btn btn-outline-primary" onClick={onNameChange}>
-              ✎
-            </button>
-            <button className="btn btn-outline-info ms-auto" onClick={onImageButtonClick}>
-              <input hidden type="file" accept="image/*" ref={imageRef} onChange={onImageChange} />
-              🖼️
-            </button>
-            <button className="btn btn-outline-danger ms-auto" onClick={onDelete}>
-              🗑️
-            </button>
-          </div>
+          {isEdit && (
+            <div className="hstack">
+              <button className="btn btn-outline-primary" onClick={onNameChange}>
+                ✎
+              </button>
+              <button className="btn btn-outline-info ms-auto" onClick={onImageButtonClick}>
+                <input hidden type="file" accept="image/*" ref={imageRef} onChange={onImageChange} />
+                🖼️
+              </button>
+              <button className="btn btn-outline-danger ms-auto" onClick={onDelete}>
+                🗑️
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
