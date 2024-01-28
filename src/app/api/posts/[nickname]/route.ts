@@ -17,6 +17,7 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
 
   const { searchParams } = new URL(request.url);
   const queryString = {
+    documentID: searchParams.get("id"),
     createdAt: Number(searchParams.get("createdAt")),
     createdBy: searchParams.get("createdBy"),
     categoryMain: searchParams.get("categoryMain"),
@@ -102,6 +103,7 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
       ExclusiveStartKey:
         queryString.createdAt && queryString.createdBy
           ? {
+              id: queryString.documentID,
               createdAt: queryString.createdAt,
               createdBy: queryString.createdBy,
             }
