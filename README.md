@@ -50,4 +50,5 @@
 ## demonstration
 
 [API](https://minnies-organization.gitbook.io/myblog-api/)  
-[demonstration Link](https://build.duiyf02ne0kez.amplifyapp.com)
+[demonstration Link](https://build.duiyf02ne0kez.amplifyapp.com)  
+[My page](https://build.duiyf02ne0kez.amplifyapp.com/home/Minnie)
