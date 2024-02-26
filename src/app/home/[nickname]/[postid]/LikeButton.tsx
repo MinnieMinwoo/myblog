@@ -72,9 +72,7 @@ export default function LikeButton() {
       className={`btn btn${
         status === "success" && userData?.id && likes.includes(userData.id) ? "" : "-outline"
       }-primary w-100px h-50px me-3`}
-      onClick={() => {
-        updateLikes();
-      }}
+      onClick={() => updateLikes()}
     >
       ♡{`(${status === "success" ? likes.length : 0})`}
     </button>
