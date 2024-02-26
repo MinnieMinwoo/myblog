@@ -22,7 +22,10 @@ export async function GET(request: Request, { params: { postid } }: { params: { 
     revalidatePath(`/home/${Item?.createdNickname}/${postid}`);
     return NextResponse.json({ id: postid, likes: Item?.likes }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    console.log(error);
+    if (error instanceof Error && error.name === "ResourceNotFoundException")
+      return NextResponse.json({ error: ErrorMessage.POST_NOT_EXISTS }, { status: 404 });
+    else return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -64,6 +67,19 @@ export async function POST(request: Request, { params: { postid } }: { params: {
     return NextResponse.json({ id: postid, likes: newLikes }, { status: 201 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+    if (!(error instanceof Error)) return NextResponse.json({ error: "Bad gateway" }, { status: 502 });
+    else if (error.name === "ResourceNotFoundException")
+      return NextResponse.json({ error: ErrorMessage.POST_NOT_EXISTS }, { status: 404 });
+    else
+      switch (error.message) {
+        case ErrorMessage.INVALID_TOKEN_DATA:
+          return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_DATA }, { status: 400 });
+        case ErrorMessage.INVALID_TOKEN_TYPE:
+          return NextResponse.json({ error: ErrorMessage.INVALID_TOKEN_TYPE }, { status: 401 });
+        case ErrorMessage.CONTAMINATED_TOKEN:
+          return NextResponse.json({ error: ErrorMessage.CONTAMINATED_TOKEN }, { status: 401 });
+        default:
+          return NextResponse.json({ error: ErrorMessage.INTERNAL_SERVER_ERROR }, { status: 500 });
+      }
   }
 }
