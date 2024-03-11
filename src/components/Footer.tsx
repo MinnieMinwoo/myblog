@@ -1,10 +1,15 @@
+"use client";
+
+import useColorScheme from "logics/useColorScheme";
 import Link from "next/link";
 
 const Footer = () => {
+  const { colorScheme } = useColorScheme();
+
   const ListComponent = ({ name, link }: { name: string; link: string }) => {
     return (
       <li className="mb-2">
-        <Link href={link} className="text-333 text-decoration-none">
+        <Link href={link} className={`${colorScheme === "dark" ? "text-999" : "text-333"} text-decoration-none`}>
           {name}
         </Link>
       </li>
@@ -13,11 +18,13 @@ const Footer = () => {
 
   return (
     <footer className="HomeFooter">
-      <nav className="navbar bg-secondary">
+      <nav className={`navbar ${colorScheme === "dark" ? "bg-dark" : "bg-secondary"}`}>
         <div className="container align-items-start pt-2 col">
           <div className="col-12 col-md-4 mb-2 mb-md-0">
-            <p className="my-1 fs-14px text-333">2023 My own blog project</p>
-            <p className="my-1 fs-14px text-333">© Snowcat</p>
+            <p className={`my-1 fs-14px ${colorScheme === "dark" ? "text-ccc" : "text-333"}`}>
+              2023 My own blog project
+            </p>
+            <p className={`my-1 fs-14px ${colorScheme === "dark" ? "text-ccc" : "text-333"}`}>© Snowcat</p>
           </div>
           <div>
             <h5>Links</h5>

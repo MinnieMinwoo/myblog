@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import HeaderProfile from "./HeaderProfile";
 import HeaderSearch from "components/HeaderSearch";
+import useColorScheme from "logics/useColorScheme";
 
 interface Props {
   userName?: string;
@@ -11,9 +12,11 @@ interface Props {
 }
 
 export default function HomeHeader({ userName }: Props) {
+  const { colorScheme } = useColorScheme();
+
   return (
     <header className="Header">
-      <nav className="navbar">
+      <nav className={`navbar ${colorScheme === "dark" ? "bg-dark" : "bg-light"}`}>
         <div className="container">
           <div className="navbar-brand">
             <Link href="/">
