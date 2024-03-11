@@ -36,7 +36,7 @@ export default function HeaderProfile() {
   return (
     <div className="HeaderProfile d-inline-block">
       <Image
-        className="img-thumbnail rounded-circle w-50px h-50px-i fs-0"
+        className="img-thumbnail rounded-circle w-50px h-50px-i fs-0 bg-white"
         src={status && userData?.picture ? userData.picture : "/altThumbnail.jpg"}
         alt="Profile"
         role="button"

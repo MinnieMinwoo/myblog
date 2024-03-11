@@ -13,7 +13,7 @@ interface Props {
 export default function HomeHeader({ userName }: Props) {
   return (
     <header className="Header">
-      <nav className="navbar bg-white">
+      <nav className="navbar">
         <div className="container">
           <div className="navbar-brand">
             <Link href="/">

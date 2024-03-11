@@ -8,10 +8,12 @@ import PostPagination from "components/PostPagination";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import CategorySideBar from "../../../components/CategorySideBar";
 import getCurrentUserToken from "logics/getCurrentUserToken";
+import useColorScheme from "logics/useColorScheme";
 
 export default function HomePage() {
   const params = useParams();
   const { nickname } = params;
+  const { colorScheme } = useColorScheme();
 
   const {
     data: postData,
@@ -63,9 +65,15 @@ export default function HomePage() {
           <div className=" col col-10 offset-1 col-lg-8 offset-lg-2 col-xxl-6 offset-xxl-3">
             <section className=" mb-3 hstack gap-1">
               <h2 className="fw-bold d-inline-block">Posts</h2>
-              <span className="text-primary fs-5">{postData ? `(${String(postData.pages[0].postCount)})` : ""}</span>
+              <span className={`${colorScheme === "dark" ? "text-info" : "text-primary"} fs-5`}>
+                {postData ? `(${String(postData.pages[0].postCount)})` : ""}
+              </span>
               {userData && nickname === userData.nickname ? (
-                <Link href="/write" role="button" className="btn btn-outline-primary ms-auto">
+                <Link
+                  href="/write"
+                  role="button"
+                  className={`btn ${colorScheme === "dark" ? "btn-outline-info" : "btn-outline-primary"} ms-auto`}
+                >
                   Write
                 </Link>
               ) : null}
