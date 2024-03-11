@@ -28,20 +28,26 @@ export default function PostThumbnailBox({ postList }: { postList: PostThumbnail
                   />
                 </div>
               ) : null}
-              <h3 className={`overflow-hidden fw-semibold ${colorScheme ? "text-eee" : "text-111"} `}>{post.title}</h3>
-              <p className={`mb-1 text-break ${colorScheme ? "text-999" : "text-555"}`}>{post.thumbnailData}</p>
+              <h3 className={`overflow-hidden fw-semibold ${colorScheme === "dark" ? "text-eee" : "text-111"} `}>
+                {post.title}
+              </h3>
+              <p className={`mb-1 text-break ${colorScheme === "dark" ? "text-999" : "text-555"}`}>
+                {post.thumbnailData}
+              </p>
               <div className="col">
                 {post.tag.map((tag) => (
                   <button
                     key={tag}
-                    className={`btn ${colorScheme ? "btn-outline-info" : "btn-outline-primary"} me-1`}
+                    className={`btn ${colorScheme === "dark" ? "btn-outline-info" : "btn-outline-primary"} me-1`}
                     onClick={() => {}}
                   >
                     {tag}
                   </button>
                 ))}
               </div>
-              <span className={`fs-14px ${colorScheme ? "text-999" : "text-777"}`}>{getDate(post.createdAt)}</span>
+              <span className={`fs-14px ${colorScheme === "dark" ? "text-999" : "text-777"}`}>
+                {getDate(post.createdAt)}
+              </span>
             </div>
           </Link>
         </div>
