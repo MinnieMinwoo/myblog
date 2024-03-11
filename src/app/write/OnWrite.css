@@ -5,6 +5,7 @@
 .post-input-bar {
   border: 0;
   border-bottom: 1px solid #eee;
+  background: transparent;
 }
 
 .post-input-bar:focus {

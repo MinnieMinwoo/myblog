@@ -7,9 +7,14 @@ import ProfileImageEdit from "./ProfileImageEdit";
 import CategoryOrderEdit from "./CategoryOrderEdit";
 import getCurrentUserToken from "logics/getCurrentUserToken";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import useColorScheme from "logics/useColorScheme";
+import ThemeEdit from "./ThemeEdit";
 
 export default function SettingPage() {
   const router = useRouter();
+  const { colorScheme } = useColorScheme();
 
   const { data: userData, status } = useQuery({
     queryKey: ["currentUser"],
@@ -102,6 +107,17 @@ export default function SettingPage() {
       {
         status === "loading" ? null : null // todo: input fallback loading
       }
+      <header>
+        <nav className={`navbar ${colorScheme === "dark" ? "bg-dark" : "bg-white"}`}>
+          <div className="container">
+            <div className="navbar-brand">
+              <Link href="/">
+                <Image className="me-2" src={"/logo.png"} width={40} height={40} alt="blog logo" />
+              </Link>
+            </div>
+          </div>
+        </nav>
+      </header>
       <main className="EditProfile">
         <section className="py-4 col col-lg-10 offset-lg-1 col-xxl-8 offset-xxl-2">
           <div className="hstack">
@@ -112,6 +128,7 @@ export default function SettingPage() {
         </section>
         <hr className="col col-lg-10 offset-lg-1 col-xxl-8 offset-xxl-2" />
         <section className="col col-lg-10 offset-lg-1 col-xxl-8 offset-xxl-2">
+          <ThemeEdit />
           <SettingData
             title="Email address"
             description="Email address that receives authentication or notification."

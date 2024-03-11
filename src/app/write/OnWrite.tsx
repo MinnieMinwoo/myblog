@@ -7,6 +7,7 @@ import "@uiw/react-markdown-preview/markdown.css";
 
 import imageUpload from "logics/imageUpload";
 import "./OnWrite.css";
+import useColorScheme from "logics/useColorScheme";
 
 interface Props {
   isEdit: boolean;
@@ -20,6 +21,7 @@ export default function OnWrite({ isEdit, postContent, setPostContent, onPreview
   const inputRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const { colorScheme } = useColorScheme();
   const onTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const {
       target: { value },
@@ -110,7 +112,7 @@ export default function OnWrite({ isEdit, postContent, setPostContent, onPreview
           <section onDragEnter={onDrag} onDragLeave={onDrag} onDragOver={onDrag} onDrop={onDrag}>
             <input hidden type="file" accept="image/*" ref={imageRef} defaultValue={""} onChange={onInputImgChange} />
             <input
-              className="w-100 fs-1 mb-3 text-777 post-input-bar"
+              className={`w-100 fs-1 mb-3 ${colorScheme === "dark" ? "text-ccc" : "text-777"} post-input-bar`}
               placeholder="Write post title"
               value={postContent.title}
               onChange={onTitleChange}
@@ -120,7 +122,7 @@ export default function OnWrite({ isEdit, postContent, setPostContent, onPreview
             <div ref={inputRef}>
               <Editor
                 className="post-editor"
-                data-color-mode="light"
+                data-color-mode={colorScheme}
                 value={postContent.postDetail}
                 visibleDragbar={false}
                 textareaProps={{

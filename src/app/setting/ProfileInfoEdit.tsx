@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import getCurrentUserData from "logics/getCurrentUserData";
 import updateUserInfo from "logics/updateUserInfo";
+import useColorScheme from "logics/useColorScheme";
 
 export default function ProfileInfoEdit() {
+  const { colorScheme } = useColorScheme();
+
   const { data: userData } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUserData,
@@ -66,8 +69,10 @@ export default function ProfileInfoEdit() {
   return (
     <div className="ProfileInfoEdit container px-4">
       <div className="vstack gap-2" hidden={!hidden}>
-        <p className="fs-2 fw-semibold m-0 text-111">{userData?.nickname}</p>
-        <button type="button" className="btn btn-outline-primary w-100px" onClick={onToggle}>
+        <p className={`fs-2 fw-semibold m-0 ${colorScheme === "dark" ? "text-eee" : "text-111"}`}>
+          {userData?.nickname}
+        </p>
+        <button type="button" className="btn btn-primary w-100px" onClick={onToggle}>
           Edit
         </button>
       </div>

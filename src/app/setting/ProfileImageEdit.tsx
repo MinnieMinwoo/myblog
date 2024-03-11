@@ -70,7 +70,7 @@ const ProfileImageEdit = () => {
       <button type="button" className="btn btn-primary w-128px" onClick={onUpload}>
         Upload Image
       </button>
-      <button type="button" className="btn btn-outline-primary w-128px" onClick={onDelete}>
+      <button type="button" className="btn btn-secondary w-128px" onClick={onDelete}>
         Delete Image
       </button>
     </div>

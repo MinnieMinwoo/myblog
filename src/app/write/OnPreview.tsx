@@ -4,6 +4,7 @@ import "./OnPreview.css";
 import imageUpload from "logics/imageUpload";
 import { useQuery } from "@tanstack/react-query";
 import getUserCategoryData from "logics/getUserCategoryData";
+import useColorScheme from "logics/useColorScheme";
 
 interface Props {
   isEdit: boolean;
@@ -30,6 +31,7 @@ const OnPreview = ({
   const [categoryData, setCategoryData] = useState<CategoryMainData[]>([]);
   const [categoryIndex, setCategoryIndex] = useState("");
   const [firstOpen, setFirstOpen] = useState(false);
+  const { colorScheme } = useColorScheme();
 
   const { status: categoryStatus, data: categoryList } = useQuery({
     queryKey: ["CategoryLists", nickname],
@@ -145,9 +147,10 @@ const OnPreview = ({
 
   return (
     <div
-      className={`Preview preview-layout bg-fff z-index-1 ${
-        isPreview ? "scrollOpen" : firstOpen ? "scrollClose" : "hidden"
-      }${isPreview ? "" : " preview-overflow"}`}
+      className={`Preview preview-layout ${colorScheme === "dark" ? "bg-dark" : "bg-light"}
+      } z-index-1 ${isPreview ? "scrollOpen" : firstOpen ? "scrollClose" : "hidden"}${
+        isPreview ? "" : " preview-overflow"
+      }`}
     >
       <div className="col-10 offset-1 col-md-5 offset-md-1 col-xxl-4 offset-xxl-2 px-4 align-self-center be-light">
         <div className="vstack gap-3">
@@ -225,12 +228,7 @@ const OnPreview = ({
           </select>
         </div>
         <div className="hstack gap-3 float-end">
-          <button
-            className="btn btn-outline-primary w-80px h-40px"
-            type="button"
-            disabled={isSubmit}
-            onClick={onPreview}
-          >
+          <button className="btn btn-secondary w-80px h-40px" type="button" disabled={isSubmit} onClick={onPreview}>
             {isSubmit ? (
               <div className="d-flex justify-content-center">
                 <div className="spinner-border spinner-border-sm" role="status">

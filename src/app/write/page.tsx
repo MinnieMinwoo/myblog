@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import EditorLoading from "./loading";
 import getCurrentUserToken from "logics/getCurrentUserToken";
+import useColorScheme from "logics/useColorScheme";
 
 const OnWrite = dynamic(() => import("./OnWrite"), { ssr: false, loading: () => <EditorLoading /> });
 const OnPreview = dynamic(() => import("./OnPreview"));
@@ -17,6 +18,7 @@ export default function WritePage() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
+  const { colorScheme } = useColorScheme();
 
   const { data: userData, status } = useQuery({
     queryKey: ["currentUser"],
@@ -79,7 +81,7 @@ export default function WritePage() {
     try {
       const token = await getCurrentUserToken();
       if (id) {
-        await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/detail/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/detail/${id}`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -87,11 +89,16 @@ export default function WritePage() {
           },
           body: JSON.stringify(postContent),
         });
-        const postID = postContent.id;
-        router.push(`/home/${postContent.createdNickname}/${postID}`);
-        router.refresh();
+        if (response.ok) {
+          const postID = postContent.id;
+          router.push(`/home/${postContent.createdNickname}/${postID}`);
+          router.refresh();
+        } else {
+          const { error } = await response.json();
+          throw new Error(error);
+        }
       } else {
-        const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${postContent.createdNickname}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/posts/${postContent.createdNickname}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -99,13 +106,18 @@ export default function WritePage() {
           },
           body: JSON.stringify(postContent),
         });
-        const { postID } = await result.json();
-        router.push(`/home/${postContent.createdNickname}/${postID}`);
-        router.refresh(); // state reset
+        if (response.ok) {
+          const { postID } = await response.json();
+          router.push(`/home/${postContent.createdNickname}/${postID}`);
+          router.refresh();
+        } else {
+          const { error } = await response.json();
+          throw new Error(error);
+        }
       }
     } catch (error) {
       console.log(error);
-      window.alert("Post Submit failed. Try again later.");
+      window.alert("Post Submit failed. Check the post data and try again.");
     } finally {
       setIsSubmit(false);
     }
@@ -124,7 +136,7 @@ export default function WritePage() {
   return (
     <>
       <header>
-        <nav className="navbar bg-white">
+        <nav className={`navbar ${colorScheme === "dark" ? "bg-dark" : "bg-light"}`}>
           <div className="container">
             <div className="navbar-brand">
               <a href="/">

@@ -2,6 +2,7 @@ import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import getCurrentUserData from "logics/getCurrentUserData";
 import getUserCategoryData from "logics/getUserCategoryData";
 import updateCategoryList from "logics/updateCategoryList";
+import useColorScheme from "logics/useColorScheme";
 import React, { useRef, useState } from "react";
 
 const CategoryOrderEdit = () => {
@@ -10,6 +11,7 @@ const CategoryOrderEdit = () => {
   const [isSubCategory, setIsSubCategory] = useState(0);
   const [mainIndex, setMainIndex] = useState(0);
   const [categoryData, setCategoryData] = useState<CategoryMainData[]>([]);
+  const { colorScheme } = useColorScheme();
   const queryClient = new QueryClient();
 
   const { data: userData } = useQuery({
@@ -110,10 +112,13 @@ const CategoryOrderEdit = () => {
     event.preventDefault();
   };
 
+  /* todo: refactor code to use settingData component */
   return (
     <>
       <div className={`SettingData px-3 ${isEdit ? "pt-4 py-2" : "bb-light py-4"}`}>
-        <h3 className="d-inline-block w-170px fs-5 text-111">Category order</h3>
+        <h3 className={`d-inline-block fs-5 w-170px ${colorScheme === "dark" ? "text-eee" : "text-111"}`}>
+          Category order
+        </h3>
         <span className="d-inline-block float-end">
           <div className="hstack">
             <button className="btn btn-primary w-98px" onClick={onClickMain} disabled={isLoading}>
@@ -130,7 +135,9 @@ const CategoryOrderEdit = () => {
             </button>
           </div>
         </span>
-        <p className="mt-2 mb-0 fs-14px text-777">Adjust the order of categories shown.</p>
+        <p className={`mt-2 mb-0 fs-14px ${colorScheme === "dark" ? "text-999" : "text-777"}`}>
+          Adjust the order of categories shown.
+        </p>
       </div>
       {isEdit && (
         <div className="SettingData px-3 py-4 bb-light">
