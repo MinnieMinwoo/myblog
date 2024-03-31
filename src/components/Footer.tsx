@@ -23,14 +23,14 @@ const Footer = () => {
             <h5>Links</h5>
             <ul className="list-unstyled">
               <ListComponent name="Home" link="/" />
-              <ListComponent name="Auth" link="/auth" />
+              <ListComponent name="Auth" link="/auth/signin" />
               <ListComponent name="Search" link="/search?query=" />
             </ul>
           </div>
           <div>
             <h5>More</h5>
             <ul className="list-unstyled">
-              <ListComponent name="Source Code" link="https://github.com/MinnieMinwoo/myBlog_Frontend" />
+              <ListComponent name="Source Code" link="https://github.com/MinnieMinwoo/myblog" />
               <ListComponent name="Contact" link="mailto:nhs075241@gmail.com" />
             </ul>
           </div>

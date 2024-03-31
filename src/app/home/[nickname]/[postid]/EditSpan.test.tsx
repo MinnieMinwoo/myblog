@@ -70,7 +70,7 @@ describe("/home/[nickname]/[postid] EditSpan test", () => {
   it("edit fail test", async () => {
     const fetchMockFunction = jest.fn(() => ({
       status: 400,
-      ok: true,
+      ok: false,
       json: () =>
         Promise.resolve({
           id: "test",
