@@ -117,7 +117,6 @@ export async function GET(request: Request, { params: { nickname } }: { params: 
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

@@ -16,8 +16,9 @@ export async function GET(request: Request) {
   console.log(searchParams);
   const query = searchParams.get("query");
   const user = searchParams.get("user");
+  const postID = searchParams.get("id");
   const createdAt = searchParams.get("createdAt");
-  const createdBy = searchParams.get("createdBy");
+  const title = searchParams.get("title");
 
   if (!query) return NextResponse.json({ error: ErrorMessage.INVALID_FETCH_DATA }, { status: 400 });
 
@@ -38,17 +39,19 @@ export async function GET(request: Request) {
     ProjectionExpression: "id, title, createdBy, createdNickname, createdAt, thumbnailImageURL, thumbnailData, tag",
     Limit: 10,
     ExclusiveStartKey:
-      createdAt && createdBy
+      postID && createdAt && title
         ? {
-            createdAt: createdAt,
-            createdBy: createdBy,
+            id: postID,
+            createdAt: Number(createdAt),
+            title: title,
           }
         : undefined,
   });
 
   try {
-    // LastEvaluatedKey : {id, createdBy, createdAt}
+    // LastEvaluatedKey : {id, createdAt, title}
     const { Items, LastEvaluatedKey } = await dbClient.send(userPostCommand);
+    console.log(LastEvaluatedKey);
     return NextResponse.json({ postList: Items, LastEvaluatedKey }, { status: 200 });
   } catch (error) {
     console.log(error);
